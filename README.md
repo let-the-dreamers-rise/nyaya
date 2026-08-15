@@ -7,6 +7,10 @@ people actually own. A local language model proposes goals; learned symbolic
 world-models verify, plan, and execute. Skills persist as plain, inspectable
 Python -- no retraining, no cloud, auditable by reading them.
 
+A behaviour you cannot read is a behaviour you cannot trust. A skill that
+is a file on your own device is a skill nobody can revoke. Loyal AI, at
+the layer above the weights: the user owns what the agent learns.
+
 Named for the Indian school of logic: *nyaya*, literally "method, rule".
 
 ## Why
