@@ -42,6 +42,63 @@ Enhancements" (AI-dApp category), "Auto Drive SDK Plugins -- LangChain,
 Hugging Face" (integration category), "Storage-Compute Separation for AI"
 and "Privacy-Preserving AI" (research category).
 
+## 2.5 The legal terms, read in full (from the actual PDFs)
+
+Both documents were downloaded and text-extracted, not skimmed. What they
+actually say:
+
+**Eligibility.** Open to applicants from any country except sanctioned
+territories or where crypto is banned. The excluded list is Afghanistan,
+Belarus, Myanmar, CAR, Cuba, DRC, Iran, Iraq, Lebanon, Libya, Mali,
+Nicaragua, North Korea, Russia, Somalia, South Sudan, Sudan, Syria,
+occupied regions of Ukraine, Venezuela. **India is not excluded** and
+crypto is not banned there, so a solo Indian founder is eligible.
+Individuals qualify -- no company required. Legal majority, no fraud
+history, no pending proceedings.
+
+**KYC/KYB is mandatory** for successful applicants, plus sanctions
+screening and possible verification of credentials or references.
+
+**IP: the good news.** All IP created under the grant **belongs to the
+Grantee**. The obligation is to open-source it: code must be published to
+a designated public GitHub repo under 0BSD, BSD, MIT, or Apache 2.0 (or
+another licence pre-approved in writing). Non-software deliverables go
+under CC BY 4.0. Nyaya is already MIT, so we comply with no change.
+Breaching the open-source requirement lets them demand repayment or take
+assignment of the IP -- fair, and irrelevant if we ship open anyway.
+
+**Payment, and the one real risk.** Milestone-based, with a **Milestone 0
+initial disbursement paid on signing** (before any work). Currencies: AI3
+tokens, stablecoins, or USD, *at the Foundation's sole discretion*. The
+clause to negotiate: the **Locked AI3 portion may be up to 100% of the
+total grant**, locked for a period they set at their sole discretion. A
+grant could therefore arrive entirely as illiquid tokens. Raise the
+liquid/locked split explicitly in the discovery call -- it is the single
+most material commercial term.
+
+**Obligations.** Monthly updates within 5 days of each month's end (with
+a financial summary), a milestone report per milestone, and a final
+narrative plus financial report within 30 days of completion. Unspent
+funds must be returned. **Confidentiality: the grant amount and terms are
+confidential** unless they authorise disclosure.
+
+**Jurisdiction.** Swiss law, exclusive courts of Zug. Signed for the
+Foundation by Markus Spillmann, Council President. Grantee bears their own
+tax liability -- worth an accountant's opinion on Indian treatment of
+token grants.
+
+**Process reality.** Up to **8 weeks** for a first response, then a
+discovery deep-dive call, then 2-4 weeks to decision. Evaluated on
+mission relevance, technical feasibility, ecosystem impact, and team
+capability. Their own words in the T&C: applications should be rich in
+technical detail. The form itself sits behind a Google sign-in, so
+submission needs a logged-in Google account.
+
+**Precedent.** They have already funded **Momento** -- a protocol for
+capturing and verifying content as tamper-proof, user-owned records on
+Auto Drive + Auto EVM. Provenance-and-verification projects are exactly
+what this program has been buying.
+
 ## 3. The gap we fill: memory is not learning
 
 Their agents framework stores **memories** -- encrypted interaction blobs,
@@ -50,6 +107,14 @@ can do is say what an agent **learned**: the behavioural rules it derived,
 whether they are any good, or whether the agent you are about to trust has
 the skills it claims. "Verifiable interaction history" verifies that bytes
 were stored, not that learning happened.
+
+And this is their own framing, not ours imposed on them. Their homepage
+argues that **unverifiable agent memory** is a first-class vulnerability
+alongside hallucination, and sells Auto Drive as immutable context that
+cannot drift, be poisoned, or vanish between calls. They have made the
+agent's *inputs* trustworthy. Nobody has made the agent's *conclusions*
+trustworthy. Pitch it in exactly that sequence: you fixed memory drift;
+this fixes learning drift. It is the next sentence of their own argument.
 
 Nyaya is exactly the missing organ. Our runtime compiles an agent's
 experience into small readable programs (world models, skills), and --
@@ -145,12 +210,37 @@ one-command demo. The ARC-AGI-3 work is the capability demonstration.
 
 ## 8. Before submitting (user actions)
 
-1. Read their sample Grant Agreement + T&Cs (linked on the program page)
-   -- Swiss foundation, token-denominated payments possible: check tax and
-   KYC comfort.
-2. Get an Auto Drive API key at ai3.storage (free tier) so the application
-   can say the integration is already being prototyped.
-3. Approve the public push of the nyaya repo -- both this and the Sentient
-   application need the repo URL.
-3. Submit via their Google Form; the discovery-phase call is where the
-   funding size gets set.
+1. **Get an Auto Drive API key** at ai3.storage (free tier) so the
+   application can honestly say the integration is already prototyped.
+   Their SDK is TypeScript-only but Auto Drive is S3-compatible with a
+   REST API, so Python works today -- and *that gap is itself part of the
+   pitch* (they explicitly ask for LangChain / Hugging Face plugins, which
+   are Python-native, while shipping no Python SDK).
+2. **Approve the public push of the nyaya repo.** Their T&C requires
+   publication to a designated public GitHub repo; both this and the
+   Sentient application need the URL. MIT already satisfies their licence
+   list.
+3. **Decide your KYC and tax comfort**: KYC/KYB is mandatory, payment may
+   be up to 100% locked AI3 at their discretion, and grantees carry their
+   own tax liability. Worth an accountant's view on Indian treatment of
+   token grants before signing.
+4. **Be ready for a Google sign-in** -- the form requires one.
+5. Submit; expect up to 8 weeks to first response. Negotiate the
+   liquid/locked split and milestone sizing in the discovery call.
+
+## 9. What I read to write this
+
+Every link on their program page, plus the primary documents: the AI3.0
+thesis post; example-projects; application-process; the program page;
+tokenomics (1B supply, Foundation treasury 15.68%, 48-month vesting with
+12-month cliff, TGE at Phase-2); the **Sample Grant Agreement (20 pages,
+text-extracted)**; the **Grant Program T&C (14 pages, text-extracted)**;
+autonomys.xyz (182 nodes, 21.71 PB pledged, 240 ms retrieval, 256x
+replication, mainnet since Q4 2024); academy and docs sites;
+develop.autonomys.xyz (Auto SDK is TypeScript/JavaScript; Auto Drive has
+REST + S3 + rclone; Auto EVM with MetaMask/Foundry/Hardhat; Auto ID
+documented but thin); the agents framework repo (TypeScript, MIT,
+explicitly experimental); and the news page (Momento grant, Guardians of
+Growth staking seasons). The only thing I could not read is the form's own
+questions -- it sits behind a Google login, and the process page
+enumerates them instead.
