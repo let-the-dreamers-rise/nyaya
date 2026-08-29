@@ -62,6 +62,18 @@ probes, and clear the level by planning inside its own theory -- no language
 model involved.
 
 ```
+python demo_scam.py
+```
+
+The same idea leaving the grid-world: a scam-screening skill learned from
+4,459 labelled real SMS in under two seconds on CPU -- 46 rules, each a
+human sentence -- measured at precision 100% / recall 77.8% on 1,115
+held-out real messages, adapted to Indian scam patterns with 32 local
+examples (recall 81% -> 94%). The demo ends with the user deleting rules
+from their own copy of the skill and the verdict flipping: ownership that
+actually does something.
+
+```
 python -m pytest tests -q
 ```
 
@@ -70,8 +82,10 @@ python -m pytest tests -q
 - The skills library: rules mined from experience logs, carried across
   tasks as inspectable programs (the depletion-goal discovery in our
   ARC-AGI-3 work was learned this way -- from the agent's own failure logs).
-- On-device verticals that inherit the efficiency: real-time scam and fraud
-  screening is the first candidate.
+- The scam guardian, India-first: `demo_scam.py` grown into an on-device
+  screener for SMS, links and forwarded messages (live-call screening is
+  gated by Android platform policy and is a partnership milestone, named
+  honestly as such).
 
 ## Licence
 

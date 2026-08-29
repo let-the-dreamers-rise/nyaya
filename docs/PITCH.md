@@ -42,13 +42,32 @@ agent learns.
 And it is why small models become enough. The runtime moves the routine
 thinking out of tokens into programs, so the model people can actually
 run -- on hardware they already own -- does the judging, not the
-grinding. Measured, not promised: a stock 27B agent spent ~441 tokens of
-reasoning per action and died budget-broke in every game; with the
-runtime carrying physics and search, actions cost ~zero tokens at 1.4 ms
-each, and the runtime alone -- **no language model at all** -- cleared
-levels the LLM-driven agent never reached. Learned from single-digit
-interaction counts, offline, CPU-only, on ARC-AGI-3 -- a benchmark built
-to punish memorisation and reward exactly the fluid learning this is.
+grinding. Measured, with denominators, because you will check: on
+ARC-AGI-3 (a benchmark built to punish memorisation), a stock 27B agent
+spent ~441 tokens of reasoning per action and exhausted its ~70k-token
+budget in all 25 games; with the runtime carrying physics and search,
+actions cost ~zero tokens at 1.4 ms each. The runtime alone -- **no
+language model at all** -- clears early levels on 2-4 of the 25 public
+games per run, including games the LLM-driven agent never cleared at
+all. That is a research prototype demonstrating a mechanism, and we say
+so: nobody has beaten this benchmark, leaderboard scores sit in the low
+single digits of a possible ~115, and our contribution is the measured
+cost collapse plus skills you can read -- not a solved benchmark.
+
+## Who pays (the question every investor asks first)
+
+The monetizable claim is the cost collapse, and its buyer exists today:
+any team running LLM agents at scale carries an inference bill this
+runtime attacks directly. The commercial motion is embarrassingly
+conventional -- an open core with paid deployment, integration and
+support for agent-running companies (the pattern every funded
+open-source infra company uses), priced against the cloud spend it
+deletes. The guardian is the mission that motion funds, not the revenue
+line: consumer safety in India monetizes through institutions (banks'
+fraud programmes, carriers, device makers), never through the
+grandmother, and we will not run ads against her fear. Grant capital
+bootstraps; deployment revenue sustains; that ordering is stated rather
+than hidden.
 
 ## Openness as the mechanism (their bar, cleared honestly)
 
@@ -66,10 +85,45 @@ First vertical: **the Scam Guardian, India-first.** Their RFP frames it
 with American numbers; the sharper version of the same wound is Indian --
 UPI fraud and digital-arrest scams industrialised against elders in
 their own languages. On-device is not a latency preference there; it is
-the difference between a guardian and another data harvester. The same
-sample-efficient modelling that learns a game's physics from ten
-interactions learns a scam's shape from few examples, on the phone, in
-Hindi first.
+the difference between a guardian and another data harvester.
+
+And this is no longer an analogy -- **the bridge artefact exists and is
+measured** (`demo_scam.py`, one command): from 4,459 labelled real SMS
+(public UCI corpus) the runtime learns a 46-rule scam-screening skill in
+**1.96 seconds on CPU** -- no GPU, no network, no weights. Held out on
+1,115 real messages: **precision 100.0%, recall 77.8% (F1 0.875)**.
+Applied zero-shot to Indian scam patterns (KYC freeze, digital arrest,
+UPI cashback; illustrative seed set, n=64) it degrades honestly to F1
+0.81 -- and **32 local examples lift recall from 81% to 94%** (F1 0.88,
+n=32). Every rule is a sentence ("asks for a fee to claim a prize", +3);
+the skill is one page of Python the user owns; the demo ends with the
+user deleting rules from their copy and the verdict actually flipping.
+The transparency has a price and we state it: a rule-based scorer can be
+read around by an adversary who steals the file -- the counterweight is
+that adaptation costs 32 examples and two seconds, and the user can see
+exactly what their guardian believes, which no black box offers.
+
+**Version 1 scope, stated honestly:** SMS, links, and forwarded
+messages/audio -- because Android restricts third-party access to live
+call audio, screening live calls is a carrier/OEM/default-dialer
+partnership milestone, not an app-store feature, and we name it as such
+rather than pitch around it.
+
+**The competition, named:**
+
+| Who | What they have | What they cannot do |
+|---|---|---|
+| Truecaller | India's default caller-ID; hundreds of millions of users; AI scam hints | Ad-and-data business model -- the guardian IS the harvester; English-first; closed |
+| Google (Pixel/Android scam alerts) | On-device Gemini Nano call alerts, shipping | Locked to new Pixels; closed; one company's values baked in; long-tail languages unserved |
+| Bank/carrier fraud SMS filters | Network-side blocking at scale | Server-side by definition; no user ownership; opaque appeals |
+| EvoSkill ecosystem (Sentient's own) | The skills-from-logs idea, funded | Coding-agent domain; nobody has taken it on-device to interactive/consumer domains |
+
+Our wedge against all four is the same sentence: open, any-phone,
+adaptable to any language community from dozens of examples, and the
+user owns the beliefs. Distribution hypothesis with a name on it: elder
+fraud-awareness programmes run by Indian banks (every major bank runs
+one by RBI direction) and state cyber-cell helplines (1930) -- one pilot
+letter is the funded quarter-one milestone.
 
 Not education. The tutor RFP is somebody else's to win.
 
