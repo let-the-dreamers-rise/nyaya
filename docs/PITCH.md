@@ -1,11 +1,33 @@
 # The pitch, written the way they would write it
 
-Supersedes the earlier application draft. Voice calibrated by
-[FOUNDERS.md](FOUNDERS.md): person first, mechanism always, numbers only
-where instruments exist, India named, no hype words. Paste into the
-TypeForm; the submit button is yours.
+Voice calibrated by [FOUNDERS.md](FOUNDERS.md): person first, mechanism
+always, numbers only where instruments exist, India named, no hype words.
+The technical spine is [RESEARCH.md](RESEARCH.md) -- read that first if the
+reader is on the technical council. Paste into the TypeForm; the submit
+button is yours.
+
+> **Who is reading this.** The council includes information theorists who
+> wrote the OML papers -- a Princeton professor and an IISc professor. The
+> strongest version of this application is therefore a *research proposal
+> with falsifiable predictions*, not a product deck. Lead with the mechanism
+> and the measurements; the consumer story is the demonstration that the
+> mechanism reaches a phone, not the pitch itself.
 
 ---
+
+## The claim, in one paragraph
+
+An agent that meets an unfamiliar environment must infer its rules from a
+handful of interactions. Every system that does this today -- WorldCoder,
+PoE-World, OPINE-World, the executable-world-model line -- puts a large
+language model in the learning loop, so every hypothesis revision costs a
+frontier call. That is why they are demonstrated and not deployed, and why
+none of them runs on a phone. **We are building the version with no model in
+the learning loop:** transition programs synthesised on CPU, a library that
+grows from the agent's own failures, and skills that persist as readable
+Python a person can open, edit and own. Sentient made *weights* loyal with
+fingerprinting; this is the same argument one layer up, for what an agent
+learns after deployment.
 
 ## The opening (their person-first pattern)
 
@@ -18,7 +40,9 @@ It protects whoever can pay, and it answers to whoever trained it.
 
 The phone in her hand is enough hardware to catch that scam. What is
 missing is intelligence that lives there, learns there, and answers to
-her. That is what we are building, and the core of it already runs.
+her. The reason it can live there is the research claim above: take the
+model out of the learning loop and learning costs milliseconds of CPU
+instead of a frontier call.
 
 ## The thesis (their stack, one layer up)
 
@@ -127,6 +151,52 @@ letter is the funded quarter-one milestone.
 
 Not education. The tutor RFP is somebody else's to win.
 
+## The research programme (the half a technical council can grade)
+
+Full version in [RESEARCH.md](RESEARCH.md). The short form:
+
+**The open problem.** Current learners -- ours included -- fit parameters
+inside a fixed hypothesis class. When the true mechanism lies outside that
+class, more data cannot help: the learner collects thousands of clean
+transitions and learns nothing, while the planner plans confidently inside a
+model that is structurally wrong. Growing the hypothesis class, rather than
+searching faster within it, is the boundary that matters.
+
+**Three falsifiable claims**, each with an experiment against an existing
+corpus of 24,499+ recorded transitions across 25 games and a causal-replay
+harness that predicts before it learns:
+
+1. *Induction without a model in the loop* -- enumerative synthesis over a
+   typed DSL with counterexample-guided refinement, on CPU.
+2. *The hypothesis class grows from the agent's own failures* -- surviving
+   programs become DSL primitives, so mispredicted transitions are the
+   specification for the next synthesis round. This is EvoSkill's thesis
+   (learn from your own attempts, including failures, produce reusable
+   artefacts without retraining) taken into online interaction.
+3. *The delegation architecture that makes it affordable* -- measured:
+   ~441 tokens of reasoning per action for the stock 27B agent, exhausting
+   its ~70k budget in all 25 games, versus ~0 tokens at 1.4 ms per action
+   with physics and search carried by programs.
+
+**Predictions we will be judged against:** synthesis lifts at least three
+wall-level games above 0.4 changed-cell F1 where templates achieve ~0;
+interactions-to-threshold on unseen games falls monotonically as the library
+grows. Baseline already measured: aggregate F1 0.25 on 3,318 held-out
+transitions the learner was never developed against.
+
+**What would falsify it:** enumerative synthesis may not scale past simple
+gridworlds (PoE-World's authors report exactly this); OPINE-World may already
+have demonstrated online library growth; and a frontier synthesiser may
+simply be better, in which case the contribution collapses to the cost result
+and we report that rather than bury it.
+
+**Deliverables:** the runtime and harness under MIT, the transition corpus so
+the numbers are contestable, and a paper to the ARC Prize 2026 Paper Track --
+whose eligibility rule is worth noting, since the linked code submission need
+not achieve a high score for the paper to be considered. The track scores the
+research and requires open-sourcing everything, which this proposal does
+regardless.
+
 ## The founder (merit over pedigree, their pattern)
 
 Solo technical founder, India. No credential theatre: the evidence is the
@@ -139,9 +209,14 @@ every claim above has a harness behind it.
 
 ## The honest fields
 
-- **Track:** Investment (Part 3 extension: EvoSkill; secondary Part 2:
-  token/economic optimization -- their "cheapest path on any agent
-  stack" is this mechanism's definition).
+- **Track:** one application, considered for both. The honest read: the
+  *research* is grant-shaped (no equity, open-source, public good, individual
+  eligible) and the *runtime plus vertical* is the investment story. Lead with
+  the research; note commercial intent rather than manufacturing a company
+  that does not exist yet. RFP mapping: Part 3 extension of EvoSkill
+  (primary); Part 2 #12 token and economic optimization (the measured cost
+  collapse); Part 2 #11 small, fast, cheap models (thesis alignment only --
+  we do not build models, we make small ones sufficient).
 - **Users:** pre-launch; repo public this month; first users from the
   ARC-AGI-3 community where the results were produced.
 - **Round:** none committed; bootstrapped; this application anchors it.
