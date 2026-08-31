@@ -52,7 +52,45 @@ none of them runs on a phone.
 > narrows to the systems result and must be re-scoped. Finding that out costs
 > an afternoon and is worth more than a month of building.
 
-## 3. The contribution, in three claims
+## 2b. The fastest route to peer standing: own the measurement
+
+A solo researcher does not become a peer of five funded labs by
+reimplementing five papers. Reimplementation is months of work and any
+resulting comparison is dismissible in one sentence -- *you implemented mine
+wrong* -- which is usually a fair objection.
+
+The asymmetry worth exploiting is different. **Every system in the table above
+is evaluated on its own setup, with its own protocol, against its own
+baseline.** There is no shared corpus, no shared causal-replay discipline, and
+no common denominator, so the field cannot currently answer a simple question:
+for a given interaction budget, which class of world-model learner predicts
+best, and where does each one break?
+
+We are unusually placed to answer it, because the expensive part already
+exists: 24,499+ recorded transitions across 25 public ARC-AGI-3 games, fully
+labelled with actions, click coordinates and level events, plus a replay
+harness that predicts before it learns and scores exact-frame and changed-cell
+F1 with held-out splits.
+
+**C0 -- a common evaluation substrate for programmatic world models.** The
+corpus, the protocol, and a leaderboard of methods measured identically.
+Published open, so anyone can contest a number or add a method.
+
+Two rules keep this honest and cheap:
+
+1. **Only run code the authors released.** Where a method has public code, run
+   it under our protocol and report it. Where it does not, report the authors'
+   own published numbers as *their setup, not ours*, clearly separated. Never
+   reimplement a method and then claim a comparison against it.
+2. **Invite correction before publishing.** Send each author their result and
+   the exact command that produced it. A correction received is a
+   collaboration started; a correction received after publication is a fight.
+
+This inverts the standing problem. Rather than a low leaderboard score asking
+for attention, it is a resource the field has to cite -- and every method added
+makes the substrate more valuable while costing us nothing but a run.
+
+## 3. The contribution, in four claims
 
 **C1 -- Induction without a model in the loop.** Transition programs are
 synthesised by enumerative search over a typed DSL with counterexample-guided
@@ -79,7 +117,13 @@ through the real sandbox. This is a systems result the modelling papers do
 not report, and it is the reason the method can run on hardware people own.
 
 **The composite claim:** *sample-efficient programmatic world-model induction
-with library growth and no language model in the learning loop.*
+with library growth and no language model in the learning loop -- measured
+against every other approach on a shared, open corpus.*
+
+Order of operations matters and is deliberate: **C0 ships first.** The
+substrate is useful to others even if C1-C3 turn out to be wrong, which makes
+it the only part of this proposal that cannot fail wastefully. It is also the
+artefact that earns the standing to be read on C1-C3 at all.
 
 ## 4. Why this is Sentient's thesis, mechanically
 
@@ -107,6 +151,16 @@ CPU-only, offline, sub-second learning possible at all.
 All five run against an existing corpus: 24,499+ recorded transitions across
 25 public ARC-AGI-3 games, with a causal-replay harness already written
 (predict before learning, learn after, no peeking).
+
+**E0 -- The head-to-head (ships first).** Run every method with released code
+under one protocol on the shared corpus: copy-forward null, our template
+learner, enumerative DSL synthesis, and each public programmatic world-model
+implementation. Report per-game changed-cell F1, exact-frame rate,
+interactions-to-threshold, and **cost per hypothesis revision in tokens and
+wall-clock** -- the axis nobody currently reports and the one on which the
+no-LLM approach is expected to win by orders of magnitude even where it loses
+on quality. Methods without public code are represented by their own published
+numbers, labelled as a different setup.
 
 **E1 -- Hypothesis-class coverage (baseline; already run).** Replay every
 game; score exact-frame and changed-cell F1 of the current template learner.
