@@ -117,6 +117,33 @@ or edited by the person they are protecting. Forty-six sentences can. Delete a
 line from `skill.py` and the verdict changes — `python demo_scam.py` ends by
 doing exactly that.
 
+## Who this is for, specifically
+
+Not "everyone". Today there is exactly one user this repository serves well,
+and they are nameable:
+
+**A researcher or engineer comparing world-model methods.** They have a method
+and no way to place it against anyone else's, because every paper in this
+literature evaluates on its own setup with its own protocol and no shared
+denominator. `bench/` gives them a fixed versioned corpus, a causal-replay
+protocol, a null baseline that scores 0.000 by construction, and a cost column
+nobody else reports. Adding their method takes ten lines.
+
+That user is findable by name: the authors of Tycho, OPINE-World, PoE-World and
+the executable-world-model line; ARC Prize 2026 Paper Track entrants; anyone
+building agents that must run without an API bill. The substrate's own rules
+require sending each author their result and the command that produced it
+before publishing, so the first outreach list *is* the user list.
+
+**The loop:** add a method, run the protocol, compare, publish, argue. Every
+method added makes the comparison more valuable to the next person, which is
+the only compounding asset here — a benchmark accrues, a runtime does not.
+
+**Everyone else is downstream and honest about it.** The person receiving a
+scam SMS is who the mission is for; they are served by a product that does not
+exist yet, gated partly behind Android platform policy, and this README will
+not pretend otherwise.
+
 ## How it works, in three sentences
 
 1. **Watch** — every interaction, or every labelled example, is folded into a

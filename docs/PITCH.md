@@ -90,18 +90,35 @@ read our correction than catch it.
 
 ## Who pays (the question every investor asks first)
 
-The monetizable claim is the cost collapse, and its buyer exists today:
-any team running LLM agents at scale carries an inference bill this
-runtime attacks directly. The commercial motion is embarrassingly
-conventional -- an open core with paid deployment, integration and
-support for agent-running companies (the pattern every funded
-open-source infra company uses), priced against the cloud spend it
-deletes. The guardian is the mission that motion funds, not the revenue
-line: consumer safety in India monetizes through institutions (banks'
-fraud programmes, carriers, device makers), never through the
-grandmother, and we will not run ads against her fear. Grant capital
-bootstraps; deployment revenue sustains; that ordering is stated rather
-than hidden.
+**The commercial artefact is the curve itself.** A published, contestable
+answer to *"how much agent capability survives at 1% of the inference spend,
+and which architecture gets you there"* is directly valuable to every team
+running LLM agents against a bill -- which, after Tycho's ~$119 a game, is a
+bill with a number on it for the first time. The motion is conventional and we
+name it as conventional: open core, paid deployment and integration for
+agent-running companies, priced against the spend it deletes. That is the
+pattern every funded open-source infrastructure company uses.
+
+**What is honestly missing, stated rather than dressed:** zero customer
+conversations to date, no letter of intent, no pricing validated against a real
+budget. The plan is a hypothesis with a named first test -- the same outreach
+list the substrate's rules already require us to write to (the authors and
+teams building on this literature), asked one question: *what is your monthly
+agent inference bill, and what would you pay to halve it?* That test costs
+nothing and is a first-quarter milestone.
+
+**The moat, named precisely.** Not the runtime -- `sms_rules.py` is a weekend
+rebuild and we will not claim otherwise. The moat is that **a benchmark
+accrues and a library does not.** Every method added to the substrate makes it
+more useful to the next person, and the reference cost measurement for a field
+is a position that compounds and cannot be forked out from under you. That is
+why C0 shipped before the ask.
+
+**The guardian is the mission the motion funds, not the revenue line.**
+Consumer safety in India monetizes through institutions -- banks' fraud
+programmes, carriers, device makers -- never through the grandmother, and we
+will not run ads against her fear. Grant capital bootstraps; deployment revenue
+sustains; that ordering is stated rather than hidden.
 
 ## Openness as the mechanism (their bar, cleared honestly)
 
