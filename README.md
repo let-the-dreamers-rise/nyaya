@@ -117,6 +117,35 @@ or edited by the person they are protecting. Forty-six sentences can. Delete a
 line from `skill.py` and the verdict changes — `python demo_scam.py` ends by
 doing exactly that.
 
+## Use it from an agent (MCP)
+
+The runtime ships an MCP server, so any agent can learn a skill and hand the
+file to its user. Standard library only — a runtime that claims to need no
+dependencies should not acquire one just to be reachable.
+
+```bash
+claude mcp add nyaya -- python -m nyaya.mcp_server
+```
+
+Three tools: `learn_skill` (labelled examples in, a page of readable Python
+out, with held-out metrics), `screen_message` (a verdict plus every rule that
+fired and why), and `list_beliefs` (audit a filter before trusting it — it
+will show you the corpus's biases as plain sentences).
+
+```text
+FLAG (evidence 5, threshold 1)
+
+   +3  contains an SMS shortcode to text
+   +1  claims the reader won a prize or lottery
+   +1  contains the word 'claim'
+
+Every line above is a reason, not a score. If one of them is wrong, it is
+one line to delete.
+```
+
+Nothing is uploaded and no model is called: the learning happens on the CPU of
+whoever ran the server.
+
 ## Who this is for, specifically
 
 Not "everyone". Today there is exactly one user this repository serves well,
@@ -177,8 +206,11 @@ not pretend otherwise.
 - `nyaya/sms_rules.py` — rule induction from labelled text; every rule a human
   sentence with the evidence that earned it.
 - `nyaya/cli.py` — `nyaya learn | eval | classify | explain`.
+- `nyaya/mcp_server.py` — the MCP server above: stdio JSON-RPC, stdlib only.
+- `docs/demo/index.html` — the belief ledger: all 47 rules, switch any off,
+  watch the verdict change. Same rules and same scoring as the Python.
 - `scripts/text_baselines.py` — the comparisons a reviewer would run.
-- **121 tests. MIT. Python ≥ 3.9, standard library only.**
+- **157 tests. MIT. Python ≥ 3.9, standard library only.**
 
 ## Roadmap (statuses are honest)
 

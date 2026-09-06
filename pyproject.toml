@@ -1,7 +1,7 @@
 [project]
 name = "nyaya"
 version = "0.1.0"
-description = "Agents that compile experience into rules: a sample-efficient symbolic runtime for cheap hardware"
+description = "Learning that costs zero tokens, and skills you can read: a symbolic runtime for cheap hardware, with the benchmark that prices everyone else's"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
@@ -12,6 +12,7 @@ dev = ["pytest"]
 
 [project.scripts]
 nyaya = "nyaya.cli:main"
+nyaya-mcp = "nyaya.mcp_server:main"
 
 [build-system]
 requires = ["setuptools>=68"]
