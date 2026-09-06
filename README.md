@@ -140,6 +140,13 @@ doing exactly that.
 - `nyaya/executor.py` — policies an agent names instead of moves
   (`learn_controls`, `auto_route`, `auto_solve`): one call runs hundreds of
   verified environment actions.
+- `nyaya/skill.py` — **the shared artefact both learners return.** A `Skill` is
+  beliefs plus provenance: each belief a human sentence carrying its evidence,
+  the whole thing renderable as editable Python and portable as JSON. Learned
+  physics ("UP moves it by -1 rows and 0 columns") and a learned scam filter
+  ("asks for a fee to claim a prize, +3") are the same type, which is what
+  makes the first line of this README a fact about the code rather than a
+  metaphor.
 - `nyaya/sms_rules.py` — rule induction from labelled text; every rule a human
   sentence with the evidence that earned it.
 - `nyaya/cli.py` — `nyaya learn | eval | classify | explain`.
