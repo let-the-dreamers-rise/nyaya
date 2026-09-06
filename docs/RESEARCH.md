@@ -1,11 +1,38 @@
-# Programs, not weights: growing an agent's hypothesis space from its own failures
+# The price of a world model
+
+### Measuring the cost-capability frontier for programmatic world models, and finding the cheapest architecture that still works
 
 A research proposal for the Sentient Foundation Open Source AGI programme.
 Written for the technical council rather than for a landing page: the
 reviewers include information theorists who wrote the OML papers, and the
 right register for them is a precise claim with an experiment attached.
 
+> **This document was rewritten on 7 September 2026** after a novelty check
+> that its own previous version demanded. The check overturned the previous
+> framing. What replaced it, and the retractions it forced, are recorded in
+> [LANDSCAPE.md](LANDSCAPE.md) rather than quietly edited away. The short
+> version: ARC-AGI-3 has been solved on the public set by LLM-in-the-loop
+> programmatic world models, at roughly $119 a game, and the interesting
+> question moved.
+
 ---
+
+## 0. The question, in one paragraph
+
+Programmatic world models work. Tycho reaches 100.00 RHAE on the ARC-AGI-3
+public set with Opus 5; OPINE-World solves 20 of 25 games. Both put a frontier
+language model inside the learning loop, and in OPINE-World's own baseline
+table, program synthesis without one clears *no levels at all*. So the
+capability question is answered, and it is not answered in our favour.
+
+What is not answered is **the price.** Tycho's runs cost about $119 per game;
+its authors list the exclusion of inference cost from the efficiency metric as
+an explicit limitation. OPINE-World reports no cost at all. The field has
+demonstrated that this class of intelligence *can* be built and has never
+measured what it costs to run -- which is precisely the measurement that
+decides whether it reaches a phone, an offline clinic, or anyone who is not
+being billed by an API. **This proposal measures that frontier and then tries
+to move along it.**
 
 ## 1. The problem, stated exactly
 
@@ -27,30 +54,43 @@ planner plans confidently inside a model that is structurally wrong.
 faster within a class", but *grow the class*. An agent that cannot extend
 what it is able to conceive of is a curve-fitter with extra steps.
 
-## 2. Where the field actually is (August 2026)
+## 2. Where the field actually is (verified 7 September 2026)
 
-Programmatic world models are an active line, and the proposal must be
-honest that we are not alone:
+Full citations, caveats and the retractions this forced are in
+[LANDSCAPE.md](LANDSCAPE.md). The compressed version:
 
 | Work | What it does | Limitation we build against |
 |---|---|---|
 | **DreamCoder** (Ellis et al.) | Wake-sleep library learning: solved programs become new primitives, growing the DSL | Offline task batches, not online interaction with an unknown environment |
 | **WorldCoder** (NeurIPS 2024) | LLM writes a world model as code; sample-efficient transfer by reusing program fragments; auditable because programs are readable | **LLM in the learning loop** -- every hypothesis revision is a model call |
 | **PoE-World** (arXiv 2505.10819) | Products of programmatic experts; data-efficient because synthesis needs less data than gradient training | Authors state it *struggles to scale beyond simple gridworlds* |
-| **OPINE-World** (arXiv 2607.01531) | Object-centric programmatic world model learned online; reports strong ARC-AGI-3 results | LLM-driven; the closest prior work and the novelty risk to check first |
+| **OPINE-World** (arXiv 2607.01531) | Two cooperating LLM agents, CEGIS synthesis, replay verification, ontology-error-guided exploration. **20/25 games, 160/183 levels, 78.4 AE** | No code released; no cost reported; single run per game, no variance (authors' own limitation) |
+| **Tycho** (arXiv 2607.28287) | Free-form executable hypotheses an agent can model, test, plan with, repair or bypass. **100.00 RHAE, all 183 levels** (Opus 5) | ~**$119/game**; inference cost explicitly excluded from the metric (authors' own limitation); public set, warm runs, single pass |
 | **Executable World Models for ARC-AGI-3** (arXiv 2605.05138) | Coding agents synthesise executable environment models | Frontier-model dependent; cost per hypothesis is a model call |
 | **One Life to Learn** (arXiv 2510.12088) | Symbolic world models for stochastic environments from unguided exploration | Different regime; useful for the stochastic extension |
 
-The common structure: **the synthesiser is a large language model.** That is
-a reasonable engineering choice and it buys enormous prior knowledge. It also
-fixes the cost of every hypothesis revision at one frontier call, which is
-precisely why these systems are demonstrated rather than deployed, and why
-none of them runs on a phone.
+Two facts follow, and the proposal is built on both.
 
-> **Action before writing any code: read OPINE-World in full.** If it already
-> demonstrates online library growth without an LLM, the contribution below
-> narrows to the systems result and must be re-scoped. Finding that out costs
-> an afternoon and is worth more than a month of building.
+**First, the LLM in the loop is winning, and we say so.** In OPINE-World's own
+baseline table, WorldCoder and neural latent world models -- the families
+nearest ours -- clear **zero levels**. Any version of this proposal claiming
+that removing the model from the learning loop beats keeping it in would be
+contradicted by published evidence on the first page. That claim is retracted.
+
+**Second, the entire field reports capability and not one system reports
+cost as a scored axis.** Tycho's ~$119/game is a footnote outside its own
+metric. OPINE-World's cost is absent. Yet the difference between $119 a game
+and $0 a game is the whole difference between a demonstration and something a
+person in Lagos or Ghaziabad can actually run. Nobody has drawn that curve
+because nobody has an instrumented cheap end to anchor it.
+
+> **The novelty check this document previously deferred has been done.**
+> OPINE-World does perform online programmatic world modelling with replay
+> verification -- so it, not us, holds that ground, and with a much stronger
+> result. It does so with two frontier LLM agents, no released code and no cost
+> accounting. Our contribution is therefore re-scoped, on purpose and in
+> public, from *a better learner* to *the measurement of what these learners
+> cost and how cheap one can get before it stops working.*
 
 ## 2b. The fastest route to peer standing: own the measurement
 
@@ -66,15 +106,24 @@ no common denominator, so the field cannot currently answer a simple question:
 for a given interaction budget, which class of world-model learner predicts
 best, and where does each one break?
 
-We are unusually placed to answer it, because the expensive part already
-exists: 24,499+ recorded transitions across 25 public ARC-AGI-3 games, fully
-labelled with actions, click coordinates and level events, plus a replay
-harness that predicts before it learns and scores exact-frame and changed-cell
-F1 with held-out splits.
+We are unusually placed to answer it, and as of 7 September 2026 **the
+substrate is built and published**, not proposed:
 
-**C0 -- a common evaluation substrate for programmatic world models.** The
-corpus, the protocol, and a leaderboard of methods measured identically.
-Published open, so anyone can contest a number or add a method.
+```bash
+git clone https://github.com/let-the-dreamers-rise/nyaya && cd nyaya
+python -m bench.run --corpus bench/corpus-heldout
+```
+
+Two corpora of 25 episodes each (development and held-out, 24,499+ recorded
+transitions in total, labelled with actions, click coordinates and level
+events), delta-encoded 331x so they ship losslessly inside the repository; a
+replay harness that predicts before it learns; changed-cell F1 as the headline
+so the copy-forward null scores 0.000 by construction; and **tokens and
+ms/step reported next to every score.** A method joins in ten lines. See
+[`bench/README.md`](../bench/README.md).
+
+That this exists before the funding, rather than after it, is the point: the
+proposal's first deliverable is already contestable by a stranger.
 
 Two rules keep this honest and cheap:
 
@@ -92,33 +141,44 @@ makes the substrate more valuable while costing us nothing but a run.
 
 ## 3. The contribution, in four claims
 
-**C1 -- Induction without a model in the loop.** Transition programs are
-synthesised by enumerative search over a typed DSL with counterexample-guided
-refinement against logged transitions, on CPU, with no language model called
-during learning. The LLM, where present at all, proposes *goals* and reads
-anomalies; it never writes the physics.
+**C1 -- The cost-capability frontier is measurable, and is currently blank.**
+For a fixed interaction budget, prediction quality is a function of inference
+spend. Today the field has exactly two points: roughly $119 per game with a
+frontier model in the loop (Tycho, solved), and $0 per game with a fixed
+hypothesis class (this runtime, F1 0.253 held out, 19 of 25 episodes never
+reaching threshold). Everything between is unmeasured. We measure it: the same
+corpus, the same causal-replay protocol, cost as a scored column rather than a
+footnote. *This is the claim that cannot fail wastefully -- the curve is useful
+to the field whichever shape it has.*
 
-**C2 -- The hypothesis class grows from the agent's own failures.** Programs
-that survive replay become primitives in the DSL, so the space of
-representable mechanisms expands with experience. Failure logs are the
-training signal: the transitions a theory mispredicts are exactly the
-specification for the next synthesis round. This is DreamCoder's wake-sleep
-loop moved from offline task batches into online interaction -- and it is
-**EvoSkill's stated thesis** (agents learning from their own attempts,
-including failed ones, producing reusable artefacts without retraining),
-instantiated where that programme has not yet gone.
+**C2 -- The curve can be bent, by moving work out of the model and into
+programs.** The prediction is not that programs beat frontier synthesis. It is
+that most of what a frontier call currently does on this benchmark is *routine*
+-- re-deriving the same physics, re-searching the same paths -- and routine work
+is compressible into programs that then cost nothing to re-run. Programs that
+survive replay become primitives, so the hypothesis class grows from the
+agent's own failures: mispredicted transitions are exactly the specification
+for the next synthesis round. This is DreamCoder's wake-sleep loop moved into
+online interaction, and it is **EvoSkill's stated thesis** (agents learning
+from their own attempts, including failed ones, producing reusable artefacts
+without retraining) instantiated where that programme has not yet gone.
+Measured as: cost per level cleared, not levels cleared.
 
-**C3 -- The delegation architecture that makes it affordable.** Once physics
-and search live in programs, actions stop costing tokens. Measured on
-ARC-AGI-3: a stock 27B agent spent ~441 tokens of reasoning per environment
-action and exhausted its ~70k-token budget in all 25 games; with the runtime
-carrying physics and search, actions cost ~0 tokens at 1.4 ms each, verified
-through the real sandbox. This is a systems result the modelling papers do
-not report, and it is the reason the method can run on hardware people own.
+**C3 -- The delegation architecture that makes the cheap end possible.** Once
+physics and search live in programs, actions stop costing tokens. Measured on
+ARC-AGI-3 through the real sandbox: a stock 27B agent spent ~441 tokens of
+reasoning per environment action and exhausted its ~70k-token budget in all 25
+games; with the runtime carrying physics and search, actions cost ~0 tokens at
+1.4 ms each. This is the systems result that anchors the cheap end of the
+curve, and the reason a point at $0 exists to measure at all.
 
-**The composite claim:** *sample-efficient programmatic world-model induction
-with library growth and no language model in the learning loop -- measured
-against every other approach on a shared, open corpus.*
+**The composite claim:** *the cost-capability frontier for programmatic world
+models, measured on a shared open corpus with cost as a scored axis -- and the
+cheapest architecture that still clears levels.*
+
+**What we are explicitly not claiming:** that this beats Tycho or OPINE-World
+on capability. It does not, they are far ahead, and the proposal that pretended
+otherwise has been retracted.
 
 Order of operations matters and is deliberate: **C0 ships first.** The
 substrate is useful to others even if C1-C3 turn out to be wrong, which makes
@@ -152,15 +212,21 @@ All five run against an existing corpus: 24,499+ recorded transitions across
 25 public ARC-AGI-3 games, with a causal-replay harness already written
 (predict before learning, learn after, no peeking).
 
-**E0 -- The head-to-head (ships first).** Run every method with released code
-under one protocol on the shared corpus: copy-forward null, our template
-learner, enumerative DSL synthesis, and each public programmatic world-model
-implementation. Report per-game changed-cell F1, exact-frame rate,
-interactions-to-threshold, and **cost per hypothesis revision in tokens and
-wall-clock** -- the axis nobody currently reports and the one on which the
-no-LLM approach is expected to win by orders of magnitude even where it loses
-on quality. Methods without public code are represented by their own published
-numbers, labelled as a different setup.
+**E0 -- The frontier (ships first; the substrate already exists and is
+published).** Run every method with released code under one protocol on the
+shared corpus: the copy-forward null, our template learner, enumerative DSL
+synthesis at several search budgets, a small local model in the loop, and
+**Tycho**, whose code is public under Apache-2.0. Report per-game changed-cell
+F1, exact-frame rate, interactions-to-threshold, and **cost in tokens, dollars
+and wall-clock** -- as a scored column, not a footnote. Plot quality against
+spend. Methods without public code (OPINE-World) appear as their own published
+numbers in their own setup, visually separated, never reimplemented.
+
+*The deliverable is the curve, and the curve is publishable whatever it shows.*
+If it is a cliff -- capability collapsing the moment the frontier model leaves
+-- that is the most important negative result in on-device agent research and
+nobody has published it. If it is a slope, the interesting engineering is
+finding where on that slope a phone can sit.
 
 **E1 -- Hypothesis-class coverage (baseline; already run).** Replay every
 game; score exact-frame and changed-cell F1 of the current template learner.
@@ -173,7 +239,9 @@ that every later claim is measured against.*
 DSL synthesis on the wall-level games specifically. Metric: changed-cell F1
 on held-out transitions of games where the template learner sits at baseline.
 *Falsifiable prediction: synthesis lifts at least three wall-level games
-above 0.4 F1 where templates achieve ~0.*
+above 0.4 F1 where templates achieve ~0.* Note the standing counter-evidence:
+WorldCoder, a program synthesiser, clears zero levels in OPINE-World's table.
+If E2 fails, that counter-evidence is confirmed and we report it as such.
 
 **E3 -- Does library learning transfer?** Train on games 1..k, measure
 sample-efficiency on unseen games k+1..25 with and without the accumulated
@@ -187,8 +255,14 @@ disambiguation between surviving programs, versus frontier exploration.
 Metric: actions spent to pin the theory. *Prediction: fewer than the ~40-70
 actions the LLM-driven agent spent wandering.*
 
-**E5 -- Cost.** Tokens and wall-clock per environment action, and per level
-cleared, against the LLM baseline. Already instrumented.
+**E5 -- Cost per level cleared.** Tokens, dollars and wall-clock per
+environment action and per level cleared, for every method in E0. Already
+instrumented at the cheap end; Tycho's public code supplies the expensive end
+measured by us rather than quoted. *Falsifiable prediction: at least one
+architecture clears levels at under $1 per game -- two orders of magnitude below
+the published frontier result. If nothing does, the honest headline is that
+capability on this benchmark currently costs $100+ a game and open on-device
+agents are further away than the field's framing suggests.*
 
 Every experiment reports denominators, held-out splits, and negative results.
 The evaluation harness is part of the deliverable precisely so the numbers can
@@ -196,28 +270,46 @@ be contested.
 
 ## 6. What could make this fail, said plainly
 
-1. **Enumerative synthesis may not scale.** PoE-World reports difficulty
+1. **The curve may be a cliff.** It is entirely possible that capability on
+   this benchmark collapses to zero the moment a frontier model leaves the
+   loop -- WorldCoder's 0 levels in OPINE-World's table is evidence for exactly
+   that. This would falsify C2. It would *not* falsify C1: the cliff is itself
+   the measurement, it is currently unpublished, and it is the single most
+   decision-relevant fact for anyone funding on-device agents. This is why C1
+   ships first and why it is the claim we are willing to be judged on.
+2. **Enumerative synthesis may not scale.** PoE-World reports difficulty
    beyond simple gridworlds; a naive DSL search explodes combinatorially. The
    mitigation is a small typed DSL plus library growth pruning the space, and
    E2 is the honest test of whether that is enough.
-2. **OPINE-World may already have done C2.** Novelty check first, before code.
-3. **An LLM synthesiser may simply be better.** If frontier synthesis
-   dominates on quality, the contribution collapses to the cost result -- still
-   real, but smaller. We would report that rather than bury it.
-4. **ARC-AGI-3 is one benchmark.** Results there are evidence about
-   grid-structured interactive environments, not about intelligence. The claim
-   stays scoped to what was measured.
-5. **The current leaderboard position is low** (~1.86 on a scale where ~115 is
-   the ceiling, and nobody has beaten this benchmark). The contribution is a
-   mechanism and a measurement, not a solved benchmark, and the proposal says
-   so in its first paragraph rather than its last.
+3. **An LLM synthesiser is, on current evidence, simply better.** Not a risk --
+   a published fact (Tycho, 100.00 RHAE). The proposal is built on top of it
+   rather than against it: we measure what it costs and how far down the cost
+   axis the capability survives.
+4. **Tycho's code may not run under our protocol.** It is an agent that acts in
+   a live environment; our corpus is logged transitions. Adapting it is real
+   work and may require a live-environment mode in the harness. Budgeted in
+   M2; if it proves impossible, Tycho joins OPINE-World as a quoted result and
+   the curve loses its measured expensive anchor, which we would state.
+5. **ARC-AGI-3 is one benchmark, and it moved.** Results here are evidence
+   about grid-structured interactive environments, not about intelligence. The
+   14 April 2026 scoring change also means pre- and post-change numbers are not
+   comparable -- which is an argument for the versioned corpus, and a caveat on
+   every historical number we quote.
+6. **Our own capability is low and stays low.** The runtime clears early levels
+   on 2-4 of 25 games. The contribution is the measurement and the cheap end of
+   the curve, not a competitive score, and this proposal says so in its title
+   rather than its appendix.
 
 ## 7. Deliverables
 
+- **The cost-capability curve** for programmatic world models on ARC-AGI-3:
+  quality against inference spend, every point measured under one protocol, the
+  first such measurement in this literature. This is the headline deliverable.
+- **The evaluation substrate** -- corpus, protocol, harness, cost column --
+  already shipped under MIT at [`bench/`](../bench/README.md), so every number
+  is contestable by a third party today rather than on completion.
 - **The runtime**, MIT, dependency-free Python, CPU-only: world-model
   induction, DSL synthesis, library learning, planner, delegation layer.
-- **The evaluation harness** and the transition corpus, so every number is
-  reproducible and falsifiable by a third party.
 - **A paper**, submitted to the ARC Prize 2026 Paper Track and arXiv. Note the
   eligibility rule that matters here: *the linked code submission need not
   achieve a high score for the paper to be eligible* -- the track scores the
@@ -238,9 +330,16 @@ is, because the alternative is incoherent.
 
 ## 9. What this is not
 
-Not AGI in general, and the proposal should never use the word as a claim. It
-is one specific mechanism -- hypothesis-space growth from an agent's own
-failures, cheaply enough to run on a phone -- that the benchmark was built to
-reward and that the EvoSkill programme already argues for. The honest framing
-is a research bet with falsifiable predictions, an existing corpus, a working
-baseline, and negative results reported as readily as positive ones.
+Not AGI in general, and the proposal should never use the word as a claim. Not
+a state-of-the-art bid: Tycho and OPINE-World are ahead and this document says
+so on its first page. Not a solved benchmark, ours or anyone's -- the
+semi-private set sits at 62.7% for the best model in the world.
+
+What it is: **one measurement the field is missing and one engineering
+question that follows from it.** What does a world model cost, and how cheap
+can one get before it stops working? The measurement is useful whatever the
+answer; the engineering is where an open, on-device, unrevocable agent either
+becomes possible or is shown not to be yet. Falsifiable predictions, a
+published corpus, a working baseline at the cheap end, a public competitor's
+code at the expensive end, and negative results reported in the same voice as
+positive ones.

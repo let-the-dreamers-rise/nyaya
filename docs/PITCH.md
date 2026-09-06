@@ -17,17 +17,21 @@ button is yours.
 
 ## The claim, in one paragraph
 
-An agent that meets an unfamiliar environment must infer its rules from a
-handful of interactions. Every system that does this today -- WorldCoder,
-PoE-World, OPINE-World, the executable-world-model line -- puts a large
-language model in the learning loop, so every hypothesis revision costs a
-frontier call. That is why they are demonstrated and not deployed, and why
-none of them runs on a phone. **We are building the version with no model in
-the learning loop:** transition programs synthesised on CPU, a library that
-grows from the agent's own failures, and skills that persist as readable
-Python a person can open, edit and own. Sentient made *weights* loyal with
-fingerprinting; this is the same argument one layer up, for what an agent
-learns after deployment.
+In July 2026 the ARC-AGI-3 benchmark was largely solved -- by putting frontier
+language models inside a world model's learning loop. Tycho reaches 100.00
+RHAE on the public set; OPINE-World solves 20 of 25 games. In those same
+papers, program synthesis without a model in the loop clears **zero levels**.
+We are not going to tell you we beat them. **We are going to tell you what it
+cost them, because nobody else has.** Tycho's runs are roughly $119 a game and
+its authors list the exclusion of inference cost from their own metric as a
+limitation; OPINE-World reports no cost and released no code. The curve of
+capability against spend has never been drawn, and it is the only curve that
+decides whether this kind of intelligence ever reaches a phone in Ghaziabad or
+stays a metered service. **We have the cheap end already instrumented at zero
+tokens, we have published the corpus and protocol to measure the rest, and we
+are asking to draw the whole curve.** Sentient made *weights* loyal with
+fingerprinting; affordability is what makes that loyalty reachable, and
+readable skills are the same argument one layer up.
 
 ## The opening (their person-first pattern)
 
@@ -73,10 +77,16 @@ budget in all 25 games; with the runtime carrying physics and search,
 actions cost ~zero tokens at 1.4 ms each. The runtime alone -- **no
 language model at all** -- clears early levels on 2-4 of the 25 public
 games per run, including games the LLM-driven agent never cleared at
-all. That is a research prototype demonstrating a mechanism, and we say
-so: nobody has beaten this benchmark, leaderboard scores sit in the low
-single digits of a possible ~115, and our contribution is the measured
-cost collapse plus skills you can read -- not a solved benchmark.
+all.
+
+And the honest frame around that number, which an earlier draft of this
+document got wrong: **this benchmark has been beaten.** Tycho scores 100.00
+RHAE on the public set. Our 2-4 games is not competitive and is not offered as
+though it were. It is the anchor at the free end of a cost curve whose
+expensive end costs $119 a game -- and the distance between those two numbers,
+not our position on the leaderboard, is the research. The retraction and what
+replaced it are published at [LANDSCAPE.md](LANDSCAPE.md); we would rather you
+read our correction than catch it.
 
 ## Who pays (the question every investor asks first)
 
@@ -122,8 +132,20 @@ UPI cashback; illustrative seed set, n=64) it degrades honestly to F1
 n=32). Every rule is a sentence ("asks for a fee to claim a prize", +3);
 the skill is one page of Python the user owns; the demo ends with the
 user deleting rules from their copy and the verdict actually flipping.
-The transparency has a price and we state it: a rule-based scorer can be
-read around by an adversary who steals the file -- the counterweight is
+
+**And we publish the baseline that beats it**, because you would run it in
+five minutes: on the identical split, multinomial naive Bayes gets **F1
+0.965** to our 0.875, in a thirtieth of the training time
+(`python scripts/text_baselines.py`). That is the actual result, and it is a
+better sentence than a fake win: *on this dataset, readability costs about
+nine points of F1 and sixteen of recall.* Nobody had priced that before. What
+7,930 naive-Bayes weights cannot do is be opened, understood, argued with or
+edited by the person being protected; forty-six sentences can. Closing that
+recall gap while keeping the rules readable is a stated research question, not
+a claim already won.
+
+The transparency has a second price and we state that too: a rule-based scorer
+can be read around by an adversary who steals the file -- the counterweight is
 that adaptation costs 32 examples and two seconds, and the user can see
 exactly what their guardian believes, which no black box offers.
 
@@ -155,40 +177,51 @@ Not education. The tutor RFP is somebody else's to win.
 
 Full version in [RESEARCH.md](RESEARCH.md). The short form:
 
-**The open problem.** Current learners -- ours included -- fit parameters
-inside a fixed hypothesis class. When the true mechanism lies outside that
-class, more data cannot help: the learner collects thousands of clean
-transitions and learns nothing, while the planner plans confidently inside a
-model that is structurally wrong. Growing the hypothesis class, rather than
-searching faster within it, is the boundary that matters.
+**The open problem.** Every system in this literature reports capability and
+none reports cost as a scored axis. Tycho's ~$119 a game sits in a footnote
+explicitly outside its own efficiency metric; OPINE-World's cost is absent
+entirely. So the field can tell you that programmatic world models work and
+cannot tell you what they cost, which is the only fact that determines whether
+they are a product for everyone or a service for whoever is billed.
 
-**Three falsifiable claims**, each with an experiment against an existing
-corpus of 24,499+ recorded transitions across 25 games and a causal-replay
-harness that predicts before it learns:
+**Three claims, in the order they ship:**
 
-1. *Induction without a model in the loop* -- enumerative synthesis over a
-   typed DSL with counterexample-guided refinement, on CPU.
-2. *The hypothesis class grows from the agent's own failures* -- surviving
-   programs become DSL primitives, so mispredicted transitions are the
-   specification for the next synthesis round. This is EvoSkill's thesis
-   (learn from your own attempts, including failures, produce reusable
-   artefacts without retraining) taken into online interaction.
-3. *The delegation architecture that makes it affordable* -- measured:
-   ~441 tokens of reasoning per action for the stock 27B agent, exhausting
-   its ~70k budget in all 25 games, versus ~0 tokens at 1.4 ms per action
-   with physics and search carried by programs.
+1. **The frontier is measurable and currently blank.** Quality against
+   inference spend, every method under one protocol on one corpus, cost as a
+   scored column. Two points exist today -- ~$119/game solved, $0/game at F1
+   0.253 -- and nothing in between has been measured by anyone. *This is the
+   claim that cannot fail wastefully: the curve is useful to the field
+   whatever shape it has, including a cliff.*
+2. **The curve can be bent, by compiling routine work out of the model.**
+   Programs surviving replay become DSL primitives, so the hypothesis class
+   grows from the agent's own failures -- EvoSkill's thesis (learn from your
+   own attempts, including failures, produce reusable artefacts without
+   retraining) taken into online interaction. Measured as cost per level
+   cleared, not levels cleared.
+3. **The delegation architecture that makes a free end exist at all** --
+   measured: ~441 tokens of reasoning per action for the stock 27B agent,
+   exhausting its ~70k budget in all 25 games, versus ~0 tokens at 1.4 ms per
+   action with physics and search carried by programs.
 
-**Predictions we will be judged against:** synthesis lifts at least three
-wall-level games above 0.4 changed-cell F1 where templates achieve ~0;
-interactions-to-threshold on unseen games falls monotonically as the library
-grows. Baseline already measured: aggregate F1 0.25 on 3,318 held-out
-transitions the learner was never developed against.
+**The substrate claim 1 needs is already built and public**, before any
+funding: `python -m bench.run` runs two 25-episode corpora under a
+causal-replay protocol with cost columns, MIT, in the repository today.
 
-**What would falsify it:** enumerative synthesis may not scale past simple
-gridworlds (PoE-World's authors report exactly this); OPINE-World may already
-have demonstrated online library growth; and a frontier synthesiser may
-simply be better, in which case the contribution collapses to the cost result
-and we report that rather than bury it.
+**Predictions we will be judged against:** at least one architecture clears
+levels at under $1 a game, two orders of magnitude below the published
+frontier; synthesis lifts at least three wall-level games above 0.4
+changed-cell F1 where templates achieve ~0. Baseline already measured:
+aggregate F1 0.253 on 3,318 held-out transitions the learner was never
+developed against.
+
+**What would falsify it:** the curve may be a cliff -- WorldCoder clears zero
+levels in OPINE-World's own table, which is direct evidence that capability may
+not survive the frontier model's departure at all. Enumerative synthesis may
+not scale past simple gridworlds (PoE-World's authors report exactly this).
+Tycho's code may not adapt to a logged-transition protocol, in which case the
+expensive anchor becomes a quoted number rather than a measured one. Each of
+these is written down in [RESEARCH.md](RESEARCH.md) with what we would report
+if it happened.
 
 **Deliverables:** the runtime and harness under MIT, the transition corpus so
 the numbers are contestable, and a paper to the ARC Prize 2026 Paper Track --
@@ -213,10 +246,12 @@ every claim above has a harness behind it.
   *research* is grant-shaped (no equity, open-source, public good, individual
   eligible) and the *runtime plus vertical* is the investment story. Lead with
   the research; note commercial intent rather than manufacturing a company
-  that does not exist yet. RFP mapping: Part 3 extension of EvoSkill
-  (primary); Part 2 #12 token and economic optimization (the measured cost
-  collapse); Part 2 #11 small, fast, cheap models (thesis alignment only --
-  we do not build models, we make small ones sufficient).
+  that does not exist yet. RFP mapping, reordered to match what the work now
+  is: **Part 2 #12 token and economic optimization (primary)** -- the
+  cost-capability frontier is literally this brief; Part 3 extension of
+  EvoSkill (the library that grows from an agent's own failures); Part 2 #11
+  small, fast, cheap models (thesis alignment -- we do not build models, we
+  measure how far you get without a big one).
 - **Users:** pre-launch; repo public this month; first users from the
   ARC-AGI-3 community where the results were produced.
 - **Round:** none committed; bootstrapped; this application anchors it.

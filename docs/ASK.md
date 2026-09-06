@@ -77,9 +77,9 @@ milestone is "make progress on."
 
 | # | Month | Deliverable | The measurable |
 |---|---|---|---|
-| M0 | 0 | Repo public, corpus released, replay harness documented | 24,499+ transitions, 25 games, one-command reproduction |
-| M1 | 3 | **C0 shipped:** head-to-head of every method with released code, one protocol | Per-game F1, interactions-to-threshold, and cost per hypothesis revision in tokens and wall-clock |
-| M2 | 5 | E2: DSL synthesis on wall-level games | Prediction on record: at least three wall-level games above 0.4 changed-cell F1 where templates score ~0 |
+| M0 | **done** | **C0 shipped before the ask:** repo public, both corpora released, replay harness documented, cost columns live | 50 episodes / 24,499+ transitions, `python -m bench.run`, MIT, 121 tests |
+| M1 | 3 | **The curve:** every method with released code under one protocol -- including **Tycho** (Apache-2.0) at the expensive end | Quality against spend, in tokens, dollars and wall-clock. Prediction on record: at least one architecture clears levels under $1/game against the published ~$119 |
+| M2 | 5 | E2: DSL synthesis on wall-level games | Prediction on record: at least three wall-level games above 0.4 changed-cell F1 where templates score ~0. Standing counter-evidence: WorldCoder clears zero levels in OPINE-World's table |
 | M3 | 8 | E3: library learning across games | Prediction on record: interactions-to-threshold on unseen games falls monotonically as the library grows |
 | M4 | 10 | E4 + on-device: active experiment design, phone-class measurements | Actions-to-pin-the-theory vs the ~40-70 the LLM agent spent; wall-clock on a sub-Rs.10,000 device |
 | M5 | 12 | Paper submitted (ARC Paper Track + arXiv), full release | All artefacts open, every number reproducible by a third party |
@@ -102,9 +102,22 @@ sentence that marks you as a researcher rather than a pitchman.
 - **EvoSkill extended** into online interactive learning: their own programme,
   taken where it has not gone, with their name on the lineage.
 
+> **M0 was delivered on 7 September 2026, before submitting.** The substrate
+> the rest of this programme depends on is public, runnable and contestable
+> today. A funder is being asked to pay for the curve, not for the ability to
+> start measuring it.
+
 ## 5. The three questions to answer before submitting
 
-1. **Has OPINE-World already done C2?** Read it in full. If yes, re-scope to
+> **Question 1 is answered.** The novelty check was done on 7 September 2026
+> and it went against the original framing: OPINE-World does hold the online
+> programmatic-world-modelling ground, with a far stronger result, using two
+> frontier LLM agents. Tycho then solved the public set outright. The proposal
+> was re-scoped in public to the cost-capability frontier -- the axis both leave
+> unmeasured -- and the retraction is published at [LANDSCAPE.md](LANDSCAPE.md).
+> Questions 2 and 3 below stand.
+
+1. ~~**Has OPINE-World already done C2?**~~ *Answered; see above.* Read it in full. If yes, re-scope to
    C0 plus the cost result and say so in the application. Being the person who
    noticed is better than being the person who did not.
 2. **What is the entity answer?** Grant track should not require one. If the

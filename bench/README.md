@@ -139,8 +139,8 @@ be quoted. That asymmetry is precisely the gap a shared substrate closes.
 
 ## What the current numbers mean
 
-`nyaya-templates` reaches F1 0.185 on development and **0.253** on the
-held-out corpus -- higher on data it was never developed against, which is
+`nyaya-templates` reaches F1 0.185 on 2,907 development transitions and
+**0.253** on 3,318 held-out ones -- higher on data it was never developed against, which is
 reported as-is rather than smoothed. Nineteen of twenty-five episodes never
 cross F1 0.5 at all.
 

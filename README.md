@@ -1,130 +1,186 @@
 # Nyaya
 
-**Agents that compile experience into rules.**
+**ARC-AGI-3 was solved this year for about $119 a game. This is the
+measurement of what happens when you spend less.**
 
-A dependency-free Python runtime for sample-efficient agents on hardware
-people actually own. It learns the rules of an environment -- or the shape of
-a scam -- from a handful of examples, on CPU, in seconds, and stores what it
-learned as **a page of Python the user can read, edit, and truly own**.
+*(nyaya — NYAH-yuh — the Indian school of logic; literally "method, rule". Not
+affiliated with Nyaaya, the Indian legal-information nonprofit.)*
 
-A behaviour you cannot read is a behaviour you cannot trust. A skill that is
-a file on your own device is a skill nobody can revoke. Loyal AI, at the
-layer above the weights: the user owns what the agent learns.
+In July 2026 two systems put frontier language models inside a world model's
+learning loop and largely closed ARC-AGI-3: Tycho reaches 100.00 RHAE on the
+public set, OPINE-World solves 20 of 25 games. In the same papers, program
+synthesis without a model in the loop clears **zero levels**.
 
-*Nyaya*: the Indian school of logic -- literally "method, rule".
+So capability is no longer the open question. **Price is.** Tycho's authors
+list the exclusion of inference cost from their metric as a limitation;
+OPINE-World reports no cost at all. Nobody has drawn the curve of quality
+against spend — which is exactly the curve that decides whether any of this
+runs on a phone, offline, for someone nobody is billing.
+
+This repository is the cheap end of that curve, instrumented: a dependency-free
+Python runtime that learns environment rules — or the shape of a scam — from a
+handful of examples, on CPU, in seconds, for **zero tokens**, and stores what
+it learned as *a page of Python you can read, edit and own*.
+
+A behaviour you cannot read is a behaviour you cannot trust. A skill that is a
+file on your own device is a skill nobody can revoke.
 
 ---
 
-## Sixty seconds to the point
+## Sixty seconds
 
 ```bash
 git clone https://github.com/let-the-dreamers-rise/nyaya && cd nyaya
+python -m bench.run --corpus bench/corpus-heldout
+```
+
+```text
+corpus: 25 episodes, 3318 transitions
+protocol: predict before learning; threshold F1 >= 0.5
+
+method                 exact      F1    tokens   ms/step  reached  median
+-------------------------------------------------------------------------
+copy-forward             6%   0.000         0      0.00     0/25      --
+nyaya-templates          6%   0.253         0      4.96     5/25      44
+```
+
+No GPU, no network, no API key, no pip install. That is a real point on the
+cost curve: **F1 0.253 for $0.00**, on 25 episodes the learner was never
+developed against. Nineteen of twenty-five never reach threshold at all, and
+the harness says so rather than hiding it.
+
+The corpus, the protocol and the rules that keep the scoreboard honest are in
+[`bench/README.md`](bench/README.md). Adding a method takes ten lines.
+
+## The state of the field, verified
+
+| System | Model in the loop | Result | Cost/game | Code |
+|---|---|---|---|---|
+| Tycho | Opus 5 | **100.00 RHAE**, 183/183 levels | ~$119 | Apache-2.0 |
+| Tycho | GPT-5.6 Sol | **100.00 RHAE**, 183/183 levels | ~$179 | Apache-2.0 |
+| OPINE-World | Opus 4.8 | 20/25 games, 160/183 levels | not reported | none |
+| WorldCoder *(as run by OPINE-World)* | — | **0 levels** | — | public |
+| **nyaya** | **none** | 2–4 early levels; F1 0.253 | **$0** | MIT |
+
+Caveats that matter and are easy to lose: the 100% runs are on the **public**
+set and are **warm**. The semi-private leaderboard sat at 62.7% for the best
+model in the world on 4 September 2026. Generalisation is not solved.
+
+Full citations, the three caveats in detail, and the claims this evidence
+forced us to **retract from our own earlier drafts**, are in
+[`docs/LANDSCAPE.md`](docs/LANDSCAPE.md).
+
+## The same idea, small enough to run on a phone
+
+The runtime learns readable rules from labelled text as well as from
+interaction. This is the demonstration that the zero-dollar end of the curve
+reaches real hardware — not a second product.
+
+```bash
 python -m nyaya learn data/sms.tsv -o skill.py
 python -m nyaya explain skill.py "Congratulations! You won a prize, text WIN to 87121 to claim"
 ```
 
 ```text
-held-out: precision 100.0%  recall 77.8%  F1 0.875  accuracy 96.8%  (n=1115)
-learned 47 rules (6 accusing, 41 vouching) from 5574 examples in 1.08s on CPU
-
 verdict: FLAG (score 5, threshold 1)
   +3  contains an SMS shortcode to text        (accuses)
   +1  claims the reader won a prize or lottery (accuses)
   +1  contains the word 'claim'                (accuses)
 ```
 
-No GPU, no network, no weights, no pip dependencies. Open `skill.py`: every
-belief is a sentence with the training evidence that earned it. Delete a
-line and the verdict changes -- that is what owning a skill means.
+### And here is the baseline that beats it
 
-Two more demos: `python demo.py` (the runtime meets a game it has never
-seen, learns its physics from 8 probes, clears the level with zero LLM
-calls) and `python demo_scam.py` (the full scam-screening story, including
-adapting to Indian scam patterns from 32 local examples).
+```bash
+python scripts/text_baselines.py data/sms.tsv
+```
 
-## The numbers, with denominators
+```text
+UCI SMS, 4459 train / 1115 held out, seed 7
 
-Every claim here has a harness behind it in this repo or its research
-corpus. Nothing is rounded up.
+method                       precision   recall     F1  accuracy   fit s  readable
+----------------------------------------------------------------------------------
+nyaya readable rules           100.0%    77.8%  0.875     96.8%    1.85  46 rules
+naive-bayes (bag of words)      98.7%    94.4%  0.965     99.0%    0.06  7930 weights
+hand-written keyword list       63.4%    71.6%  0.672     89.9%    0.00  14 rules
+majority class                   0.0%     0.0%  0.000     85.5%    0.00  1 constant
+```
 
-| Claim | Measurement |
-|---|---|
-| Scam skill learned from real data | 46-47 readable rules from 4,459-5,574 labelled SMS (public UCI corpus) in ~1-2s on CPU |
-| Held out on real messages | precision **100.0%**, recall 77.8%, F1 0.875 (n=1,115) |
-| Few-shot domain adaptation | 32 Indian-pattern examples lift recall 81% -> 94% (illustrative seed set, n=32) |
-| Agent cost collapse | stock 27B agent: ~441 tokens of reasoning per action, budget exhausted in all 25 games; with the runtime carrying physics and search: ~0 tokens at 1.4 ms/action |
-| No-LLM capability | the symbolic runtime alone clears early levels on 2-4 of 25 ARC-AGI-3 public games per run, including games the LLM-driven agent never cleared |
-| Honest status | ARC-AGI-3 leaderboard scores sit in the low single digits of a possible ~115 for everyone; ours included. The contribution is a mechanism and a measurement, not a solved benchmark |
+**Naive Bayes wins on F1 by 0.09 and trains thirty times faster.** We publish
+that because you would have run it in five minutes and because it is the
+actual result: on this dataset, *readability costs about nine points of F1 and
+sixteen points of recall.* That price is the interesting number, it was never
+published before, and closing that recall gap while keeping the rules readable
+is a stated research question rather than a claim already won.
+
+What 7,930 naive-Bayes weights cannot do is be opened, understood, argued with
+or edited by the person they are protecting. Forty-six sentences can. Delete a
+line from `skill.py` and the verdict changes — `python demo_scam.py` ends by
+doing exactly that.
 
 ## How it works, in three sentences
 
-1. **Watch:** every interaction (or labelled example) is folded into a
-   factored symbolic theory -- what moves, what blocks, what depletes; or
-   which patterns accuse and which vouch -- by voting, with held-out
-   verification before anything is believed.
-2. **Compile:** what survives verification is emitted as small readable
-   programs (skills), not weights -- inspectable, editable, portable across
-   models, zero inference cost.
-3. **Delegate:** an LLM, where present at all, proposes goals and reads
-   anomalies; it never does the routine thinking. That is why actions cost
-   milliseconds instead of tokens, and why the whole thing runs on a phone-
-   class CPU.
+1. **Watch** — every interaction, or every labelled example, is folded into a
+   factored symbolic theory (what moves, what blocks, what depletes; which
+   patterns accuse and which vouch) by voting, with held-out verification
+   before anything is believed.
+2. **Compile** — what survives verification is emitted as small readable
+   programs: inspectable, editable, portable across models, zero inference cost
+   to re-run.
+3. **Delegate** — a language model, where present at all, proposes goals and
+   reads anomalies; it never does the routine thinking. That is why actions
+   cost milliseconds instead of tokens.
 
 ## What is in the box
 
-- `nyaya/world_model.py` -- the theory learner for interactive environments:
-  body, movement, blocking (with an exoneration rule), click effects,
-  autonomous movers, decay. Zero imports, injectable into restricted
-  sandboxes as source.
-- `nyaya/executor.py` -- policies an agent names instead of moves
-  (`learn_controls`, `auto_route`, `auto_solve`...): one call runs hundreds
-  of verified environment actions.
-- `nyaya/sms_rules.py` -- rule induction from labelled text: every rule a
-  human sentence with its evidence; skills rendered as editable Python.
-- `nyaya/cli.py` -- `nyaya learn | eval | classify | explain`, the tool a
-  stranger can point at their own TSV in one minute.
-- `nyaya/delegation.py` -- injects the runtime into an LLM harness's
-  sandbox and corrects its prompt.
-- 100 tests. MIT. Python >= 3.9, stdlib only.
+- [`bench/`](bench/README.md) — the substrate: 50 episodes across two corpora,
+  causal-replay protocol, method registry, **cost reported next to quality**.
+- `nyaya/world_model.py` — the theory learner for interactive environments:
+  body, movement, blocking with an exoneration rule, click effects, autonomous
+  movers, decay. Zero imports, injectable into restricted sandboxes as source.
+- `nyaya/executor.py` — policies an agent names instead of moves
+  (`learn_controls`, `auto_route`, `auto_solve`): one call runs hundreds of
+  verified environment actions.
+- `nyaya/sms_rules.py` — rule induction from labelled text; every rule a human
+  sentence with the evidence that earned it.
+- `nyaya/cli.py` — `nyaya learn | eval | classify | explain`.
+- `scripts/text_baselines.py` — the comparisons a reviewer would run.
+- **121 tests. MIT. Python ≥ 3.9, standard library only.**
 
 ## Roadmap (statuses are honest)
 
 | Stage | What | Status |
 |---|---|---|
-| C0 | A shared evaluation substrate for programmatic world models: 24,499+ recorded ARC-AGI-3 transitions, causal-replay protocol, head-to-head of every method with released code -- including cost per hypothesis revision, the axis nobody reports | corpus + harness exist in the research repo; packaging for release is next |
-| C1-C3 | DSL synthesis, library learning (the hypothesis class grows from the agent's own failures), active experiment design | proposed -- see `docs/RESEARCH.md`, with falsifiable predictions and the ways it could fail stated |
-| MVP | The CLI you just ran, hardened; skills with provenance | live in this repo |
-| Vertical | On-device scam screening for SMS/links/forwards, India-first (live-call screening is gated by Android platform policy and is a partnership milestone, named honestly as such) | bridge artefact measured; product not started |
+| C0 | Shared evaluation substrate: two corpora, causal-replay protocol, cost as a scored column | **shipped** — [`bench/`](bench/README.md), run it now |
+| C1 | The cost-capability curve: every method with public code under one protocol, including Tycho at the expensive end | next; the substrate it needs exists |
+| C2 | Bending the curve — DSL synthesis, library growth from the agent's own failures | proposed, with falsifiable predictions and the ways it could fail, in [`docs/RESEARCH.md`](docs/RESEARCH.md) |
+| MVP | The CLI above, hardened; skills with provenance | live in this repo |
+| Vertical | On-device scam screening, India-first (live-call screening is gated by Android platform policy and is a partnership milestone, not an app-store feature) | bridge artefact measured; product not started |
 
-## Relationship to grant programmes (stated plainly)
+## Relationship to grant programmes
 
-This repo is the core runtime behind two independent funding applications,
-and both reviewers deserve to see that clearly rather than discover it:
+This repo is the core runtime behind two independent funding applications, and
+both reviewers deserve to see that plainly rather than discover it:
 
-- **Sentient Foundation (Open Source AGI programme):** Nyaya as research --
-  programmatic world models with no language model in the learning loop, and
-  skills as the loyal behaviour layer above the weights. Spine:
-  [`docs/RESEARCH.md`](docs/RESEARCH.md), ask: [`docs/ASK.md`](docs/ASK.md).
-- **Autonomys (Subspace Foundation grants):** *Auto Evolve* -- a proposed
-  integration that anchors these skills, their evidence and their lineage on
-  Autonomys' permanent storage and identity stack (Auto Drive, Auto ID,
-  Auto EVM), so learned knowledge becomes cumulative and verifiable across
-  agents. Nyaya is the engine; Auto Evolve is that engine plus their chain.
-  Research: [`docs/AUTONOMYS.md`](docs/AUTONOMYS.md).
+- **Sentient Foundation (Open Source AGI programme)** — the cost-capability
+  frontier, and skills as the loyal behaviour layer above the weights. Spine:
+  [`docs/RESEARCH.md`](docs/RESEARCH.md); ask: [`docs/ASK.md`](docs/ASK.md).
+- **Autonomys (Subspace Foundation grants)** — *Auto Evolve*, a proposed
+  integration anchoring skills, their evidence and their lineage on Autonomys'
+  permanent storage and identity stack. Nyaya is the engine; Auto Evolve is that
+  engine plus their chain. Research: [`docs/AUTONOMYS.md`](docs/AUTONOMYS.md).
 
-Same engine, two different completions. Neither application claims work the
-other did; both link here.
+Same engine, two completions. Neither application claims work the other did.
 
 ## Status, for anyone deciding whether to bet on this
 
-Solo founder, India. Pre-users -- the repo went public on 31 August 2026.
-What exists is measured and reproducible; what does not exist yet is labelled
-roadmap. Instruments first: every number above can be regenerated by a
-command in this repo, and negative results get reported in the same voice as
-positive ones.
+Solo founder, India. Pre-users; public since 31 August 2026. Everything above
+regenerates from a command in this repo. When the evidence went against us — as
+it did in September 2026, when a novelty check refuted the headline claim of
+our own draft — the retraction was written down and published rather than
+edited out. See [`docs/LANDSCAPE.md`](docs/LANDSCAPE.md).
 
 ## Licence
 
-MIT. The ARC-AGI-3 measurements were made with the TAAF/Duck harness
-(Apache-2.0, Tufa Labs) driving a Qwen model; this runtime contains none of
-that code and runs anywhere Python runs.
+MIT, corpus included. The ARC-AGI-3 logs were produced with the TAAF/Duck
+harness (Apache-2.0, Tufa Labs) driving a Qwen model; this runtime contains
+none of that code and runs anywhere Python runs.
