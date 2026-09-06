@@ -156,8 +156,8 @@ def run(path, seed=7):
             len(train), len(test), seed
         )
     )
-    header = "{0:<28}{1:>10}{2:>9}{3:>7}{4:>10}{5:>8}{6:>10}".format(
-        "method", "precision", "recall", "F1", "accuracy", "fit s", "readable"
+    header = "{0:<28}{1:>10}{2:>9}{3:>7}{4:>10}{5:>8}   {6:<14}".format(
+        "method", "precision", "recall", "F1", "accuracy", "fit s", "what you can read"
     )
     print(header)
     print("-" * len(header))
@@ -166,7 +166,7 @@ def run(path, seed=7):
         if name.startswith("majority"):
             readable = "1 constant"
         print(
-            "{0:<28}{1:>9.1%}{2:>9.1%}{3:>7.3f}{4:>10.1%}{5:>8.2f}{6:>10}".format(
+            "{0:<28}{1:>9.1%}{2:>9.1%}{3:>7.3f}{4:>10.1%}{5:>8.2f}   {6:<14}".format(
                 name,
                 stats["precision"],
                 stats["recall"],

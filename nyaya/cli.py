@@ -27,7 +27,39 @@ def _load_skill_file(path: Path) -> dict:
     namespace: dict = {}
     source = path.read_text(encoding="utf-8")
     exec(compile(source, str(path), "exec"), namespace)  # noqa: S102 - user's own file
+    if "RULES" not in namespace:
+        raise ValueError(
+            "{0} has no RULES list, so it is not a nyaya skill".format(path)
+        )
     return sr.load_skill(namespace)
+
+
+def _require_examples(rows, path):
+    """Refuse to pretend an unreadable file was a small one."""
+    if not rows:
+        raise ValueError(
+            "{0} has no usable rows -- each line must be 'spam' or 'ham', a tab, "
+            "then the text".format(path)
+        )
+    if len(rows) < 8:
+        raise ValueError(
+            "{0} rows is too few to hold any out; give at least 8".format(len(rows))
+        )
+    labels = set(label for label, _ in rows)
+    unknown = labels - {"spam", "ham"}
+    if unknown:
+        raise ValueError(
+            "unexpected label(s) {0} -- nyaya expects 'spam' or 'ham'".format(
+                ", ".join(sorted(repr(u) for u in unknown))[:80]
+            )
+        )
+    if len(labels) < 2:
+        raise ValueError(
+            "every row is labelled {0!r}; learning needs both classes".format(
+                labels.pop()
+            )
+        )
+    return rows
 
 
 def _pct(x: float) -> str:
@@ -47,10 +79,7 @@ def _print_eval(stats: dict, n: int, label: str) -> None:
 
 
 def cmd_learn(args: argparse.Namespace) -> int:
-    examples = sr.read_tsv(args.data)
-    if len(examples) < 10:
-        print(f"only {len(examples)} usable examples in {args.data}; need at least 10")
-        return 2
+    examples = _require_examples(sr.read_tsv(args.data), args.data)
 
     # Honest numbers first: hold out a fifth, report, then train the final
     # skill on everything. The held-out line is what the user may quote; the
@@ -144,6 +173,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_learn)
 
     p = sub.add_parser("eval", help="measure a skill against a labelled TSV")
+    p.description = "Score an existing skill on labelled data it may never have seen."
     p.add_argument("skill")
     p.add_argument("data")
     p.set_defaults(func=cmd_eval)
@@ -161,9 +191,60 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _complain(problem, remedy):
+    """One line for what went wrong, one for what to do about it.
+
+    A stack trace tells the reader where our code is on our disk. It does not
+    tell them they typed a filename wrong, which is what actually happened
+    almost every time.
+    """
+    print("nyaya: {0}".format(problem), file=sys.stderr)
+    print("       {0}".format(remedy), file=sys.stderr)
+    return 1
+
+
 def main(argv=None) -> int:
-    args = build_parser().parse_args(argv)
-    return args.func(args)
+    parser = build_parser()
+    given = sys.argv[1:] if argv is None else list(argv)
+    if not given:
+        # Someone typing the bare name is asking what this does, not making a
+        # mistake. Answer the question instead of scolding them.
+        parser.print_help()
+        return 0
+    args = parser.parse_args(argv)
+    try:
+        return args.func(args)
+    except FileNotFoundError as missing:
+        name = getattr(missing, "filename", None) or "that file"
+        if str(name).endswith(".py"):
+            return _complain(
+                "no skill file at {0}".format(name),
+                "make one first:  python -m nyaya learn data/sms.tsv -o {0}".format(name),
+            )
+        return _complain(
+            "no data file at {0}".format(name),
+            "expected a TSV of 'label<TAB>text' rows; the bundled one is data/sms.tsv",
+        )
+    except IsADirectoryError as wrong:
+        return _complain(
+            "{0} is a directory, not a file".format(getattr(wrong, "filename", "that path")),
+            "point at the .tsv itself, e.g. data/sms.tsv",
+        )
+    except PermissionError as denied:
+        return _complain(
+            "not allowed to open {0}".format(getattr(denied, "filename", "that file")),
+            "check the file's permissions, or copy it somewhere you own",
+        )
+    except UnicodeDecodeError:
+        return _complain(
+            "that file is not UTF-8 text",
+            "nyaya reads plain TSV; re-save it as UTF-8 and try again",
+        )
+    except ValueError as bad:
+        return _complain(str(bad), "see  python -m nyaya <command> --help")
+    except KeyboardInterrupt:
+        print(file=sys.stderr)
+        return 130
 
 
 if __name__ == "__main__":

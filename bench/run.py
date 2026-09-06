@@ -43,10 +43,15 @@ def main(argv=None) -> int:
     results = {}
     for name in args.methods:
         rows = []
+        # Replaying 25 episodes takes long enough that silence reads as a hang.
+        # One dot per episode costs nothing and says the machine is working.
+        print(f"running {name:<18}", end="", flush=True)
         for episode, chain in sorted(data.items()):
             row = replay.replay(methods.build(name), chain, threshold=args.threshold)
             row["episode"] = episode
             rows.append(row)
+            print(".", end="", flush=True)
+        print(" done", flush=True)
         results[name] = {"per_episode": rows, "total": replay.aggregate(rows)}
 
         if args.per_episode:
@@ -60,6 +65,7 @@ def main(argv=None) -> int:
                 )
             print()
 
+    print()
     print(
         f"{'method':<20}{'exact':>8}{'F1':>8}{'tokens':>10}"
         f"{'ms/step':>10}{'reached':>9}{'median':>8}"

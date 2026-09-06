@@ -210,7 +210,9 @@ not pretend otherwise.
 - `docs/demo/index.html` — the belief ledger: all 47 rules, switch any off,
   watch the verdict change. Same rules and same scoring as the Python.
 - `scripts/text_baselines.py` — the comparisons a reviewer would run.
-- **157 tests. MIT. Python ≥ 3.9, standard library only.**
+- **170 tests. MIT. Python ≥ 3.9, standard library only.**
+- [`docs/`](docs/README.md) — indexed by reader: what to read if you are
+  checking the claims, judging the research, or deciding whether to fund it.
 
 ## Roadmap (statuses are honest)
 

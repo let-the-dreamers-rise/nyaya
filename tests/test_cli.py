@@ -44,10 +44,11 @@ def test_learn_writes_a_skill_and_reports_held_out(data, tmp_path, capsys):
 
 
 def test_learn_refuses_a_tiny_file(tmp_path, capsys):
+    """Refusal now goes to stderr with exit 1, like every other user error."""
     path = tmp_path / "tiny.tsv"
     path.write_text("spam\thello", encoding="utf-8")
-    assert main(["learn", str(path)]) == 2
-    assert "at least 10" in capsys.readouterr().out
+    assert main(["learn", str(path)]) == 1
+    assert "too few" in capsys.readouterr().err
 
 
 def test_eval_scores_a_written_skill(data, tmp_path, capsys):
