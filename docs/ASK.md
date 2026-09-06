@@ -90,6 +90,53 @@ remaining funds go to C0 -- the substrate the field keeps either way. Funders
 almost never hear this offered, and for a council of academics it is the
 sentence that marks you as a researcher rather than a pitchman.
 
+## 3b. Why this is safe to fund, said from their side of the table
+
+The question a grantmaker actually asks is not "is this exciting" but **"what
+is my downside, and what do I keep if this person stops?"** Answer it before
+they have to ask, and answer it structurally rather than with promises.
+
+**1. The first milestone was delivered before the ask, unpaid.** C0 -- the
+corpus, the protocol, the harness, the cost column -- is public, MIT and
+runnable today. The single best predictor of whether someone ships funded work
+is whether they shipped unfunded work, and that evidence is a `git clone` away.
+The request is not for permission to start. It is to continue something already
+moving.
+
+**2. Open licensing makes abandonment survivable for the funder.** This is the
+structural argument and it is specific to open work. If a closed project is
+abandoned at 40%, the funder loses everything. If this one is, the corpus, the
+protocol, the harness and every measurement taken up to that point are already
+MIT and already published -- the field keeps them, and so does Sentient. There
+is no version of this where the money buys nothing.
+
+**3. Tranche it, and we propose the tranches ourselves.** No sensible funder
+hands a solo researcher twelve months of budget on day one, and we are not
+asking them to:
+
+| Tranche | Released on | Share |
+|---|---|---|
+| 1 | Signing. Covers M1: the cost curve, every method with public code under one protocol | 35% |
+| 2 | M1 published and reproducible by a third party | 30% |
+| 3 | M2/M3 reported -- *including if the prediction failed*, which is a delivery, not a default | 20% |
+| 4 | Paper submitted, all artefacts released | 15% |
+
+A failed prediction releases its tranche. That is deliberate: paying only for
+positive results is how funders buy quiet negative results, and the whole point
+of this proposal is that the negative ones get published.
+
+**4. The work is legible while it happens.** Public repo, public corpus, and
+every claim regenerable by one command. A funder does not have to trust a
+quarterly update; they can run the number. That is a stronger control than any
+reporting requirement, and it exists because the project is open, not because
+anyone was asked for it.
+
+**5. The risk that remains, named.** Solo, so there is no one to continue if I
+stop. A student, so term time is real and I will state my actual weekly hours
+rather than round them up. No completed funded project behind me. Those are
+true, they are the reason for a small first tranche rather than a large one,
+and pretending otherwise would be the first broken promise.
+
 ## 4. What they get for the money
 
 - A **corpus and protocol** the field currently lacks, open, that makes every
