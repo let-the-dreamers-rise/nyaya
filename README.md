@@ -6,6 +6,10 @@ measurement of what happens when you spend less.**
 *(nyaya — NYAH-yuh — the Indian school of logic; literally "method, rule". Not
 affiliated with Nyaaya, the Indian legal-information nonprofit.)*
 
+**The whole thing on one page:** [the project site](https://claude.ai/code/artifact/aaf9ecdc-f203-487a-b542-ac370294df33)
+— the curve nobody has drawn, the results with intervals, four published
+retractions, and the ask. Also served from [`docs/index.html`](docs/index.html).
+
 In July 2026 two systems put frontier language models inside a world model's
 learning loop and largely closed ARC-AGI-3: Tycho reaches 100.00 RHAE on the
 public set, OPINE-World solves 20 of 25 games. In the same papers, program
