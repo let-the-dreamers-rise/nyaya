@@ -244,6 +244,58 @@ fourth condition gave the greedy refiner more ways to over-specialise and
 dropped probe F1 from 0.153 to 0.121. The commented-out line is left in
 `synthesis.py` with the numbers attached.
 
+### Stage two failed twice, and the failures are the finding
+
+C2 claims that programs which survive replay should become primitives, so the
+hypothesis class grows with experience. Two implementations were built and
+both were measured and reverted. Neither is in the shipped registry, and the
+numbers are here rather than in a drawer.
+
+**Attempt one -- promote surviving programs directly.** A `dsl-library` method
+held its library at class level so it outlived the episode: game 26 started
+with whatever games 1-25 taught. Result on the development corpus:
+
+| method | F1 | reached |
+|---|---|---|
+| dsl-synthesis-rel (no library) | **0.204** (0.119-0.286) | **6/25** |
+| dsl-library (library carried across games) | 0.105 (0.047-0.183) | 4/25 |
+
+**The library halved performance.** The cause is not a bug, it is the design:
+every promoted program was tied to colour literals -- *"when self is 'c' and
+ahead2 is 'b'"* -- and a colour means something different in every game. The
+library carried 25 games' worth of confident, specific, wrong vocabulary into
+each new one.
+
+So: **a library of concrete programs is worse than no library.** That is a real
+result about library learning in this setting, and it is not obvious in
+advance -- DreamCoder's setting reuses a fixed symbol vocabulary across tasks,
+and ARC-AGI-3 does not.
+
+**Attempt two -- make the programs abstract.** If literals do not transfer,
+the outcome should be referential: not *"becomes 'b'"* but *"becomes whatever
+is behind it"*, which is a statement about movement that survives a change of
+palette. Conditions likewise became colour-agnostic tests (`same_as_behind`,
+`at_edge`). Result:
+
+| method | F1 | ms/step |
+|---|---|---|
+| dsl-synthesis-rel (before) | **0.204** | 14 |
+| with referential outcomes | 0.087 | 87 |
+
+Worse, and six times slower. Referential rules carry no colour to pin them to,
+so they fall out of the prediction index into a scan over every cell, and
+without a pinning condition they are general enough to fire almost anywhere
+and overwrite what the specific rules got right.
+
+The idea is not refuted -- the implementation is. What the two results together
+say is precise: **transferable programs need abstraction, and abstraction
+without a constraint that keeps them selective is worse than no abstraction at
+all.** That is the problem C2 actually has to solve, stated much more sharply
+than it was before either attempt.
+
+The shipped registry is the state that measured best. Nothing that regressed
+was kept, and nothing that was tried is unreported.
+
 ### Why the engine is domain-agnostic on purpose
 
 The searcher never learns what a primitive means. It takes `(observation,

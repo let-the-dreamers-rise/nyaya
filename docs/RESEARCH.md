@@ -151,6 +151,19 @@ corpus, the same causal-replay protocol, cost as a scored column rather than a
 footnote. *This is the claim that cannot fail wastefully -- the curve is useful
 to the field whichever shape it has.*
 
+> **C2 has been attempted twice and failed twice, in September 2026.**
+> Promoting surviving programs to primitives *halved* held-out F1 (0.204 to
+> 0.105) because programs tied to colour literals carry confident wrong
+> vocabulary between games. Rewriting outcomes referentially -- "becomes
+> whatever is behind it" rather than "becomes 'b'" -- made them transferable
+> and simultaneously too general to be selective (0.204 to 0.087, six times
+> slower). Both are documented with numbers in
+> [`bench/README.md`](../bench/README.md) and neither is in the shipped
+> registry. The claim below is therefore *open*, and the problem it has to
+> solve is now stated precisely rather than hopefully: **abstraction is
+> necessary for transfer and insufficient for selectivity.** That is what the
+> funded work is for.
+
 **C2 -- The curve can be bent, by moving work out of the model and into
 programs.** The prediction is not that programs beat frontier synthesis. It is
 that most of what a frontier call currently does on this benchmark is *routine*
