@@ -176,6 +176,64 @@ hypothesis class barely separates from *do what you did last time*, then the
 problem is the class, not the search inside it -- which is precisely what C2
 proposes to attack.
 
+## Stage one: programs, searched for rather than fitted
+
+`dsl-synthesis` is the first method here that does not fit parameters inside a
+fixed hypothesis class. It searches for **local update rules** -- conjunctions
+of tests over a cell's neighbourhood and the action, implying what that cell
+becomes -- using separate-and-conquer with counterexample-guided refinement, on
+CPU, with no model called at any point.
+
+    when action is 'RIGHT' and right2 is 'b' and self is 'c', it becomes 'b'
+
+That sentence is a program the search found, at precision 1.00 over 90
+examples. Nobody wrote it.
+
+| method | dev F1 | dev reached | held-out F1 | held-out reached | ms/step |
+|---|---|---|---|---|---|
+| last-effect | **0.228** (0.136-0.316) | **11/25** | 0.151 (0.065-0.289) | 6/25 | 0.09 |
+| nyaya-templates | 0.185 (0.043-0.355) | 6/25 | **0.253** (0.039-0.490) | 5/25 | 3.8 |
+| dsl-synthesis | 0.171 (0.113-0.239) | 5/25 | 0.213 (0.127-0.321) | **8/25** | 21 |
+
+**No method dominates, and every interval overlaps.** Synthesis beats
+`last-effect` on held-out data (0.213 to 0.151) and loses to it on development
+(0.171 to 0.228). It reaches usable prediction quality on more held-out
+episodes than anything else here -- 8 of 25 -- and it has the tightest interval
+of the three learners, so it is the most consistent even where it is not the
+highest.
+
+The honest verdict on the first run of a brand-new engine: **not settled.**
+That is a better result than it sounds, and it is stated with its intervals
+rather than by quoting whichever column flatters it.
+
+### What the failures taught, since they are the point
+
+Three bugs were found by measurement rather than by reading the code, and each
+is now a test:
+
+1. **It learned rules that changed nothing.** "When self is 'b', it becomes
+   'b'" -- support 4,755, precision 0.93, completely useless, and it won the
+   search round on sheer support while starving real mechanisms of budget.
+2. **Negatives were sampled only next to changes.** Rules looked precise on
+   that neighbourhood and fired in a thousand places nobody had shown the
+   searcher. Held-out F1 was 0.058 against a 0.313 baseline -- worse than doing
+   nothing. Sampling across the whole board fixed it.
+3. **One hard outcome ended the entire search.** Precision stayed at 86% while
+   recall collapsed to 8%.
+
+And one change was reverted *on evidence*: adding diagonal primitives and a
+fourth condition gave the greedy refiner more ways to over-specialise and
+dropped probe F1 from 0.153 to 0.121. The commented-out line is left in
+`synthesis.py` with the numbers attached.
+
+### Why the engine is domain-agnostic on purpose
+
+The searcher never learns what a primitive means. It takes `(observation,
+action, observation')` and a registered primitive set; every fact about grids
+lives in `grid_primitives()`. Swapping that set points the same search at UI
+traces, tool-use logs, or anything shaped like a transition -- which is the
+difference between an ARC-AGI-3 project and a runtime.
+
 ## What the current numbers mean
 
 `nyaya-templates` reaches F1 0.185 on 2,907 development transitions and

@@ -132,6 +132,33 @@ class LastEffect:
         return ["".join(row) for row in grid]
 
 
+@register("dsl-synthesis")
+class DslSynthesis:
+    """Programs searched for, not parameters fitted.
+
+    The bet this repository exists to test: that the failures of a fixed
+    hypothesis class are the specification for the next one. Local update rules
+    are searched over a typed primitive set, on CPU, with no model called at
+    any point. Position-independent by construction, which is where
+    `last-effect` -- the baseline to beat -- fails.
+    """
+
+    def __init__(self):
+        from nyaya.synthesis import SynthesisLearner
+
+        self.learner = SynthesisLearner()
+        self.tokens = 0
+
+    def observe(self, before, action, after):
+        self.learner.observe(before, action, after)
+
+    def predict(self, board, action):
+        return self.learner.predict(board, action)
+
+    def summary(self):
+        return {"rules": len(self.learner.rules)}
+
+
 def build(name: str):
     if name not in REGISTRY:
         raise KeyError(f"unknown method {name!r}; known: {sorted(REGISTRY)}")
