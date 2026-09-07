@@ -95,6 +95,19 @@ of the programme this proposal is written for.
 **Retracted.** "Nobody has beaten this benchmark." False as of July 2026.
 Removed from `README.md`, `PITCH.md` and `RESEARCH.md`.
 
+**Retracted, 7 September 2026, by our own benchmark.** That our template
+learner's F1 of 0.185 / 0.253 demonstrated anything about world-model
+induction. Adding two diagnostic baselines to the registry -- `memorise`, an
+exact lookup table, and `last-effect`, a one-line "replay what this action did
+last time" heuristic -- showed that **`last-effect` beats the template learner
+outright on the development corpus** (0.228 vs 0.185, reaching threshold on
+11 of 25 episodes against 6) at a fortieth of the cost per step, and that the
+held-out lead is inside overlapping 95% intervals. The honest claim is now:
+*the factored template learner has not been shown to beat a trivial baseline.*
+Nobody asked us to run that comparison; the substrate did, the moment it
+existed. Every score in `bench/` now carries a bootstrap interval so this
+class of overclaim is harder to make.
+
 **Retracted.** Any framing in which removing the LLM from the learning loop is
 expected to win on capability. The evidence points the other way and we say so.
 

@@ -137,6 +137,45 @@ On those rules, today: Tycho released code (Apache-2.0) and is a candidate
 for a real run under this protocol. OPINE-World released none, so it can only
 be quoted. That asymmetry is precisely the gap a shared substrate closes.
 
+## The first thing this substrate did was refute its own author
+
+The registry holds two diagnostics that exist to keep everyone, including us,
+honest. Both were added after the headline number was already published, and
+both changed what that number means.
+
+**`memorise`** is an exact `(board, action)` lookup table. Whatever it scores
+is the share of the corpus that is repetition rather than generalisation. It
+scores **0.024 held out, 0.048 on development** -- so this corpus is almost
+entirely novel transitions, and the benchmark is measuring what it claims to.
+A benchmark without this baseline cannot tell you that about itself.
+
+**`last-effect`** is one line of theory: *replay whatever this action did last
+time, in the same cells*. It is not a learner in any interesting sense.
+
+| corpus | last-effect | nyaya-templates |
+|---|---|---|
+| development | **F1 0.228**, 11/25 reached, 0.07 ms/step | F1 0.185, 6/25 reached, 2.8 ms/step |
+| held out | F1 0.151 (CI 0.065-0.289) | F1 0.253 (CI 0.039-0.490) |
+
+**On the development corpus the one-line heuristic beats the world-model
+learner outright**, at a fortieth of the cost per step. On the held-out corpus
+the learner leads, but the intervals overlap so heavily that the difference has
+not been demonstrated.
+
+The honest statement, which now replaces the earlier one everywhere it
+appeared: **the factored template learner has not been shown to beat a trivial
+baseline on this corpus.**
+
+That is a worse result for us than the one we published a week ago, and it is
+the strongest possible argument for the substrate: nobody made us run
+`last-effect`. The registry did, the moment it existed. Any method added here
+does the same to every method already in it, ours first.
+
+It also sharpens the research question rather than dissolving it. If a fixed
+hypothesis class barely separates from *do what you did last time*, then the
+problem is the class, not the search inside it -- which is precisely what C2
+proposes to attack.
+
 ## What the current numbers mean
 
 `nyaya-templates` reaches F1 0.185 on 2,907 development transitions and
@@ -144,11 +183,17 @@ be quoted. That asymmetry is precisely the gap a shared substrate closes.
 reported as-is rather than smoothed. Nineteen of twenty-five episodes never
 cross F1 0.5 at all.
 
-That is not a good score, and it is not presented as one. It is a floor with
-a denominator: the honest measurement of how far a fixed hypothesis class
+That is not a good score, it is not presented as one, and as the section above
+shows it is not even reliably better than a one-line heuristic. It is a floor
+with a denominator: the honest measurement of how far a fixed hypothesis class
 gets for **zero tokens and 3 milliseconds per step**, against systems that
-solve the same games for roughly $119 each. Both ends of that frontier are
-now measured. The interesting work is everything in between.
+solve the same games for roughly $119 each. Both ends of that frontier are now
+measured, with intervals. The interesting work is everything in between.
+
+Every score here carries a 95% bootstrap interval, resampled over episodes
+because transitions inside one episode are not independent. Two methods whose
+intervals overlap have not been shown to differ, and this README will say so
+rather than reporting the larger number and moving on.
 
 ## Licence
 

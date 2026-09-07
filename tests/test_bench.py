@@ -157,6 +157,78 @@ def test_cells_are_pooled_not_averaged_over_episodes():
 # --- the registry --------------------------------------------------------
 
 
+def test_memorise_recalls_a_transition_it_has_seen():
+    m = methods.build("memorise")
+    before, after = ["aa"], ["bb"]
+    m.observe(before, "UP", after)
+    assert m.predict(before, "UP") == after
+
+
+def test_memorise_falls_back_to_copy_forward_on_anything_novel():
+    m = methods.build("memorise")
+    m.observe(["aa"], "UP", ["bb"])
+    assert m.predict(["cc"], "UP") == ["cc"]
+    assert m.predict(["aa"], "DOWN") == ["aa"]
+
+
+def test_last_effect_replays_the_cells_the_action_changed_before():
+    m = methods.build("last-effect")
+    m.observe(["aaa", "bbb"], "UP", ["aXa", "bbb"])
+    assert m.predict(["ccc", "ddd"], "UP") == ["cXc", "ddd"]
+
+
+def test_last_effect_does_nothing_for_an_action_it_has_never_seen():
+    m = methods.build("last-effect")
+    assert m.predict(["ab"], "NEVER") == ["ab"]
+
+
+def test_last_effect_ignores_changes_that_fall_outside_a_smaller_board():
+    m = methods.build("last-effect")
+    m.observe(["aaaa"], "UP", ["aaaX"])
+    assert m.predict(["aa"], "UP") == ["aa"]  # no crash, no phantom cell
+
+
+# --- confidence ----------------------------------------------------------
+
+
+def _row(tp, fp, fn):
+    return {
+        "tp": tp, "fp": fp, "fn": fn, "transitions": 10, "exact": 0.0,
+        "tokens": 0, "seconds": 0.0, "to_threshold": None,
+    }
+
+
+def test_a_bootstrap_interval_brackets_the_point_estimate():
+    rows = [_row(5, 1, 1) for _ in range(10)]
+    lo, hi = replay.bootstrap_f1(rows, draws=200)
+    pooled = replay.aggregate(rows)["f1"]
+    assert lo <= pooled <= hi
+
+
+def test_disagreeing_episodes_widen_the_interval():
+    """An interval that ignores episode-level variance would be a lie."""
+    steady = [_row(5, 1, 1) for _ in range(10)]
+    erratic = [_row(9, 0, 0) if i % 2 else _row(0, 9, 9) for i in range(10)]
+    steady_lo, steady_hi = replay.bootstrap_f1(steady, draws=400)
+    erratic_lo, erratic_hi = replay.bootstrap_f1(erratic, draws=400)
+    assert (erratic_hi - erratic_lo) > (steady_hi - steady_lo)
+
+
+def test_a_single_episode_gets_no_interval_rather_than_a_fake_one():
+    assert replay.bootstrap_f1([_row(1, 0, 0)]) == (None, None)
+
+
+def test_the_interval_is_deterministic_so_a_reported_number_reproduces():
+    rows = [_row(i, 1, 1) for i in range(1, 11)]
+    assert replay.bootstrap_f1(rows, draws=200) == replay.bootstrap_f1(rows, draws=200)
+
+
+def test_aggregate_reports_the_interval_alongside_the_score():
+    pooled = replay.aggregate([_row(5, 1, 1) for _ in range(6)])
+    assert pooled["f1_lo"] is not None and pooled["f1_hi"] is not None
+    assert pooled["f1_lo"] <= pooled["f1"] <= pooled["f1_hi"]
+
+
 def test_the_null_baseline_is_registered_and_predicts_no_change():
     null = methods.build("copy-forward")
     board = ["ab", "cd"]

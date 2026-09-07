@@ -27,11 +27,19 @@ def main(argv=None) -> int:
     parser.add_argument("--corpus", default=None)
     parser.add_argument("--threshold", type=float, default=0.5)
     parser.add_argument("--per-episode", action="store_true")
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="first N episodes only -- a two-second look before the full run",
+    )
     parser.add_argument("--json", default=None, help="also write results here")
     args = parser.parse_args(argv)
 
     data = corpus.load(Path(args.corpus) if args.corpus else None)
     data = {name: chain for name, chain in data.items() if chain}
+    if args.limit:
+        data = dict(sorted(data.items())[: args.limit])
     if not data:
         print("no corpus found -- run `python -m bench.pack <raw_dir>` first")
         return 2
@@ -67,23 +75,33 @@ def main(argv=None) -> int:
 
     print()
     print(
-        f"{'method':<20}{'exact':>8}{'F1':>8}{'tokens':>10}"
-        f"{'ms/step':>10}{'reached':>9}{'median':>8}"
+        f"{'method':<20}{'exact':>8}{'F1':>8}{'95% CI':>16}{'tokens':>9}"
+        f"{'ms/step':>9}{'reached':>9}"
     )
-    print("-" * 73)
+    print("-" * 80)
     for name, result in results.items():
         t = result["total"]
+        interval = (
+            f"{t['f1_lo']:.3f}-{t['f1_hi']:.3f}"
+            if t["f1_lo"] is not None
+            else "--"
+        )
         print(
-            f"{name:<20}{t['exact']:>7.0%}{t['f1']:>8.3f}{t['tokens']:>10}"
-            f"{t['ms_per_step']:>10.2f}"
+            f"{name:<20}{t['exact']:>7.0%}{t['f1']:>8.3f}{interval:>16}"
+            f"{t['tokens']:>9}{t['ms_per_step']:>9.2f}"
             f"{str(t['reached_threshold']) + '/' + str(t['episodes']):>9}"
-            f"{_fmt_threshold(t['median_to_threshold']):>8}"
         )
     print(
         "\nF1 is over changed cells only -- copy-forward scores 0 there by "
-        "construction.\n'reached' counts episodes whose trailing F1 crossed "
-        "the threshold; 'median' is\ntransitions observed before it did."
+        "construction.\nThe interval is a 95% bootstrap over episodes, so two "
+        "methods whose intervals\noverlap have not been shown to differ. "
+        "'reached' counts episodes whose\ntrailing F1 crossed the threshold."
     )
+    if "memorise" in results:
+        print(
+            "\nRead `memorise` first: it is a lookup table, so whatever it scores is "
+            "the\nshare of this corpus that is repetition rather than generalisation."
+        )
 
     if args.json:
         Path(args.json).write_text(json.dumps(results, indent=1), encoding="utf-8")

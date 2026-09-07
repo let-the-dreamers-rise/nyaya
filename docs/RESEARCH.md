@@ -230,10 +230,26 @@ finding where on that slope a phone can sit.
 
 **E1 -- Hypothesis-class coverage (baseline; already run).** Replay every
 game; score exact-frame and changed-cell F1 of the current template learner.
-Result to date: aggregate F1 0.25 on 3,318 held-out transitions from a run
-the learner was never developed against, up from 0.18 on development logs.
-Per-game residuals name the missing mechanism classes. *This is the control
-that every later claim is measured against.*
+Result to date, with the interval that the first version of this document
+omitted: aggregate F1 **0.253 (95% CI 0.039-0.490)** on 3,318 held-out
+transitions the learner was never developed against, and **0.185 (CI
+0.043-0.355)** on development logs.
+
+**And the finding that matters more.** Two diagnostic baselines were added to
+the registry in September: `memorise`, an exact lookup table, and
+`last-effect`, a one-line heuristic that replays whatever an action did last
+time. `memorise` scores 0.024-0.048, so the corpus is genuinely novel rather
+than repetitive -- the benchmark measures what it claims to. But `last-effect`
+scores **0.228 on development, beating the template learner's 0.185** and
+reaching threshold on 11 of 25 episodes against 6, at a fortieth of the cost
+per step. On held-out data the learner leads, inside heavily overlapping
+intervals.
+
+So the control says something sharper than "the learner is weak": **a fixed
+hypothesis class barely separates from *do what you did last time*.** That is
+direct evidence that the bottleneck is the class rather than the search inside
+it, which is exactly the premise of C2 -- and it is stronger motivation for
+this proposal than the flattering number it replaces.
 
 **E2 -- Does synthesis beat templates where templates fail?** Run enumerative
 DSL synthesis on the wall-level games specifically. Metric: changed-cell F1

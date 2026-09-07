@@ -227,9 +227,13 @@ causal-replay protocol with cost columns, MIT, in the repository today.
 **Predictions we will be judged against:** at least one architecture clears
 levels at under $1 a game, two orders of magnitude below the published
 frontier; synthesis lifts at least three wall-level games above 0.4
-changed-cell F1 where templates achieve ~0. Baseline already measured:
-aggregate F1 0.253 on 3,318 held-out transitions the learner was never
-developed against.
+changed-cell F1 where templates achieve ~0. Baseline already measured, with
+the interval and the unflattering comparison both stated: aggregate F1 **0.253
+(95% CI 0.039-0.490)** on 3,318 held-out transitions the learner was never
+developed against -- and on development data a **one-line heuristic beats it**
+(0.228 to 0.185). Our own benchmark produced that result the week it was
+built, we published it rather than removing the baseline, and it makes the
+case for growing the hypothesis class stronger than the flattering number did.
 
 **What would falsify it:** the curve may be a cliff -- WorldCoder clears zero
 levels in OPINE-World's own table, which is direct evidence that capability may

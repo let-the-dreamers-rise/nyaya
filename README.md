@@ -38,16 +38,30 @@ python -m bench.run --corpus bench/corpus-heldout
 corpus: 25 episodes, 3318 transitions
 protocol: predict before learning; threshold F1 >= 0.5
 
-method                 exact      F1    tokens   ms/step  reached  median
--------------------------------------------------------------------------
-copy-forward             6%   0.000         0      0.00     0/25      --
-nyaya-templates          6%   0.253         0      4.96     5/25      44
+method                 exact      F1          95% CI   tokens  ms/step  reached
+--------------------------------------------------------------------------------
+copy-forward             6%   0.000     0.000-0.000        0     0.00     0/25
+last-effect              8%   0.151     0.065-0.289        0     0.07     6/25
+memorise                 8%   0.024     0.009-0.038        0     0.01     0/25
+nyaya-templates          6%   0.253     0.039-0.490        0     3.06     5/25
 ```
 
-No GPU, no network, no API key, no pip install. That is a real point on the
-cost curve: **F1 0.253 for $0.00**, on 25 episodes the learner was never
-developed against. Nineteen of twenty-five never reach threshold at all, and
-the harness says so rather than hiding it.
+No GPU, no network, no API key, no pip install. Two things in that table matter
+more than our own row:
+
+**`memorise` scores 0.024.** It is a lookup table, so its score is the share of
+this corpus that is repetition. Almost none of it is. The benchmark is
+measuring generalisation, and now that is a measured fact rather than a hope.
+
+**`last-effect` is a one-line heuristic** — *replay whatever this action did
+last time* — and our world-model learner **has not been shown to beat it.** The
+intervals overlap here, and on the development corpus the heuristic wins
+outright (0.228 to 0.185, reaching threshold on 11 of 25 episodes against our
+6) at a fortieth of the cost per step.
+
+That is an unflattering result about our own method, discovered by our own
+benchmark, and it is the best argument for the benchmark that exists. See
+[`bench/README.md`](bench/README.md).
 
 The corpus, the protocol and the rules that keep the scoreboard honest are in
 [`bench/README.md`](bench/README.md). Adding a method takes ten lines.
@@ -60,7 +74,7 @@ The corpus, the protocol and the rules that keep the scoreboard honest are in
 | Tycho | GPT-5.6 Sol | **100.00 RHAE**, 183/183 levels | ~$179 | Apache-2.0 |
 | OPINE-World | Opus 4.8 | 20/25 games, 160/183 levels | not reported | none |
 | WorldCoder *(as run by OPINE-World)* | — | **0 levels** | — | public |
-| **nyaya** | **none** | 2–4 early levels; F1 0.253 | **$0** | MIT |
+| **nyaya** | **none** | 2–4 early levels; F1 0.253 (CI 0.039–0.490) | **$0** | MIT |
 
 Caveats that matter and are easy to lose: the 100% runs are on the **public**
 set and are **warm**. The semi-private leaderboard sat at 62.7% for the best

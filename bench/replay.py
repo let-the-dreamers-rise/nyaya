@@ -22,6 +22,7 @@ What is scored:
 """
 from __future__ import annotations
 
+import random
 import time
 
 
@@ -100,6 +101,35 @@ def replay(method, chain, threshold: float = 0.5, window: int = 25) -> dict:
     }
 
 
+def bootstrap_f1(rows: list, draws: int = 1000, seed: int = 7) -> tuple:
+    """A 95% interval for pooled F1, by resampling episodes with replacement.
+
+    A single number like 'F1 0.253' invites a reader to compare it against
+    0.185 and conclude something. Whether that conclusion survives depends on
+    how much of the score rests on a handful of episodes, and only an interval
+    can say. Episodes are the resampling unit because transitions within one
+    episode are not independent.
+    """
+    if len(rows) < 2:
+        return (None, None)
+    rng = random.Random(seed)
+    n = len(rows)
+    scores = []
+    for _ in range(draws):
+        picked = [rows[rng.randrange(n)] for _ in range(n)]
+        scores.append(
+            f1_of(
+                sum(r["tp"] for r in picked),
+                sum(r["fp"] for r in picked),
+                sum(r["fn"] for r in picked),
+            )
+        )
+    scores.sort()
+    lo = scores[int(0.025 * draws)]
+    hi = scores[min(draws - 1, int(0.975 * draws))]
+    return (lo, hi)
+
+
 def aggregate(rows: list) -> dict:
     """Pool across episodes. Cells are pooled, not averaged over episodes:
     averaging per-episode F1 would let a 20-transition episode outvote a
@@ -109,7 +139,10 @@ def aggregate(rows: list) -> dict:
     fn = sum(r["fn"] for r in rows)
     n = sum(r["transitions"] for r in rows)
     reached = [r["to_threshold"] for r in rows if r["to_threshold"] is not None]
+    lo, hi = bootstrap_f1(rows)
     return {
+        "f1_lo": lo,
+        "f1_hi": hi,
         "episodes": len(rows),
         "transitions": n,
         "exact": sum(r["exact"] * r["transitions"] for r in rows) / n if n else 0.0,
