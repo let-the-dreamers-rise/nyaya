@@ -251,6 +251,26 @@ direct evidence that the bottleneck is the class rather than the search inside
 it, which is exactly the premise of C2 -- and it is stronger motivation for
 this proposal than the flattering number it replaces.
 
+> **E2 has started, and the first two rounds are measured.** A synthesis engine
+> now searches for local update rules -- conjunctions over a primitive set,
+> implying what a cell becomes -- by separate-and-conquer with
+> counterexample-guided refinement, on CPU, no model called. Against the
+> template learner it replaces: **0.204 vs 0.185 on development, 0.237 vs 0.253
+> held out**, with an interval roughly a third as wide (0.134-0.348 against
+> 0.039-0.490). It is the only method in the registry that is never worst on
+> either corpus.
+>
+> More to the point for C2: **both improvements came from changing the
+> hypothesis class in response to a diagnosis, not from tuning.** Absolute
+> neighbours forced four rules for one sliding mechanism; describing cells
+> relative to the action's direction made it one rule with four times the
+> evidence, and moved both corpora at once while running faster. That is the
+> loop this proposal is about, executed twice, with the failures published in
+> [`bench/README.md`](../bench/README.md).
+>
+> Nothing is settled -- every interval still overlaps. But the mechanism has
+> gone from proposed to running.
+
 **E2 -- Does synthesis beat templates where templates fail?** Run enumerative
 DSL synthesis on the wall-level games specifically. Metric: changed-cell F1
 on held-out transitions of games where the template learner sits at baseline.

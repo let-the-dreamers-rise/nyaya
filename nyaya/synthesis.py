@@ -84,6 +84,64 @@ def grid_primitives():
     ]
 
 
+DIRECTIONS = {
+    "UP": (-1, 0),
+    "DOWN": (1, 0),
+    "LEFT": (0, -1),
+    "RIGHT": (0, 1),
+}
+
+
+@register_primitives("grid-relative")
+def grid_relative_primitives():
+    """The same cell, described relative to the direction the action points.
+
+    Measurement asked for this. With absolute neighbours, a body that slides
+    one cell needs four separate rules -- one per direction -- and each gets a
+    quarter of the evidence. Described as *ahead* and *behind*, it needs one
+    rule with all of it. That is the difference between a hypothesis class
+    that can state "things move the way you pushed them" and one that has to
+    rediscover it four times.
+
+    Non-directional actions (SPACE, clicks) get a zero direction, so `ahead`
+    collapses onto `self` and the search simply stops finding those conditions
+    useful -- which is the correct behaviour rather than a special case.
+    """
+
+    def at(grid, r, c):
+        if 0 <= r < len(grid) and 0 <= c < len(grid[r]):
+            return grid[r][c]
+        return None
+
+    def delta(action):
+        return DIRECTIONS.get(action if isinstance(action, str) else "", (0, 0))
+
+    def make(name, fn):
+        fn.__name__ = name
+        return (name, fn)
+
+    def rel(steps, sideways=0):
+        def fn(g, r, c, a):
+            dr, dc = delta(a)
+            # Perpendicular is the direction rotated a quarter turn.
+            return at(g, r + steps * dr + sideways * dc, c + steps * dc - sideways * dr)
+
+        return fn
+
+    return [
+        make("self", lambda g, r, c, a: at(g, r, c)),
+        make("ahead", rel(1)),
+        make("behind", rel(-1)),
+        make("ahead2", rel(2)),
+        make("behind2", rel(-2)),
+        make("beside", rel(0, 1)),
+        make("beside_other", rel(0, -1)),
+        make("ahead_beside", rel(1, 1)),
+        make("directional", lambda g, r, c, a: delta(a) != (0, 0)),
+        make("action", lambda g, r, c, a: a),
+    ]
+
+
 def features(primitives, grid, r, c, action):
     """The observation vector for one cell: (primitive name, value) pairs."""
     return tuple((name, fn(grid, r, c, action)) for name, fn in primitives)

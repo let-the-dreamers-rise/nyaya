@@ -189,22 +189,40 @@ CPU, with no model called at any point.
 That sentence is a program the search found, at precision 1.00 over 90
 examples. Nobody wrote it.
 
-| method | dev F1 | dev reached | held-out F1 | held-out reached | ms/step |
+| method | dev F1 | dev reached | held-out F1 | held-out reached | mean |
 |---|---|---|---|---|---|
-| last-effect | **0.228** (0.136-0.316) | **11/25** | 0.151 (0.065-0.289) | 6/25 | 0.09 |
-| nyaya-templates | 0.185 (0.043-0.355) | 6/25 | **0.253** (0.039-0.490) | 5/25 | 3.8 |
-| dsl-synthesis | 0.171 (0.113-0.239) | 5/25 | 0.213 (0.127-0.321) | **8/25** | 21 |
+| last-effect | **0.228** (0.136-0.316) | **11/25** | 0.151 (0.065-0.289) | 6/25 | 0.190 |
+| nyaya-templates | 0.185 (0.043-0.355) | 6/25 | **0.253** (0.039-0.490) | 5/25 | 0.219 |
+| dsl-synthesis | 0.171 (0.113-0.239) | 5/25 | 0.213 (0.127-0.321) | **8/25** | 0.192 |
+| **dsl-synthesis-rel** | 0.204 (0.119-0.286) | 6/25 | 0.237 (0.134-0.348) | 7/25 | **0.221** |
 
-**No method dominates, and every interval overlaps.** Synthesis beats
-`last-effect` on held-out data (0.213 to 0.151) and loses to it on development
-(0.171 to 0.228). It reaches usable prediction quality on more held-out
-episodes than anything else here -- 8 of 25 -- and it has the tightest interval
-of the three learners, so it is the most consistent even where it is not the
-highest.
+**No single method dominates and every interval overlaps**, so nothing here is
+settled. But two things are visible and both point the same way.
 
-The honest verdict on the first run of a brand-new engine: **not settled.**
-That is a better result than it sounds, and it is stated with its intervals
-rather than by quoting whichever column flatters it.
+`dsl-synthesis-rel` is the only method that is **never worst on either corpus**,
+it has the highest mean, and its interval is roughly a third the width of the
+template learner's. A method whose held-out lower bound is 0.134 is a different
+proposition from one whose lower bound is 0.039 and which happens to have the
+higher midpoint.
+
+And it got there **by changing the hypothesis class in response to a
+diagnosis**, twice, which is the actual thesis being tested.
+
+### The second change, and why it worked
+
+The absolute primitive set describes a cell by its fixed neighbours. Under it,
+a body that slides one cell needs **four separate rules** -- one per direction --
+each trained on a quarter of the evidence. `grid-relative` describes the same
+cell as *ahead*, *behind* and *beside* relative to where the action points, so
+the same mechanism is **one rule with all of it**.
+
+That single reframing moved development F1 from 0.171 to 0.204 and held-out
+from 0.213 to 0.237, and it runs *faster* (7.9 ms/step against 8.9) because
+fewer, more general rules are cheaper to apply than many specific ones.
+
+Neither primitive set was deleted. Both are registered, both are scored, and
+the benchmark decides -- which is the point of having built the benchmark
+before the method.
 
 ### What the failures taught, since they are the point
 

@@ -27,6 +27,37 @@ def test_off_board_is_an_observation_not_a_crash():
     assert observed["up"] is None
 
 
+def test_relative_primitives_describe_a_cell_by_where_the_action_points():
+    prims = syn.PRIMITIVE_SETS["grid-relative"]()
+    grid = ["abc", "def", "ghi"]
+    right = dict(syn.features(prims, grid, 1, 1, "RIGHT"))
+    down = dict(syn.features(prims, grid, 1, 1, "DOWN"))
+    assert right["self"] == down["self"] == "e"
+    assert right["ahead"] == "f" and right["behind"] == "d"
+    assert down["ahead"] == "h" and down["behind"] == "b"
+
+
+def test_the_same_mechanism_looks_identical_in_every_direction():
+    """The whole reason this primitive set exists: one rule, not four."""
+    prims = syn.PRIMITIVE_SETS["grid-relative"]()
+    moving_right = dict(syn.features(prims, ["...", ".@.", "..."], 1, 2, "RIGHT"))
+    moving_down = dict(syn.features(prims, ["...", ".@.", "..."], 2, 1, "DOWN"))
+    assert moving_right["behind"] == moving_down["behind"] == "@"
+
+
+def test_a_non_directional_action_is_flagged_rather_than_special_cased():
+    prims = syn.PRIMITIVE_SETS["grid-relative"]()
+    click = dict(syn.features(prims, ["abc"], 0, 1, ("MOUSE", 3, 4)))
+    assert click["directional"] is False
+    assert click["ahead"] == click["self"]  # zero displacement, no crash
+
+
+def test_relative_primitives_handle_the_board_edge():
+    prims = syn.PRIMITIVE_SETS["grid-relative"]()
+    edge = dict(syn.features(prims, ["ab"], 0, 0, "LEFT"))
+    assert edge["ahead"] is None
+
+
 def test_a_registered_primitive_set_is_the_only_domain_knowledge():
     @syn.register_primitives("unit-test-set")
     def _tiny():
@@ -158,9 +189,18 @@ def test_the_theory_it_learns_is_the_same_readable_artefact_as_every_other():
     assert artefact.provenance["transitions observed"] == 9
 
 
-def test_it_is_registered_in_the_benchmark_so_it_is_scored_like_everything_else():
+def test_both_hypothesis_classes_are_registered_so_the_benchmark_decides():
     from bench import methods
 
-    built = methods.build("dsl-synthesis")
-    assert built.tokens == 0
-    assert built.predict(["ab"], "UP") == ["ab"]
+    for name in ("dsl-synthesis", "dsl-synthesis-rel"):
+        built = methods.build(name)
+        assert built.tokens == 0
+        assert built.predict(["ab"], "UP") == ["ab"]
+
+
+def test_the_relative_learner_learns_a_slide_it_has_seen_in_one_direction():
+    learner = syn.SynthesisLearner(primitive_set="grid-relative", min_support=3)
+    for before, action, after in _slide(9):
+        learner.observe(before, action, after)
+    learner._fit()
+    assert learner.rules

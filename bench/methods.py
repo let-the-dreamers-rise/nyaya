@@ -159,6 +159,32 @@ class DslSynthesis:
         return {"rules": len(self.learner.rules)}
 
 
+@register("dsl-synthesis-rel")
+class DslSynthesisRelative:
+    """The same search, over neighbours described relative to the action.
+
+    A body that slides needs four rules under absolute neighbours -- one per
+    direction, each on a quarter of the evidence -- and one rule under this
+    primitive set. Registered separately so the benchmark decides which
+    hypothesis class is better rather than the author deciding.
+    """
+
+    def __init__(self):
+        from nyaya.synthesis import SynthesisLearner
+
+        self.learner = SynthesisLearner(primitive_set="grid-relative")
+        self.tokens = 0
+
+    def observe(self, before, action, after):
+        self.learner.observe(before, action, after)
+
+    def predict(self, board, action):
+        return self.learner.predict(board, action)
+
+    def summary(self):
+        return {"rules": len(self.learner.rules)}
+
+
 def build(name: str):
     if name not in REGISTRY:
         raise KeyError(f"unknown method {name!r}; known: {sorted(REGISTRY)}")
