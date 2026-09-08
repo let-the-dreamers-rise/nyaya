@@ -179,7 +179,7 @@ rather than pitch around it.
 | Truecaller | India's default caller-ID; hundreds of millions of users; AI scam hints | Ad-and-data business model -- the guardian IS the harvester; English-first; closed |
 | Google (Pixel/Android scam alerts) | On-device Gemini Nano call alerts, shipping | Locked to new Pixels; closed; one company's values baked in; long-tail languages unserved |
 | Bank/carrier fraud SMS filters | Network-side blocking at scale | Server-side by definition; no user ownership; opaque appeals |
-| EvoSkill ecosystem (Sentient's own) | The skills-from-logs idea, funded | Coding-agent domain; nobody has taken it on-device to interactive/consumer domains |
+| EvoSkill (Sentient's own, arXiv 2603.02766, Apache-2.0) | Skills from failed trajectories, for coding agents; Proposer and Generator are both LLM calls; reports zero-shot transfer across benchmarks | An LLM at every step of the loop, so the skill costs tokens to learn and the loop cannot run where there is no model. Our comparison point, on the same unseen games |
 
 Our wedge against all four is the same sentence: open, any-phone,
 adaptable to any language community from dozens of examples, and the
@@ -215,10 +215,17 @@ they are a product for everyone or a service for whoever is billed.
    own attempts, including failures, produce reusable artefacts without
    retraining) taken into online interaction. Measured as cost per level
    cleared, not levels cleared.
-3. **The delegation architecture that makes a free end exist at all** --
-   measured: ~441 tokens of reasoning per action for the stock 27B agent,
-   exhausting its ~70k budget in all 25 games, versus ~0 tokens at 1.4 ms per
-   action with physics and search carried by programs.
+3. **The delegation architecture that makes a free end exist at all**,
+   and its first honest number. A stock 27B agent spent ~441 tokens of
+   reasoning per action and exhausted its budget in all 25 games; a world
+   model costs ~0 tokens at 1.4 ms. So we measured how many actions the
+   free end can take *today* on unseen games with no error: **about two
+   percent**, and a one-line heuristic delegates more than either learner
+   (`scripts/delegation.py`, 9 September). The learners over-commit, claiming
+   59% of actions and being right on 0.7%. The curve starts there. The
+   funded work is calibrated commitment and a small local model routing
+   only what the world model has earned, with the prediction on record:
+   over 20% delegable at under $1 a game, or we report that it is not.
 
 **The substrate claim 1 needs is already built and public**, before any
 funding: `python -m bench.run` runs two 25-episode corpora under a
@@ -267,12 +274,21 @@ every claim above has a harness behind it.
   *research* is grant-shaped (no equity, open-source, public good, individual
   eligible) and the *runtime plus vertical* is the investment story. Lead with
   the research; note commercial intent rather than manufacturing a company
-  that does not exist yet. RFP mapping, reordered to match what the work now
-  is: **Part 2 #12 token and economic optimization (primary)** -- the
-  cost-capability frontier is literally this brief; Part 3 extension of
-  EvoSkill (the library that grows from an agent's own failures); Part 2 #11
-  small, fast, cheap models (thesis alignment -- we do not build models, we
-  measure how far you get without a big one).
+  that does not exist yet. RFP mapping, verified against the live list on
+  9 September: **Part Two #12, "Token and Economic Optimization for
+  Agents" (primary)** -- their words are "automatic cost routing selecting
+  appropriate models and tools," and delegation is cost routing with the
+  routing decision measured; **Part Two #11, "Make Open Models Small, Fast,
+  and Cheap: offline ownership over rental models"** -- we do not build
+  models, we measure how far you get without a big one; **Part Two #8,
+  "Your AI, Your Values: portable skills without retraining"** -- the
+  `Skill` file. Part Three #1, "Self Evolving Agent Skills (extends
+  EvoSkill)", is the closest cousin and is treated as the **baseline**, not
+  the base: their loop and ours on the same unseen games, compared. Part One
+  #2, the Scam Guardian, is where the money witness lives and it runs today
+  in Termux; it is a demonstration, not the pitch. Standing alone is
+  deliberate: the programme funds Parts One and Two on merit, and the work
+  should not bend toward someone else's loop to be legible.
 - **Users:** pre-launch; repo public this month; first users from the
   ARC-AGI-3 community where the results were produced.
 - **Round:** none committed; bootstrapped; this application anchors it.

@@ -296,7 +296,19 @@ than it was before either attempt.
 The shipped registry is the state that measured best. Nothing that regressed
 was kept, and nothing that was tried is unreported.
 
-### Why the engine is domain-agnostic on purpose
+### Delegation, measured, and the number is two percent
+
+The delegation claim says an agent can hand routine steps to a $0 world
+model. `python scripts/delegation.py` asks how many steps that is today: an
+action is *delegable* when the model committed to a prediction and the whole
+frame was right, under causal replay. Held out: `last-effect` 2.0%,
+`nyaya-templates` 0.9%, `dsl-synthesis-rel` 0.4%. The synthesiser commits on
+59% of actions and is right on 0.7% of them. So the free end can carry about
+two percent of an agent right now, the learners over-commit badly, and the
+one-line heuristic is the best delegator in the registry. Calibrated
+commitment is the work; the number is where the curve starts.
+
+## Why the engine is domain-agnostic on purpose
 
 The searcher never learns what a primitive means. It takes `(observation,
 action, observation')` and a registered primitive set; every fact about grids

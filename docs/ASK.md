@@ -192,8 +192,13 @@ and pretending otherwise would be the first broken promise.
 - A **runtime** that runs the method on CPU, MIT, dependency-free, on the
   hardware their programme exists to serve.
 - A **paper** whose results are reproducible from the released artefacts.
-- **EvoSkill extended** into online interactive learning: their own programme,
-  taken where it has not gone, with their name on the lineage.
+- **The delegation number**, measured before funding and again after: how
+  much of an agent a person can own at $0. Today it is about two percent on
+  unseen games (`scripts/delegation.py`); the tranche-one prediction is over
+  twenty at under $1 a game, or a published reason why not.
+- **EvoSkill, compared**: their skills-from-failures loop and ours on the
+  same unseen games, cost and transfer side by side. Their name in the table,
+  not on the lineage.
 
 > **M0 was delivered on 7 September 2026, before submitting.** The substrate
 > the rest of this programme depends on is public, runnable and contestable

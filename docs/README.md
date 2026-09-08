@@ -13,7 +13,6 @@ you are here rather than reading in file order.
 | **Here about Autonomys** | [AUTONOMYS.md](AUTONOMYS.md), [FORM.md](FORM.md), [DECK.md](DECK.md) | *Auto Evolve* -- the same engine, anchored on Autonomys' storage and identity stack |
 | **Just wanting to see it work** | [demo/index.html](demo/index.html) | All 47 learned beliefs; switch any off and watch the verdict change |
 | **Putting it on a phone** | [MONEY.md](MONEY.md) | The money witness: Termux steps, what it never does, and where the money comes from |
-| **Wanting the engine and the frontier context** | [ENGINE.md](ENGINE.md) | The benchmark, the verified state of ARC-AGI-3, the baselines that beat us, the MCP server, and the research roadmap |
 | **Wanting the whole thing on one page** | [index.html](index.html) | The project site: the cost–capability curve, results with intervals, the retractions, how to run it, the ask |
 
 The benchmark has its own documentation next door in

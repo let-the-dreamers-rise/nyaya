@@ -284,6 +284,46 @@ this proposal than the flattering number it replaces.
 > Nothing is settled -- every interval still overlaps. But the mechanism has
 > gone from proposed to running.
 
+**E1b -- Delegation, measured today (ran 9 September 2026; the pilot for
+C3).** The delegation architecture claims a frontier model can hand routine
+steps to a world model that costs nothing per call. Before asking anyone to
+fund that, we measured how many steps the free end can take *now*, on games
+it has never seen, under causal replay: an action is **delegable** if the
+world model committed to a prediction and the whole frame was right.
+`python scripts/delegation.py` reproduces it.
+
+| method | actions | commits | commit right | **delegable** | no-ops |
+|---|---|---|---|---|---|
+| copy-forward | 3,318 | 0% | -- | 0.0% | 6.4% |
+| last-effect | 3,318 | 22.7% | 8.6% | **2.0%** | 6.1% |
+| nyaya-templates | 3,318 | 38.1% | 2.5% | 0.9% | 5.2% |
+| dsl-synthesis-rel | 3,318 | 59.0% | 0.7% | 0.4% | 2.4% |
+
+*Held-out corpus. Development corpus: 2.0%, 1.3%, 1.3% respectively.*
+
+Three things this says, none of them flattering and all of them useful.
+**The curve starts at about two percent**, not zero and not thirty: that
+is how much of an agent's work a $0 world model can carry today with no
+error. **The learners over-commit**: synthesis claims to know the outcome
+on 59% of actions and is right on the whole frame 0.7% of the time, so an
+agent that trusted it would be wrong far more often than an agent that
+called the model. Delegation therefore needs a *calibrated* commitment,
+which no method here has, and building one is now a named work item rather
+than an assumption. And **the one-line heuristic delegates more than
+either learner**, which is the same finding as E1 seen from the routing
+side: the bottleneck is the hypothesis class, not the search.
+
+The number is also an upper bound, since it assumes the agent knew which
+commits to trust, and it is a strict one, since whole-frame exactness
+punishes autonomous movers and counters that a planner may not care about.
+The funded version measures delegation on the cells a plan depends on (the
+body, the goal, the blockers) as well as on the whole frame, and reports
+both. *Falsifiable prediction for tranche one: with a small local model
+routing only the commits the world model is calibrated on, delegable
+actions exceed 20% on held-out games at under $1 per game. If calibration
+cannot separate the 0.7% from the 59%, delegation does not work on this
+benchmark and we say so.*
+
 **E2 -- Does synthesis beat templates where templates fail?** Run enumerative
 DSL synthesis on the wall-level games specifically. Metric: changed-cell F1
 on held-out transitions of games where the template learner sits at baseline.
@@ -366,6 +406,18 @@ be contested.
   anyway.
 - **A skills library format**: learned programs with provenance, portable
   across models -- the artefact that makes behaviour ownable.
+- **The delegation measurement**, E1b, extended from whole-frame to
+  plan-relevant cells and from post-hoc to calibrated: the number that says
+  how much of an agent a person can own at $0.
+
+**Relation to EvoSkill.** Sentient's EvoSkill (arXiv 2603.02766, Apache-2.0)
+is the language-model instance of C2: a Proposer reads failed trajectories
+and a Generator writes a reusable skill, for coding agents, with an LLM at
+every step of the loop. This proposal is the same loop for interactive
+worlds with the skill synthesised as a program and no model called. The two
+are compared, not combined: the same unseen games, skills from failures
+both ways, transfer and cost both reported. If a skill emitted here happens
+to load in their folder format, that is one adapter; it is not a dependency.
 
 ## 8. Why open source is load-bearing, not a concession
 
