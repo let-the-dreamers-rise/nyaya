@@ -224,6 +224,7 @@ def _render_amount(rule, names):
 def beliefs(txns, names, min_support=4, min_precision=0.9):
     """The learned part. Two passes of the same synthesiser."""
     out = []
+    said = set()  # (party, amount band) pairs already stated by the payee pass
     for examples, render in ((examples_payee(txns), _render_payee),
                              (examples_amount(txns), _render_amount)):
         for rule in synthesis.synthesise(examples, 3, min_support, min_precision):
@@ -233,6 +234,14 @@ def beliefs(txns, names, min_support=4, min_precision=0.9):
             # alone, so the evidence shown is against everything.
             support, precision = synthesis._score(examples, rule.conditions, rule.outcome)
             if precision < min_precision or support < min_support:
+                continue
+            conds = dict(rule.conditions)
+            if render is _render_payee and set(conds) == {"self", "amount"}:
+                said.add((rule.outcome, conds["amount"]))
+            # The amount pass restates 'under Rs 100 -> chai' as 'chai is under
+            # Rs 100'. Same belief, two passes; the reader sees it once.
+            if render is _render_amount and set(conds) == {"self"} \
+                    and (conds["self"], rule.outcome) in said:
                 continue
             rule.support, rule.precision = support, precision
             out.append(render(rule, names))

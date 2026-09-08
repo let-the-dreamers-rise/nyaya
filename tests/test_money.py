@@ -155,6 +155,14 @@ def test_chai_belief_carries_all_its_evidence(demo):
     assert "Right 72 of 72 times" in chai[0]["text"]
 
 
+def test_one_habit_is_one_sentence(demo):
+    """'A payment of under Rs 100 goes to chai' and 'Chai is under Rs 100' are
+    the same belief found by two passes; a reader should see it once."""
+    _, r = demo
+    chai = [s for s in r["sentences"] if s["kind"] == "belief" and "chaiwala" in s["text"].lower()]
+    assert len(chai) == 1, [s["text"] for s in chai]
+
+
 def test_beliefs_are_scored_against_everything(demo):
     msgs, _ = demo
     txns = sources.transactions(msgs)
