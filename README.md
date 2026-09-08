@@ -135,6 +135,40 @@ or edited by the person they are protecting. Forty-six sentences can. Delete a
 line from `skill.py` and the verdict changes — `python demo_scam.py` ends by
 doing exactly that.
 
+## Your money, witnessed on the phone you already have
+
+The first stream a personal intelligence should learn you from is the one
+already on your phone: every bank and UPI message. `nyaya-money` reads them
+**on the device**, learns readable beliefs with the same synthesiser the
+benchmark uses, and serves them to the phone's own browser. No server, no
+account, no model, no network connection at all.
+
+```bash
+nyaya-money report demo        # a fictional person, 100 days, one bad afternoon
+nyaya-money serve demo         # the page, at http://127.0.0.1:8765/
+```
+
+```text
+Look at this
+  - Rs 12,000 went to kyc.update9@ybl, a first-time recipient, 9 minutes after
+    a message from +919811234567 that said 'kyc' and 'blocked'. That is the
+    shape of a scam.
+
+Counted
+  - Every month around the 2nd, Rs 18,000 to sunil.rent@okaxis. Seen 4 times.
+
+Learned
+  - A payment of under Rs 100 goes to chaiwala@ybl. Right 72 of 72 times.
+  - On Sundays, in the evening, money goes to Zomato. Right 14 of 14 times.
+```
+
+On a real Android phone it runs inside Termux and reads the inbox through
+Termux:API; on a laptop it reads an SMS Backup & Restore export. Tap a
+sentence's cross and it stays muted; tap a payee and name it. Every learned
+line is scored against every payment, not just the ones earlier rules left
+behind. [docs/MONEY.md](docs/MONEY.md) has the phone steps, what it will
+never do, and where the money comes from.
+
 ## Use it from an agent (MCP)
 
 The runtime ships an MCP server, so any agent can learn a skill and hand the
@@ -225,10 +259,13 @@ not pretend otherwise.
   sentence with the evidence that earned it.
 - `nyaya/cli.py` — `nyaya learn | eval | classify | explain`.
 - `nyaya/mcp_server.py` — the MCP server above: stdio JSON-RPC, stdlib only.
+- `nyaya/money/` — the money witness: Indian bank-SMS parser, Termux and
+  XML readers, the synthesiser pointed at a person's own payments, alerts for
+  the shape of a scam, and a loopback-only page. `nyaya-money report | serve | skill`.
 - `docs/demo/index.html` — the belief ledger: all 47 rules, switch any off,
   watch the verdict change. Same rules and same scoring as the Python.
 - `scripts/text_baselines.py` — the comparisons a reviewer would run.
-- **170 tests. MIT. Python ≥ 3.9, standard library only.**
+- **228 tests. MIT. Python ≥ 3.9, standard library only.**
 - [`docs/`](docs/README.md) — indexed by reader: what to read if you are
   checking the claims, judging the research, or deciding whether to fund it.
 
@@ -240,7 +277,7 @@ not pretend otherwise.
 | C1 | The cost-capability curve: every method with public code under one protocol, including Tycho at the expensive end | next; the substrate it needs exists |
 | C2 | Bending the curve — DSL synthesis, library growth from the agent's own failures | proposed, with falsifiable predictions and the ways it could fail, in [`docs/RESEARCH.md`](docs/RESEARCH.md) |
 | MVP | The CLI above, hardened; skills with provenance | live in this repo |
-| Vertical | On-device scam screening, India-first (live-call screening is gated by Android platform policy and is a partnership milestone, not an app-store feature) | bridge artefact measured; product not started |
+| Vertical | The money witness above: on-device, readable, nothing leaves; the scam guardian is one sentence it learns rather than the product | **runs today** in Termux or from an export; the packaged app waits on ten people keeping it installed |
 
 ## Relationship to grant programmes
 

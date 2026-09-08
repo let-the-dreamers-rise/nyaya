@@ -12,6 +12,7 @@ you are here rather than reading in file order.
 | **Wondering who wrote this** | [FOUNDERS.md](FOUNDERS.md) | Notes on the people the pitch is addressed to, and the register it is written in |
 | **Here about Autonomys** | [AUTONOMYS.md](AUTONOMYS.md), [FORM.md](FORM.md), [DECK.md](DECK.md) | *Auto Evolve* -- the same engine, anchored on Autonomys' storage and identity stack |
 | **Just wanting to see it work** | [demo/index.html](demo/index.html) | All 47 learned beliefs; switch any off and watch the verdict change |
+| **Putting it on a phone** | [MONEY.md](MONEY.md) | The money witness: Termux steps, what it never does, and where the money comes from |
 | **Wanting the whole thing on one page** | [index.html](index.html) | The project site: the cost–capability curve, results with intervals, the retractions, how to run it, the ask |
 
 The benchmark has its own documentation next door in
