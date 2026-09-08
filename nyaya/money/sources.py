@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import random
+import shutil
 import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -41,6 +42,11 @@ def _message(when, sender, body):
 
 def read_termux(limit=3000, runner=None):
     """Inbox via `termux-sms-list`. `runner` is injectable for tests."""
+    if runner is None and not shutil.which("termux-sms-list"):
+        raise FileNotFoundError(
+            "termux-sms-list is not on this device. On Android, install Termux and "
+            "Termux:API from F-Droid and run `pkg install termux-api`. On a laptop, "
+            "pass an SMS Backup & Restore .xml export, or `demo`.")
     run = runner or (lambda args: subprocess.run(
         args, capture_output=True, text=True, check=True).stdout)
     raw = run(["termux-sms-list", "-l", str(limit), "-t", "inbox"])
@@ -58,11 +64,14 @@ def _from_termux_json(raw):
 def read_xml(path):
     """SMS Backup & Restore export: <sms address= date= type= body= />."""
     out = []
-    for _, el in ElementTree.iterparse(str(path)):
-        if el.tag != "sms" or el.get("type") not in (None, "1"):
-            continue
-        out.append(_message(el.get("date"), el.get("address"), el.get("body")))
-        el.clear()
+    try:
+        for _, el in ElementTree.iterparse(str(path)):
+            if el.tag != "sms" or el.get("type") not in (None, "1"):
+                continue
+            out.append(_message(el.get("date"), el.get("address"), el.get("body")))
+            el.clear()
+    except ElementTree.ParseError as exc:
+        raise ValueError("{0} is not a readable SMS Backup & Restore export ({1})".format(path, exc))
     return sorted(out, key=lambda m: m["when"])
 
 

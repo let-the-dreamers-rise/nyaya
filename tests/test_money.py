@@ -87,6 +87,21 @@ def test_xml_backup_reads_inbox_only(tmp_path):
     assert len(msgs) == 1 and msgs[0]["sender"] == "VM-HDFCBK"
 
 
+def test_malformed_xml_is_a_value_error(tmp_path):
+    path = tmp_path / "bad.xml"
+    path.write_text('<smses><sms address="x" date="1" body="unclosed', encoding="utf-8")
+    with pytest.raises(ValueError) as err:
+        sources.read_xml(path)
+    assert "SMS Backup" in str(err.value)
+
+
+def test_termux_missing_says_what_to_do(monkeypatch):
+    monkeypatch.setattr(sources.shutil, "which", lambda name: None)
+    with pytest.raises(FileNotFoundError) as err:
+        sources.read_termux()
+    assert "F-Droid" in str(err.value)
+
+
 def test_termux_reader_uses_the_injected_runner():
     raw = json.dumps([{"threadid": 1, "type": "inbox", "read": True, "number": "VM-HDFCBK",
                        "received": "2026-09-07 08:05:11", "body": "hello"}])

@@ -1,5 +1,24 @@
 # Nyaya
 
+**Intelligence you own.** A personal intelligence that lives on the phone you
+already have, learns readable beliefs from your own life, runs with no model
+and no network, and is a file nobody can revoke. The first stream it learns
+you from is your money: every bank and UPI message already on the phone.
+
+```bash
+pip install git+https://github.com/let-the-dreamers-rise/nyaya && nyaya-money serve
+```
+
+> Rs 12,000 went to kyc.update9@ybl, a first-time recipient, 9 minutes after a
+> message that said 'kyc' and 'blocked'. That is the shape of a scam.
+
+That sentence, and the [thirty like it](#your-money-witnessed-on-the-phone-you-already-have),
+were found on-device by the same program synthesiser that this repository
+benchmarks against the frontier below. The product and the research are one
+engine.
+
+---
+
 **ARC-AGI-3 was solved this year for about $119 a game. This is the
 measurement of what happens when you spend less.**
 

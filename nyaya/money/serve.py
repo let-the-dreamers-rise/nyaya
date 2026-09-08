@@ -162,7 +162,7 @@ function row(s,mutable){const ev=s.evidence||{};let e='';if('fired on' in ev)e=e
 return '<div class="row '+(s.kind==='alert'?'alert':'')+'"><div class="t">'+esc(s.text)+'</div>'+(e?'<div class="ev">'+e+'</div>':'')+(mutable?'<button title="Mute this" aria-label="Mute" onclick="mute(\''+s.id+'\')">&times;</button>':'')+'</div>';}
 function fill(id,list,mutable,empty){const el=document.getElementById(id);el.innerHTML=list.length?list.map(s=>row(s,mutable)).join(''):'<p class="empty">'+empty+'</p>';}
 async function load(){const r=await fetch('/api/witness');data=await r.json();
-document.getElementById('span').textContent=data.count?data.count+' transactions, '+data.span:'No bank messages found yet.';
+document.getElementById('span').textContent=data.count?data.count+' transactions, '+data.span:'No bank messages found yet. In Termux, allow the SMS permission and run nyaya-money serve again; on a laptop, pass an SMS Backup & Restore export.';
 const S=data.sentences||[];fill('alerts',S.filter(s=>s.kind==='alert'),true,'');
 fill('facts',S.filter(s=>s.kind==='fact'&&!s.text.startsWith('Every month')),false,'Nothing in the last 30 days.');
 fill('recurring',S.filter(s=>s.kind==='fact'&&s.text.startsWith('Every month')),false,'No monthly pattern yet.');
