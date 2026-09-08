@@ -45,16 +45,14 @@ That is what a demo is; the app comes after ten people keep this installed.
 
 1. Install **Termux** and **Termux:API** from F-Droid (the Play Store builds
    are stale). Open Termux.
-2. Give Termux the SMS permission when asked, then:
+2. Paste one line. It installs Python, asks Android for SMS permission,
+   installs nyaya, and adds a `money` command. Forty lines; read it first.
 
     ```
-    pkg install python termux-api git
-    git clone https://github.com/let-the-dreamers-rise/nyaya
-    pip install ./nyaya
-    nyaya-money serve
+    curl -sL https://raw.githubusercontent.com/let-the-dreamers-rise/nyaya/main/install-termux.sh | bash
     ```
 
-3. Open **http://127.0.0.1:8765/** in the phone's browser.
+3. Type `money`, then open **http://127.0.0.1:8765/** in the phone's browser.
 
 It reads the inbox once at start. Run `nyaya-money report` in the terminal
 for the same sentences as text.

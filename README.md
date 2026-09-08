@@ -1,171 +1,15 @@
 # Nyaya
 
-**Intelligence you own.** A personal intelligence that lives on the phone you
-already have, learns readable beliefs from your own life, runs with no model
-and no network, and is a file nobody can revoke. The first stream it learns
-you from is your money: every bank and UPI message already on the phone.
+**A personal banker in your pocket that is a file, not a service.**
 
-```bash
-pip install git+https://github.com/let-the-dreamers-rise/nyaya && nyaya-money serve
-```
-
-> Rs 12,000 went to kyc.update9@ybl, a first-time recipient, 9 minutes after a
-> message that said 'kyc' and 'blocked'. That is the shape of a scam.
-
-That sentence, and the [thirty like it](#your-money-witnessed-on-the-phone-you-already-have),
-were found on-device by the same program synthesiser that this repository
-benchmarks against the frontier below. The product and the research are one
-engine.
-
----
-
-**ARC-AGI-3 was solved this year for about $119 a game. This is the
-measurement of what happens when you spend less.**
-
-*(nyaya — NYAH-yuh — the Indian school of logic; literally "method, rule". Not
+*(nyaya, NYAH-yuh: the Indian school of logic; literally "method, rule". Not
 affiliated with Nyaaya, the Indian legal-information nonprofit.)*
 
-**The whole thing on one page:** [the project site](https://claude.ai/code/artifact/aaf9ecdc-f203-487a-b542-ac370294df33)
-— the curve nobody has drawn, the results with intervals, four published
-retractions, and the ask. Also served from [`docs/index.html`](docs/index.html).
-
-In July 2026 two systems put frontier language models inside a world model's
-learning loop and largely closed ARC-AGI-3: Tycho reaches 100.00 RHAE on the
-public set, OPINE-World solves 20 of 25 games. In the same papers, program
-synthesis without a model in the loop clears **zero levels**.
-
-So capability is no longer the open question. **Price is.** Tycho's authors
-list the exclusion of inference cost from their metric as a limitation;
-OPINE-World reports no cost at all. Nobody has drawn the curve of quality
-against spend — which is exactly the curve that decides whether any of this
-runs on a phone, offline, for someone nobody is billing.
-
-This repository is the cheap end of that curve, instrumented: a dependency-free
-Python runtime that learns environment rules — or the shape of a scam — from a
-handful of examples, on CPU, in seconds, for **zero tokens**, and stores what
-it learned as *a page of Python you can read, edit and own*.
-
-A behaviour you cannot read is a behaviour you cannot trust. A skill that is a
-file on your own device is a skill nobody can revoke.
-
----
-
-## Sixty seconds
-
-```bash
-git clone https://github.com/let-the-dreamers-rise/nyaya && cd nyaya
-python -m bench.run --corpus bench/corpus-heldout
-```
-
-```text
-corpus: 25 episodes, 3318 transitions
-protocol: predict before learning; threshold F1 >= 0.5
-
-method                 exact      F1          95% CI   tokens  ms/step  reached
---------------------------------------------------------------------------------
-copy-forward             6%   0.000     0.000-0.000        0     0.00     0/25
-last-effect              8%   0.151     0.065-0.289        0     0.07     6/25
-memorise                 8%   0.024     0.009-0.038        0     0.01     0/25
-nyaya-templates          6%   0.253     0.039-0.490        0     3.06     5/25
-```
-
-No GPU, no network, no API key, no pip install. Two things in that table matter
-more than our own row:
-
-**`memorise` scores 0.024.** It is a lookup table, so its score is the share of
-this corpus that is repetition. Almost none of it is. The benchmark is
-measuring generalisation, and now that is a measured fact rather than a hope.
-
-**`last-effect` is a one-line heuristic** — *replay whatever this action did
-last time* — and our world-model learner **has not been shown to beat it.** The
-intervals overlap here, and on the development corpus the heuristic wins
-outright (0.228 to 0.185, reaching threshold on 11 of 25 episodes against our
-6) at a fortieth of the cost per step.
-
-That is an unflattering result about our own method, discovered by our own
-benchmark, and it is the best argument for the benchmark that exists. See
-[`bench/README.md`](bench/README.md).
-
-The corpus, the protocol and the rules that keep the scoreboard honest are in
-[`bench/README.md`](bench/README.md). Adding a method takes ten lines.
-
-## The state of the field, verified
-
-| System | Model in the loop | Result | Cost/game | Code |
-|---|---|---|---|---|
-| Tycho | Opus 5 | **100.00 RHAE**, 183/183 levels | ~$119 | Apache-2.0 |
-| Tycho | GPT-5.6 Sol | **100.00 RHAE**, 183/183 levels | ~$179 | Apache-2.0 |
-| OPINE-World | Opus 4.8 | 20/25 games, 160/183 levels | not reported | none |
-| WorldCoder *(as run by OPINE-World)* | — | **0 levels** | — | public |
-| **nyaya** | **none** | 2–4 early levels; F1 0.253 (CI 0.039–0.490) | **$0** | MIT |
-
-Caveats that matter and are easy to lose: the 100% runs are on the **public**
-set and are **warm**. The semi-private leaderboard sat at 62.7% for the best
-model in the world on 4 September 2026. Generalisation is not solved.
-
-Full citations, the three caveats in detail, and the claims this evidence
-forced us to **retract from our own earlier drafts**, are in
-[`docs/LANDSCAPE.md`](docs/LANDSCAPE.md).
-
-## The same idea, small enough to run on a phone
-
-The runtime learns readable rules from labelled text as well as from
-interaction. This is the demonstration that the zero-dollar end of the curve
-reaches real hardware — not a second product.
-
-```bash
-python -m nyaya learn data/sms.tsv -o skill.py
-python -m nyaya explain skill.py "Congratulations! You won a prize, text WIN to 87121 to claim"
-```
-
-```text
-verdict: FLAG (score 5, threshold 1)
-  +3  contains an SMS shortcode to text        (accuses)
-  +1  claims the reader won a prize or lottery (accuses)
-  +1  contains the word 'claim'                (accuses)
-```
-
-### And here is the baseline that beats it
-
-```bash
-python scripts/text_baselines.py data/sms.tsv
-```
-
-```text
-UCI SMS, 4459 train / 1115 held out, seed 7
-
-method                       precision   recall     F1  accuracy   fit s  readable
-----------------------------------------------------------------------------------
-nyaya readable rules           100.0%    77.8%  0.875     96.8%    1.85  46 rules
-naive-bayes (bag of words)      98.7%    94.4%  0.965     99.0%    0.06  7930 weights
-hand-written keyword list       63.4%    71.6%  0.672     89.9%    0.00  14 rules
-majority class                   0.0%     0.0%  0.000     85.5%    0.00  1 constant
-```
-
-**Naive Bayes wins on F1 by 0.09 and trains thirty times faster.** We publish
-that because you would have run it in five minutes and because it is the
-actual result: on this dataset, *readability costs about nine points of F1 and
-sixteen points of recall.* That price is the interesting number, it was never
-published before, and closing that recall gap while keeping the rules readable
-is a stated research question rather than a claim already won.
-
-What 7,930 naive-Bayes weights cannot do is be opened, understood, argued with
-or edited by the person they are protecting. Forty-six sentences can. Delete a
-line from `skill.py` and the verdict changes — `python demo_scam.py` ends by
-doing exactly that.
-
-## Your money, witnessed on the phone you already have
-
-The first stream a personal intelligence should learn you from is the one
-already on your phone: every bank and UPI message. `nyaya-money` reads them
-**on the device**, learns readable beliefs with the same synthesiser the
-benchmark uses, and serves them to the phone's own browser. No server, no
-account, no model, no network connection at all.
-
-```bash
-nyaya-money report demo        # a fictional person, 100 days, one bad afternoon
-nyaya-money serve demo         # the page, at http://127.0.0.1:8765/
-```
+Every bank and UPI message on an Indian phone is a record of something that
+mattered. Nyaya reads those messages **on the phone**, learns readable
+beliefs about your money, and shows them to you as sentences you can mute,
+rename and correct. No server, no account, no model, no network connection.
+The beliefs are a file. If we disappear, the file keeps working.
 
 ```text
 Look at this
@@ -174,6 +18,8 @@ Look at this
     shape of a scam.
 
 Counted
+  - In the last 30 days Rs 68,123 left and Rs 63,200 came in. Spending is +10%
+    against the 30 days before.
   - Every month around the 2nd, Rs 18,000 to sunil.rent@okaxis. Seen 4 times.
 
 Learned
@@ -181,148 +27,115 @@ Learned
   - On Sundays, in the evening, money goes to Zomato. Right 14 of 14 times.
 ```
 
-On a real Android phone it runs inside Termux and reads the inbox through
-Termux:API; on a laptop it reads an SMS Backup & Restore export. Tap a
-sentence's cross and it stays muted; tap a payee and name it. Every learned
-line is scored against every payment, not just the ones earlier rules left
-behind. [docs/MONEY.md](docs/MONEY.md) has the phone steps, what it will
-never do, and where the money comes from.
+Three kinds of sentence, labelled so you know which is which. *Counted* is
+arithmetic. *Learned* was found by a program synthesiser searching your own
+payments, and every learned line carries how often it fired and how often it
+was right, scored against every payment. *Look at this* is a shape worth a
+second look: money to someone new, minutes after a stranger's message that
+said KYC.
 
-## Use it from an agent (MCP)
+## Put it on a phone
 
-The runtime ships an MCP server, so any agent can learn a skill and hand the
-file to its user. Standard library only — a runtime that claims to need no
-dependencies should not acquire one just to be reachable.
+Android, inside Termux. Install **Termux** and **Termux:API** from F-Droid
+(the Play Store builds are stale), open Termux, paste one line:
 
 ```bash
-claude mcp add nyaya -- python -m nyaya.mcp_server
+curl -sL https://raw.githubusercontent.com/let-the-dreamers-rise/nyaya/main/install-termux.sh | bash
 ```
 
-Three tools: `learn_skill` (labelled examples in, a page of readable Python
-out, with held-out metrics), `screen_message` (a verdict plus every rule that
-fired and why), and `list_beliefs` (audit a filter before trusting it — it
-will show you the corpus's biases as plain sentences).
+Allow SMS when Android asks. Type `money`. Open **http://127.0.0.1:8765/** in
+the phone's browser. The script is 40 lines and does nothing it does not say;
+read it first.
 
-```text
-FLAG (evidence 5, threshold 1)
+**On a laptop**, from an SMS Backup & Restore export:
 
-   +3  contains an SMS shortcode to text
-   +1  claims the reader won a prize or lottery
-   +1  contains the word 'claim'
-
-Every line above is a reason, not a score. If one of them is wrong, it is
-one line to delete.
+```bash
+pip install git+https://github.com/let-the-dreamers-rise/nyaya
+nyaya-money serve sms-20260908.xml
 ```
 
-Nothing is uploaded and no model is called: the learning happens on the CPU of
-whoever ran the server.
+**With nobody's data at all:**
 
-## Who this is for, specifically
+```bash
+nyaya-money serve demo
+```
 
-Not "everyone". Today there is exactly one user this repository serves well,
-and they are nameable:
+The demo person is Meera: salaried, Bangalore, two accounts, one bad
+afternoon in late August. Nothing in it is real. `nyaya-money report` prints
+the same sentences as text; `nyaya-money skill -o mine.py` writes them as
+Python you can open, edit and delete lines from.
 
-**A researcher or engineer comparing world-model methods.** They have a method
-and no way to place it against anyone else's, because every paper in this
-literature evaluates on its own setup with its own protocol and no shared
-denominator. `bench/` gives them a fixed versioned corpus, a causal-replay
-protocol, a null baseline that scores 0.000 by construction, and a cost column
-nobody else reports. Adding their method takes ten lines.
+## What it will never do
 
-That user is findable by name: the authors of Tycho, OPINE-World, PoE-World and
-the executable-world-model line; ARC Prize 2026 Paper Track entrants; anyone
-building agents that must run without an API bill. The substrate's own rules
-require sending each author their result and the command that produced it
-before publishing, so the first outreach list *is* the user list.
+- **Open a network connection.** The page loads no font, script or image from
+  anywhere. A test asserts no external URL exists in it and that the server
+  binds 127.0.0.1 only. Check it with `netstat` while it runs.
+- **Read a message from a phone number as a transaction.** A bank-shaped
+  message from a person's number is what phishing looks like. It is dropped
+  before it can enter the ledger.
+- **Sell the ledger, refer a loan off it, or meter the sentences.** That is
+  the incumbents' model and it is why people distrust them.
 
-**The loop:** add a method, run the protocol, compare, publish, argue. Every
-method added makes the comparison more valuable to the next person, which is
-the only compounding asset here — a benchmark accrues, a runtime does not.
+## Who it is for
 
-**Everyone else is downstream and honest about it.** The person receiving a
-scam SMS is who the mission is for; they are served by a product that does not
-exist yet, gated partly behind Android platform policy, and this README will
-not pretend otherwise.
+The son or daughter in Bangalore whose mother is in Ghaziabad, who reads
+about digital-arrest scams and cannot be there. They install it, read it, and
+rename the payees. The parent never opens settings. Digital-arrest scams took
+Rs 3,012 crore across 241,537 cases in India between 2022 and 2025; the phone
+in the victim's hand is enough hardware to catch the shape of one.
 
-## How it works, in three sentences
+## Where the money comes from
 
-1. **Watch** — every interaction, or every labelled example, is folded into a
-   factored symbolic theory (what moves, what blocks, what depletes; which
-   patterns accuse and which vouch) by voting, with held-out verification
-   before anything is believed.
-2. **Compile** — what survives verification is emitted as small readable
-   programs: inspectable, editable, portable across models, zero inference cost
-   to re-run.
-3. **Delegate** — a language model, where present at all, proposes goals and
-   reads anomalies; it never does the routine thinking. That is why actions
-   cost milliseconds instead of tokens.
+Free on your own phone, forever. **Rs 499, once,** for the family version:
+the same file on your parents' phones, with the alerts delivered to yours.
+Never monthly, never ads, never your data. A subscription is a revocation
+with a due date, and revocation is the thing this sells against. Later,
+belief files that have learned a language's bank templates or a district's
+scam patterns are worth copying, and a place to share and pay for them is
+the second business. [docs/MONEY.md](docs/MONEY.md) has the reasoning and
+the Google Play policy that makes this shape the compliant one.
 
-## What is in the box
+## How it works
 
-- [`bench/`](bench/README.md) — the substrate: 50 episodes across two corpora,
-  causal-replay protocol, method registry, **cost reported next to quality**.
-- `nyaya/world_model.py` — the theory learner for interactive environments:
-  body, movement, blocking with an exoneration rule, click effects, autonomous
-  movers, decay. Zero imports, injectable into restricted sandboxes as source.
-- `nyaya/executor.py` — policies an agent names instead of moves
-  (`learn_controls`, `auto_route`, `auto_solve`): one call runs hundreds of
-  verified environment actions.
-- `nyaya/skill.py` — **the shared artefact both learners return.** A `Skill` is
-  beliefs plus provenance: each belief a human sentence carrying its evidence,
-  the whole thing renderable as editable Python and portable as JSON. Learned
-  physics ("UP moves it by -1 rows and 0 columns") and a learned scam filter
-  ("asks for a fee to claim a prize, +3") are the same type, which is what
-  makes the first line of this README a fact about the code rather than a
-  metaphor.
-- `nyaya/sms_rules.py` — rule induction from labelled text; every rule a human
-  sentence with the evidence that earned it.
-- `nyaya/cli.py` — `nyaya learn | eval | classify | explain`.
-- `nyaya/mcp_server.py` — the MCP server above: stdio JSON-RPC, stdlib only.
-- `nyaya/money/` — the money witness: Indian bank-SMS parser, Termux and
-  XML readers, the synthesiser pointed at a person's own payments, alerts for
-  the shape of a scam, and a loopback-only page. `nyaya-money report | serve | skill`.
-- `docs/demo/index.html` — the belief ledger: all 47 rules, switch any off,
-  watch the verdict change. Same rules and same scoring as the Python.
-- `scripts/text_baselines.py` — the comparisons a reviewer would run.
-- **228 tests. MIT. Python ≥ 3.9, standard library only.**
-- [`docs/`](docs/README.md) — indexed by reader: what to read if you are
-  checking the claims, judging the research, or deciding whether to fund it.
+1. **Parse.** Bank and UPI messages become a ledger: amount, direction,
+   payee, channel. Two dozen small extractors rather than one regex per bank.
+2. **Search.** A program synthesiser looks for rules over the ledger: *when
+   weekday is Sunday and time is evening, money goes to Zomato*. Every rule is
+   a conjunction a person can read, and it ships with its evidence.
+3. **Serve.** A 180-line loopback server hands the sentences to the phone's
+   own browser. Mutes and names persist to a local file.
 
-## Roadmap (statuses are honest)
+The synthesiser is the same one this repository benchmarks against the
+frontier on ARC-AGI-3. That story, the cost-capability curve nobody has
+drawn, the baselines that beat us and the claims we retracted, is in
+[docs/ENGINE.md](docs/ENGINE.md). It is why the learning costs milliseconds
+of CPU instead of a frontier call, and why it fits in a 4 GB phone that
+cannot run a language model at all.
+
+## Roadmap
 
 | Stage | What | Status |
 |---|---|---|
-| C0 | Shared evaluation substrate: two corpora, causal-replay protocol, cost as a scored column | **shipped** — [`bench/`](bench/README.md), run it now |
-| C1 | The cost-capability curve: every method with public code under one protocol, including Tycho at the expensive end | next; the substrate it needs exists |
-| C2 | Bending the curve — DSL synthesis, library growth from the agent's own failures | proposed, with falsifiable predictions and the ways it could fail, in [`docs/RESEARCH.md`](docs/RESEARCH.md) |
-| MVP | The CLI above, hardened; skills with provenance | live in this repo |
-| Vertical | The money witness above: on-device, readable, nothing leaves; the scam guardian is one sentence it learns rather than the product | **runs today** in Termux or from an export; the packaged app waits on ten people keeping it installed |
-
-## Relationship to grant programmes
-
-This repo is the core runtime behind two independent funding applications, and
-both reviewers deserve to see that plainly rather than discover it:
-
-- **Sentient Foundation (Open Source AGI programme)** — the cost-capability
-  frontier, and skills as the loyal behaviour layer above the weights. Spine:
-  [`docs/RESEARCH.md`](docs/RESEARCH.md); ask: [`docs/ASK.md`](docs/ASK.md).
-- **Autonomys (Subspace Foundation grants)** — *Auto Evolve*, a proposed
-  integration anchoring skills, their evidence and their lineage on Autonomys'
-  permanent storage and identity stack. Nyaya is the engine; Auto Evolve is that
-  engine plus their chain. Research: [`docs/AUTONOMYS.md`](docs/AUTONOMYS.md).
-
-Same engine, two completions. Neither application claims work the other did.
+| 0 | Ten phones, by hand. Day-8 keeps. | **now**, September 2026 |
+| 1 | An APK under Play's SMS-based money management exception. Bank templates as readable parse rules people can contribute. Hindi, Tamil, Bengali, Marathi sentences. | next |
+| 2 | Export a belief file; import someone else's. The first scam-shape rule forwarded between two strangers. | after ten phones |
+| 3 | The second stream: who you message and when it stopped. Beliefs across streams. | 2027 |
+| 4 | The engine learns a new stream with no new code. Measured on the benchmark, attempted twice, failed twice so far. | research, ongoing |
 
 ## Status, for anyone deciding whether to bet on this
 
-Solo founder, India. Pre-users; public since 31 August 2026. Everything above
-regenerates from a command in this repo. When the evidence went against us — as
-it did in September 2026, when a novelty check refuted the headline claim of
-our own draft — the retraction was written down and published rather than
-edited out. See [`docs/LANDSCAPE.md`](docs/LANDSCAPE.md).
+Solo founder, India. Public since 31 August 2026; the money product since
+8 September. Pre-revenue. Every number above regenerates from a command in
+this repo, and when the evidence has gone against us we have published it:
+naive Bayes beats our readable rules by nine points of F1, a one-line
+heuristic beats our world-model learner, and two of our earlier claims were
+retracted in writing. That record is in the commit log and it is the reason
+to trust the rest.
+
+**231 tests. MIT. Python 3.9 or later, standard library only.**
+[`docs/`](docs/README.md) is indexed by reader.
 
 ## Licence
 
-MIT, corpus included. The ARC-AGI-3 logs were produced with the TAAF/Duck
-harness (Apache-2.0, Tufa Labs) driving a Qwen model; this runtime contains
-none of that code and runs anywhere Python runs.
+MIT, corpus included. The ARC-AGI-3 logs in `bench/` were produced with the
+TAAF/Duck harness; see [docs/LANDSCAPE.md](docs/LANDSCAPE.md) for provenance.
