@@ -222,10 +222,12 @@ they are a product for everyone or a service for whoever is billed.
    free end can take *today* on unseen games with no error: **about two
    percent**, and a one-line heuristic delegates more than either learner
    (`scripts/delegation.py`, 9 September). The learners over-commit, claiming
-   59% of actions and being right on 0.7%. The curve starts there. The
-   funded work is calibrated commitment and a small local model routing
-   only what the world model has earned, with the prediction on record:
-   over 20% delegable at under $1 a game, or we report that it is not.
+   59% of actions and being right on 0.7%, and gating them on per-rule
+   evidence does not help; requiring the whole effect to have repeated lifts
+   commit precision to 51% at 1% coverage. Delegation is a completeness
+   problem, and that is the funded work, with the prediction on record:
+   over 20% delegable at under $1 a game with precision above 50%, or we
+   report that it is not.
 
 **The substrate claim 1 needs is already built and public**, before any
 funding: `python -m bench.run` runs two 25-episode corpora under a

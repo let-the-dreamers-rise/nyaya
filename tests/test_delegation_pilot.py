@@ -63,6 +63,32 @@ def test_silent_gets_only_the_noop():
     assert counts["commits"] == 0 and counts["noops"] == 1 and counts["delegable"] == 0
 
 
+def test_stable_effect_waits_for_two_identical_effects():
+    m = delegation.StableEffect(k=2)
+    a, b = ["..", ".."], ["a.", ".."]
+    assert m.predict(a, "UP") == a            # never seen
+    m.observe(a, "UP", b)
+    assert m.predict(a, "UP") == a            # seen once, still silent
+    m.observe(a, "UP", b)
+    assert m.predict(a, "UP") == b            # same effect twice, commits
+    m.observe(a, "UP", [".a", ".."])          # a different effect breaks the streak
+    assert m.predict(a, "UP") == a
+
+
+def test_calibrated_synthesis_restores_its_rules_after_predicting():
+    m = delegation.CalibratedSynthesis(min_support=1000)
+    for _ in range(12):
+        m.observe(["a..", "..."], "RIGHT", [".a.", "..."])
+    before = list(m.learner.rules)
+    m.predict(["a..", "..."], "RIGHT")
+    assert m.learner.rules == before
+
+
+def test_build_knows_the_calibrated_names():
+    assert isinstance(delegation.build("last-effect-stable"), delegation.StableEffect)
+    assert delegation.build("dsl-cal-16").min_support == 16
+
+
 def test_table_renders_percentages():
     text = delegation.table({"m": {"n": 4, "commits": 2, "exact": 1, "delegable": 1, "noops": 0, "perfect_f1": 1}}, "t")
     assert "50.0%" in text and "25.0%" in text and "delegable" in text

@@ -313,16 +313,39 @@ than an assumption. And **the one-line heuristic delegates more than
 either learner**, which is the same finding as E1 seen from the routing
 side: the bottleneck is the hypothesis class, not the search.
 
+**And a first calibration, run the same day** (`--calibrated`). Two ways
+to make a method commit only on earned evidence, on the held-out corpus:
+
+| variant | commits | commit right | delegable |
+|---|---|---|---|
+| last-effect (as above) | 22.7% | 8.6% | 2.0% |
+| last-effect-stable: commit only if the action did the same thing the last two times | 1.1% | **51.4%** | 0.6% |
+| dsl-synthesis-rel (as above) | 59.0% | 0.7% | 0.4% |
+| dsl-cal-8: commit only on rules with support >= 8 and precision >= 0.98 | 38.9% | 0.7% | 0.3% |
+| dsl-cal-32 | 24.2% | 0.1% | 0.0% |
+| dsl-cal-64 | 16.8% | 0.0% | 0.0% |
+
+The split is the finding. **Gating on per-rule evidence does not calibrate
+at all**: the rules are mostly right about the cells they touch, and the
+frame is wrong anyway because of cells no rule covers. Whole-frame
+delegation is a *completeness* problem, not a precision problem, so the
+commit criterion has to be about whether the method's account of the
+action is complete. The one variant that checks exactly that, consistency
+of the whole effect across repetitions, multiplies commit precision by six
+and divides coverage by twenty. That trade-off is the curve C3 has to
+climb, and now it has two measured points on it.
+
 The number is also an upper bound, since it assumes the agent knew which
 commits to trust, and it is a strict one, since whole-frame exactness
 punishes autonomous movers and counters that a planner may not care about.
 The funded version measures delegation on the cells a plan depends on (the
 body, the goal, the blockers) as well as on the whole frame, and reports
-both. *Falsifiable prediction for tranche one: with a small local model
-routing only the commits the world model is calibrated on, delegable
-actions exceed 20% on held-out games at under $1 per game. If calibration
-cannot separate the 0.7% from the 59%, delegation does not work on this
-benchmark and we say so.*
+both. *Falsifiable prediction for tranche one: with completeness-based
+commitment (the whole effect explained, not the rule confident) and a small
+local model routing the rest, delegable actions exceed 20% on held-out games
+at under $1 per game while commit precision stays above 50%. If no
+completeness criterion beats the two-repeat heuristic's 51% at more than
+its 1% coverage, delegation does not work on this benchmark and we say so.*
 
 **E2 -- Does synthesis beat templates where templates fail?** Run enumerative
 DSL synthesis on the wall-level games specifically. Metric: changed-cell F1

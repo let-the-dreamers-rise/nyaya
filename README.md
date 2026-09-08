@@ -71,15 +71,20 @@ method                actions  commits  commit ok  delegable  no-ops
 last-effect              3318    22.7%       8.6%       2.0%    6.1%
 nyaya-templates          3318    38.1%       2.5%       0.9%    5.2%
 dsl-synthesis-rel        3318    59.0%       0.7%       0.4%    2.4%
+last-effect-stable       3318     1.1%      51.4%       0.6%    6.4%
+dsl-cal-32               3318    24.2%       0.1%       0.0%    4.6%
 ```
 
 An action is *delegable* when the model committed to a prediction and the
 whole frame was right. The learners over-commit: synthesis claims 59% of
 actions and is right on 0.7%. The one-line heuristic is the best delegator
-in the registry. The curve starts at two percent, and the work is calibrated
-commitment. The prediction on record, in
-[docs/RESEARCH.md](docs/RESEARCH.md): over 20% delegable at under $1 a game,
-or a published reason why not.
+in the registry, and the only calibration that works is the one that checks
+the *whole effect* was consistent (51% right, at 1% coverage); gating
+synthesis on per-rule evidence does nothing, because the frame is wrong on
+cells no rule covers. Delegation is a completeness problem. The curve starts
+at two percent, and the prediction on record in
+[docs/RESEARCH.md](docs/RESEARCH.md) is over 20% delegable at under $1 a
+game with precision above 50%, or a published reason why not.
 
 ## The state of the field, verified
 
@@ -167,7 +172,7 @@ nothing uploaded, no model called.
 - `nyaya/mcp_server.py`, `nyaya/sms_rules.py`, `nyaya/cli.py`.
 - `scripts/delegation.py`, `scripts/text_baselines.py`: the two comparisons a
   reviewer would run.
-- **235 tests. MIT. Python 3.9 or later, standard library only.**
+- **238 tests. MIT. Python 3.9 or later, standard library only.**
 - [`docs/`](docs/README.md), indexed by reader.
 
 ## Roadmap (statuses are honest)

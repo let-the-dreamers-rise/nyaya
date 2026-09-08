@@ -305,8 +305,14 @@ frame was right, under causal replay. Held out: `last-effect` 2.0%,
 `nyaya-templates` 0.9%, `dsl-synthesis-rel` 0.4%. The synthesiser commits on
 59% of actions and is right on 0.7% of them. So the free end can carry about
 two percent of an agent right now, the learners over-commit badly, and the
-one-line heuristic is the best delegator in the registry. Calibrated
-commitment is the work; the number is where the curve starts.
+one-line heuristic is the best delegator in the registry.
+
+`--calibrated` adds the first attempt at commitment on earned evidence.
+Gating synthesis on rule support and precision does nothing (0.7% right at
+support 8, 0.0% at 64), because the frame is wrong on cells no rule covers.
+Requiring `last-effect` to have seen the same whole effect twice lifts its
+commit precision from 8.6% to 51.4% at 1.1% coverage. Delegation is a
+completeness problem, and that is where the curve starts.
 
 ## Why the engine is domain-agnostic on purpose
 

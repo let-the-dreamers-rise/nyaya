@@ -34,6 +34,66 @@ from bench import methods  # noqa: E402
 from bench.replay import f1_of, score_step  # noqa: E402
 
 DEFAULT_METHODS = ("copy-forward", "last-effect", "nyaya-templates", "dsl-synthesis-rel")
+CALIBRATED = ("last-effect-stable", "dsl-cal-8", "dsl-cal-32", "dsl-cal-64")
+
+
+class StableEffect:
+    """last-effect, but it only commits when an action has done the same
+    thing the last `k` times. The cheapest possible calibration."""
+
+    def __init__(self, k=2):
+        self.inner = methods.build("last-effect")
+        self.history: dict = {}
+        self.k = k
+
+    def predict(self, board, action):
+        past = self.history.get(repr(action), [])
+        if len(past) >= self.k and all(p == past[-1] for p in past[-self.k:]):
+            return self.inner.predict(board, action)
+        return list(board)
+
+    def observe(self, before, action, after):
+        self.inner.observe(before, action, after)
+        key = repr(action)
+        self.history.setdefault(key, []).append(repr(self.inner.effect.get(key)))
+
+
+class CalibratedSynthesis:
+    """dsl-synthesis-rel, committing only on rules with enough evidence.
+
+    The rules carry support and precision already; this just refuses to act
+    on the thin ones. Whether that trades commits for correctness is exactly
+    the question.
+    """
+
+    def __init__(self, min_support, min_precision=0.98):
+        from nyaya.synthesis import SynthesisLearner
+
+        self.learner = SynthesisLearner(primitive_set="grid-relative")
+        self.min_support = min_support
+        self.min_precision = min_precision
+
+    def predict(self, board, action):
+        full = self.learner.rules
+        self.learner.rules = [r for r in full
+                              if r.support >= self.min_support and r.precision >= self.min_precision]
+        self.learner._index()
+        try:
+            return self.learner.predict(board, action)
+        finally:
+            self.learner.rules = full
+            self.learner._index()
+
+    def observe(self, before, action, after):
+        self.learner.observe(before, action, after)
+
+
+def build(name):
+    if name == "last-effect-stable":
+        return StableEffect()
+    if name.startswith("dsl-cal-"):
+        return CalibratedSynthesis(min_support=int(name.rsplit("-", 1)[1]))
+    return methods.build(name)
 
 
 def measure(method, chain):
@@ -60,7 +120,7 @@ def run(corpus_path, names):
     for name in names:
         total = {"n": 0, "commits": 0, "exact": 0, "delegable": 0, "noops": 0, "perfect_f1": 0}
         for chain in episodes.values():
-            counts = measure(methods.build(name), chain)
+            counts = measure(build(name), chain)
             for key in total:
                 total[key] += counts[key]
         out[name] = total
@@ -89,7 +149,11 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--corpus", default=None, help="episode directory (default: bench/corpus)")
     parser.add_argument("--methods", nargs="*", default=list(DEFAULT_METHODS))
+    parser.add_argument("--calibrated", action="store_true",
+                        help="add the variants that only commit on earned evidence")
     args = parser.parse_args(argv)
+    if args.calibrated:
+        args.methods = list(args.methods) + list(CALIBRATED)
     path = Path(args.corpus) if args.corpus else corpus_mod.CORPUS
     results = run(path, args.methods)
     print(table(results, f"corpus: {path.name}"))
