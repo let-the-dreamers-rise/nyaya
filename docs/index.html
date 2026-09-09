@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="The cost-capability curve for programmatic world models on ARC-AGI-3, the runtime at the free end, and the results including the ones that went against us.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Price of a World Model</title>
+<meta name="description" content="Nyaya: how much of an agent can a person own at $0? A benchmark with cost as a scored column, a dependency-free runtime, and the losing rows published.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Karla:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
@@ -19,34 +19,26 @@
   --data:"DM Mono",ui-monospace,Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
+  :root{
     --ground:#0C1117; --surface:#131A22; --sunken:#1A222C;
     --ink:#E7ECF2; --muted:#98A2AE; --faint:#6C7784; --hair:#26303B;
     --accent:#7AA2FF; --accent-soft:#16233C; --gap:#5C6773;
     --good:#5BC28A; --bad:#EF7A70;
   }
 }
-:root[data-theme="dark"]{
-  --ground:#0C1117; --surface:#131A22; --sunken:#1A222C;
-  --ink:#E7ECF2; --muted:#98A2AE; --faint:#6C7784; --hair:#26303B;
-  --accent:#7AA2FF; --accent-soft:#16233C; --gap:#5C6773;
-  --good:#5BC28A; --bad:#EF7A70;
-}
 *{box-sizing:border-box}
-body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
 .col{max-width:720px;margin:0 auto;padding:0 22px}
 .wide{max-width:980px;margin:0 auto;padding:0 22px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 a{color:var(--accent);text-underline-offset:3px}
 .sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-
 .eyebrow{font-family:var(--data);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
 h1{font-family:var(--display);font-weight:400;font-size:clamp(44px,8vw,78px);line-height:.98;letter-spacing:-.01em;margin:0 0 22px;text-wrap:balance}
 h1 em{font-style:italic;color:var(--accent)}
 .dek{font-size:21px;line-height:1.45;color:var(--muted);margin:0;max-width:34em;text-wrap:pretty}
 .dek b{color:var(--ink);font-weight:600}
 .mast{padding:64px 0 36px}
-
 h2{font-family:var(--display);font-weight:400;font-size:36px;line-height:1.1;letter-spacing:-.005em;margin:0 0 14px;text-wrap:balance}
 section{padding:44px 0}
 section+section{border-top:1px solid var(--hair)}
@@ -54,8 +46,6 @@ p{margin:0 0 16px;max-width:66ch;text-wrap:pretty}
 p.lede{font-size:19px;color:var(--ink)}
 p strong{font-weight:600}
 .muted{color:var(--muted)}
-
-/* figure */
 figure{margin:28px 0 0}
 .chart{background:var(--surface);border:1px solid var(--hair);border-radius:4px;padding:18px 18px 12px}
 .chart svg{width:100%;height:auto;display:block}
@@ -72,11 +62,6 @@ figcaption b{color:var(--ink);font-weight:600}
 .gapline{stroke:var(--gap);stroke-width:1.5;stroke-dasharray:6 6;fill:none}
 .gaplbl{font-family:var(--display);font-style:italic;font-size:22px;fill:var(--muted)}
 .gapsub{font-family:var(--body);font-size:12px;fill:var(--faint)}
-.hit{fill:transparent;cursor:default}
-.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--ground);font-family:var(--data);font-size:12px;padding:8px 10px;border-radius:3px;white-space:nowrap;opacity:0;transition:opacity .12s}
-@media (prefers-reduced-motion:reduce){.tip{transition:none}}
-
-/* tables */
 .tw{overflow-x:auto;border:1px solid var(--hair);background:var(--surface);border-radius:4px;margin:22px 0 8px}
 table{width:100%;border-collapse:collapse;font-family:var(--data);font-size:13.5px}
 th,td{padding:10px 14px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--hair);font-variant-numeric:tabular-nums}
@@ -87,8 +72,6 @@ td{color:var(--muted)}td:first-child{color:var(--ink);font-weight:500}
 tr.us td{background:var(--accent-soft)}
 .ci{color:var(--faint);font-size:12px}
 .best{color:var(--ink);font-weight:500}
-
-/* cards */
 .trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:4px;overflow:hidden;margin:24px 0 6px}
 @media(max-width:760px){.trio{grid-template-columns:minmax(0,1fr)}}
 .trio>div{background:var(--surface);padding:20px 20px 18px}
@@ -97,8 +80,6 @@ tr.us td{background:var(--accent-soft)}
 .trio p{font-size:14.5px;color:var(--muted);margin:0 0 10px}
 .trio a{font-size:14px}
 .code{font-family:var(--data);font-size:12.5px;background:var(--sunken);padding:10px 12px;border-radius:3px;color:var(--ink);overflow-x:auto;white-space:pre;margin:10px 0 0}
-
-/* retractions */
 .retract{display:grid;gap:0;border-left:2px solid var(--bad);margin:22px 0 8px}
 .retract>div{padding:14px 0 14px 20px;border-bottom:1px solid var(--hair)}
 .retract>div:last-child{border-bottom:0}
@@ -106,28 +87,29 @@ tr.us td{background:var(--accent-soft)}
 .retract .was{font-family:var(--display);font-style:italic;font-size:20px;margin:0 0 6px;color:var(--ink)}
 .retract .now{font-size:15px;color:var(--muted);margin:0}
 .retract .now b{color:var(--ink);font-weight:600}
-
-/* commands */
+.log{border-left:2px solid var(--accent);margin:22px 0 8px}
+.log>div{padding:12px 0 12px 20px;border-bottom:1px solid var(--hair);display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline}
+.log>div:last-child{border-bottom:0}
+.log .when{font-family:var(--data);font-size:12px;color:var(--faint)}
+.log .what{font-size:15px;color:var(--muted);margin:0}
+.log .what b{color:var(--ink);font-weight:600}
 .cmds{font-family:var(--data);font-size:13.5px;background:var(--surface);border:1px solid var(--hair);border-radius:4px;padding:16px 18px;overflow-x:auto;margin:20px 0 6px}
 .cmds div{white-space:pre;padding:3px 0}
 .cmds .c{color:var(--faint)}
 .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
 .btn{font-family:var(--body);font-weight:600;font-size:14px;padding:11px 16px;border-radius:3px;text-decoration:none;border:1px solid var(--hair);color:var(--ink);background:var(--surface)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-
-/* ask */
 .ask{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start;background:var(--surface);border:1px solid var(--hair);border-radius:4px;padding:24px;margin:22px 0 8px}
 @media(max-width:640px){.ask{grid-template-columns:minmax(0,1fr)}}
 .ask .n{font-family:var(--display);font-size:56px;line-height:1;font-variant-numeric:tabular-nums}
 .ask .n small{font-family:var(--body);font-size:13px;color:var(--faint);display:block;margin-top:6px;letter-spacing:.04em;text-transform:uppercase}
 .ask ul{margin:0;padding-left:18px;font-size:15px;color:var(--muted)}
 .ask li{margin:0 0 6px}.ask li b{color:var(--ink);font-weight:600}
-
 footer{padding:30px 0 60px;border-top:1px solid var(--hair);font-family:var(--data);font-size:12.5px;color:var(--faint);display:flex;flex-wrap:wrap;gap:8px 22px}
 footer a{color:var(--muted)}
 </style>
 </head>
-<body style="margin:0">
+<body>
 <header class="col mast">
   <p class="eyebrow">Nyaya &middot; a research programme, and the runtime behind it</p>
   <h1>The price of a <em>world model</em></h1>
@@ -141,57 +123,41 @@ footer a{color:var(--muted)}
 
 <div class="wide">
   <figure>
-    <div class="chart" id="chartwrap" style="position:relative">
+    <div class="chart">
       <svg viewBox="0 0 960 420" role="img" aria-labelledby="ctitle cdesc">
         <title id="ctitle">Capability against inference cost per game on ARC-AGI-3</title>
         <desc id="cdesc">Two measured points at the top right: Tycho with Opus 5 at 100 RHAE for about $119 per game, and Tycho with GPT-5.6 Sol at 100 RHAE for about $179. One measured point at the bottom left: the Nyaya runtime at roughly 3.4 RHAE for $0. Between them, a dashed line across an empty region labelled unmeasured.</desc>
-
-        <!-- grid and axes -->
         <line class="grid" x1="70" x2="930" y1="112.5" y2="112.5"/>
         <line class="grid" x1="70" x2="930" y1="195" y2="195"/>
         <line class="grid" x1="70" x2="930" y1="277.5" y2="277.5"/>
         <line class="axis" x1="70" x2="930" y1="360" y2="360"/>
         <line class="axis" x1="70" x2="70" y1="30" y2="360"/>
-
         <text class="tick" x="62" y="364" text-anchor="end">0</text>
         <text class="tick" x="62" y="281.5" text-anchor="end">25</text>
         <text class="tick" x="62" y="199" text-anchor="end">50</text>
         <text class="tick" x="62" y="116.5" text-anchor="end">75</text>
         <text class="tick" x="62" y="34" text-anchor="end">100</text>
         <text class="axlabel" x="70" y="18">capability (RHAE, public set)</text>
-
         <text class="tick" x="70" y="380" text-anchor="middle">$0</text>
         <text class="tick" x="285" y="380" text-anchor="middle">$50</text>
         <text class="tick" x="500" y="380" text-anchor="middle">$100</text>
         <text class="tick" x="715" y="380" text-anchor="middle">$150</text>
         <text class="tick" x="930" y="380" text-anchor="middle">$200</text>
         <text class="axlabel" x="930" y="404" text-anchor="end">inference cost per game</text>
-
-        <!-- the unmeasured middle -->
         <polygon class="gapfill" points="70,348.8 581.7,30 581.7,360 70,360"/>
         <line class="gapline" x1="70" y1="348.8" x2="581.7" y2="30"/>
         <text class="gaplbl" x="300" y="236" text-anchor="middle">unmeasured</text>
         <text class="gapsub" x="300" y="256" text-anchor="middle">the shape of this line is the research</text>
-
-        <!-- measured points -->
         <circle class="pt" cx="70" cy="348.8" r="7"/>
         <text class="pt-lbl" x="84" y="340">nyaya runtime</text>
         <text class="pt-sub" x="84" y="355">$0 &middot; ~3.4 RHAE &middot; no model in the loop</text>
-
         <circle class="pt" cx="581.7" cy="30" r="7"/>
         <text class="pt-lbl" x="581.7" y="58" text-anchor="middle">Tycho &middot; Opus 5</text>
         <text class="pt-sub" x="581.7" y="73" text-anchor="middle">~$119 &middot; 100 RHAE</text>
-
         <circle class="pt" cx="839.7" cy="30" r="7"/>
         <text class="pt-lbl" x="839.7" y="58" text-anchor="middle">Tycho &middot; GPT-5.6 Sol</text>
         <text class="pt-sub" x="839.7" y="73" text-anchor="middle">~$179 &middot; 100 RHAE</text>
-
-        <!-- hover targets, larger than the marks -->
-        <circle class="hit" cx="70" cy="348.8" r="18" data-tip="nyaya runtime -- $0.00 per game, ~3.4 RHAE, 0 tokens, 1.4 ms per action"/>
-        <circle class="hit" cx="581.7" cy="30" r="18" data-tip="Tycho (Opus 5) -- ~$119 mean per game, 100.00 RHAE, 183/183 levels, warm run"/>
-        <circle class="hit" cx="839.7" cy="30" r="18" data-tip="Tycho (GPT-5.6 Sol) -- ~$179 mean per game, 100.00 RHAE, 183/183 levels, warm run"/>
       </svg>
-      <div class="tip" id="tip" role="status" aria-live="polite"></div>
     </div>
     <figcaption>
       <b>Every point here is someone's published number, plotted on one axis nobody
@@ -206,18 +172,51 @@ footer a{color:var(--muted)}
 <main>
 
 <section class="col">
+  <h2>How much of an agent can you own at $0? Two percent, today.</h2>
+  <p class="lede">
+    The delegation architecture says a frontier model should propose goals and read
+    anomalies while a world model that costs nothing handles the steps it has already
+    learned. Nobody had measured how many steps the free end could take. So we did,
+    on games the learners had never seen, scored after the fact against what happened.
+  </p>
+  <div class="tw">
+    <table>
+      <caption class="sr">Delegation on the held-out corpus, 3,318 transitions</caption>
+      <thead><tr><th>method</th><th>commits</th><th>commit right</th><th>delegable</th></tr></thead>
+      <tbody>
+        <tr><td>last-effect <span class="ci">one-line heuristic</span></td><td>22.7%</td><td>8.6%</td><td class="best">2.0%</td></tr>
+        <tr><td>nyaya-templates</td><td>38.1%</td><td>2.5%</td><td>0.9%</td></tr>
+        <tr class="us"><td>dsl-synthesis-rel</td><td>59.0%</td><td>0.7%</td><td>0.4%</td></tr>
+        <tr><td>last-effect, complete gate</td><td>1.2%</td><td class="best">50.0%</td><td>0.6%</td></tr>
+        <tr><td>nyaya-templates, complete gate</td><td>1.0%</td><td>32.4%</td><td>0.3%</td></tr>
+        <tr><td>dsl-synthesis-rel, complete gate</td><td>0.6%</td><td>21.1%</td><td>0.1%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    An action is <em>delegable</em> when the model committed to a prediction and the whole
+    frame was right. The learners over-commit: synthesis claims 59% of actions and is right on
+    under one percent of them. Gating on per-rule evidence changes nothing. Gating on
+    <strong>completeness</strong>, committing only when the current theory reproduces the
+    action's last frames exactly, lifts every learner to 20 to 50% right at about one percent
+    coverage. <strong>The commit criterion is solved and cheap. The theories are what is
+    incomplete.</strong> That is the research.
+  </p>
+  <div class="log">
+    <div><span class="when">9 Sep 2026, morning</span><p class="what"><b>First measurement.</b> Delegable 0.4% (synthesis), 2.0% (last-effect). Commit precision 0.7% and 8.6%.</p></div>
+    <div><span class="when">9 Sep 2026, afternoon</span><p class="what"><b>Per-rule evidence gates:</b> no change. <b>Whole-effect gate:</b> precision 8.6% &rarr; 51.4%, coverage 1.1%.</p></div>
+    <div><span class="when">9 Sep 2026, evening</span><p class="what"><b>General completeness gate</b> on every learner: 20 to 50% right, about 1% coverage. Requiring three repeats zeroes the synthesiser.</p></div>
+    <div><span class="when">10 Sep 2026</span><p class="what"><b>A model in the loop, the way EvoSkill does it,</b> on the same corpus: see the README for the row and its token cost.</p></div>
+  </div>
+</section>
+
+<section class="col">
   <h2>The question moved, so we moved with it</h2>
   <p class="lede">
     In July 2026 two systems put frontier language models inside a world model's
     learning loop and largely closed the benchmark. In their own tables, program
     synthesis <em>without</em> a model in the loop clears zero levels. So capability
     is answered, and not in our favour. <strong>Price is not answered by anyone.</strong>
-  </p>
-  <p>
-    The difference between $119 a game and $0 a game is the whole difference
-    between a demonstration and something that runs on a phone, offline, for a
-    person nobody is billing. That is the axis this programme measures, and then
-    tries to move along.
   </p>
   <div class="tw">
     <table>
@@ -257,7 +256,7 @@ it becomes 'b'</div>
       <h3>The artefact</h3>
       <p class="big">47</p>
       <p>beliefs a scam filter learned from 5,574 real messages in 2 seconds &mdash; each a sentence with the evidence that earned it. Switch one off and the verdict changes.</p>
-      <a href="https://claude.ai/code/artifact/06089609-fcda-45bc-86f6-e3adf3399c40">Try the belief ledger &rarr;</a>
+      <a href="ledger.html">Try the belief ledger &rarr;</a>
     </div>
   </div>
 </section>
@@ -289,9 +288,7 @@ it becomes 'b'</div>
     scores near zero, so the corpus is genuinely novel &mdash; the benchmark measures
     generalisation, and that is now a measured fact rather than a hope. And the
     synthesis engine is the only method never worst on either corpus, with an
-    interval a third the width of the template learner it replaces. It got there by
-    <strong>changing the hypothesis class in response to a diagnosis, twice</strong> &mdash;
-    which is the mechanism this whole programme is about.
+    interval a third the width of the template learner it replaces.
   </p>
 </section>
 
@@ -321,28 +318,33 @@ it becomes 'b'</div>
     <div>
       <p class="when">8 September 2026 &middot; the central claim, tried twice in one night</p>
       <p class="was">&ldquo;Programs that survive replay become primitives, and the library transfers.&rdquo;</p>
-      <p class="now">A library of concrete programs <b>halved</b> performance (0.204 &rarr; 0.105): colour literals carry confident wrong vocabulary between games. Making programs abstract made them transferable and too general to be selective (&rarr; 0.087). Both reverted, both published. The problem is now stated precisely: <b>abstraction is necessary for transfer and insufficient for selectivity.</b> That is what the funded work is for.</p>
+      <p class="now">A library of concrete programs <b>halved</b> performance (0.204 &rarr; 0.105): colour literals carry confident wrong vocabulary between games. Making programs abstract made them transferable and too general to be selective (&rarr; 0.087). Both reverted, both published. <b>Abstraction is necessary for transfer and insufficient for selectivity.</b> That is what the funded work is for.</p>
+    </div>
+    <div>
+      <p class="when">9 September 2026 &middot; the delegation number</p>
+      <p class="was">&ldquo;The free end of the curve can carry an agent's routine steps.&rdquo;</p>
+      <p class="now">Two percent of them, today, and only with a completeness gate does any learner get its commits right more than half the time. <b>Published the day it was measured.</b></p>
     </div>
   </div>
 </section>
 
 <section class="col">
   <h2>Run all of it</h2>
-  <p>No API key, no GPU, no dependencies beyond the Python standard library. Every number on this page regenerates from one of these.</p>
+  <p>No API key, no GPU, no dependencies beyond the Python standard library. Every number on this page regenerates from one of these, and <a href="https://github.com/let-the-dreamers-rise/nyaya/actions">GitHub Actions regenerates the held-out table on every push</a>.</p>
   <div class="cmds">
 <div>git clone https://github.com/let-the-dreamers-rise/nyaya &amp;&amp; cd nyaya</div>
 <div class="c"># the results table above, on data the learners never saw</div>
 <div>python -m bench.run --corpus bench/corpus-heldout</div>
+<div class="c"># the delegation table, with the completeness gates</div>
+<div>python scripts/delegation.py --corpus bench/corpus-heldout --complete</div>
 <div class="c"># learn a readable scam filter from 5,574 real messages, then open skill.py</div>
 <div>python -m nyaya learn data/sms.tsv -o skill.py</div>
-<div class="c"># the baseline that beats it, published by us</div>
-<div>python scripts/text_baselines.py</div>
 <div class="c"># use it from any agent: three tools, stdlib only, nothing uploaded</div>
 <div>claude mcp add nyaya -- python -m nyaya.mcp_server</div>
   </div>
   <div class="btnrow">
-    <a class="btn primary" href="https://github.com/let-the-dreamers-rise/nyaya">Repository &middot; MIT &middot; 201 tests</a>
-    <a class="btn" href="https://claude.ai/code/artifact/06089609-fcda-45bc-86f6-e3adf3399c40">The belief ledger</a>
+    <a class="btn primary" href="https://github.com/let-the-dreamers-rise/nyaya">Repository &middot; MIT &middot; 249 tests</a>
+    <a class="btn" href="ledger.html">The belief ledger</a>
     <a class="btn" href="https://github.com/let-the-dreamers-rise/nyaya/blob/main/docs/RESEARCH.md">The research proposal</a>
   </div>
 </section>
@@ -352,11 +354,11 @@ it becomes 'b'</div>
   <div class="ask">
     <div class="n">$30,000<small>first tranche &middot; three months</small></div>
     <ul>
-      <li><b>One deliverable:</b> the cost&ndash;capability curve. Every method with public code &mdash; including Tycho at the expensive end &mdash; under one protocol, cost measured rather than quoted.</li>
+      <li><b>One deliverable:</b> the cost&ndash;capability curve. Every method with public code &mdash; including Tycho at the expensive end &mdash; under one protocol, cost measured rather than quoted; and delegation re-measured with completeness-based commitment.</li>
       <li><b>The largest line is $12,000 of compute spent running our competitor's method, not ours.</b> A curve with an unmeasured expensive end is an opinion.</li>
       <li><b>The first milestone was delivered before this ask, unpaid:</b> the substrate is public and runnable today.</li>
       <li><b>If the work stops at any point,</b> everything published to that point is already MIT. There is no version of this where the money buys nothing.</li>
-      <li><b>The remaining programme is $68,000 across three further tranches,</b> released on delivery &mdash; including on a failed prediction, because paying only for wins is how funders buy quiet negative results. It is an option you hold, not a commitment you make today.</li>
+      <li><b>The remaining programme is $68,000 across three further tranches,</b> released on delivery &mdash; including on a failed prediction, because paying only for wins is how funders buy quiet negative results.</li>
     </ul>
   </div>
   <p class="muted" style="font-size:14px;margin-top:14px">Full build-up, tranche schedule and the risks named plainly: <a href="https://github.com/let-the-dreamers-rise/nyaya/blob/main/docs/ASK.md">ASK.md</a>. Who this is for and who pays, eventually: <a href="https://github.com/let-the-dreamers-rise/nyaya/blob/main/docs/PITCH.md">PITCH.md</a>.</p>
@@ -367,7 +369,7 @@ it becomes 'b'</div>
   <p>
     A student in India, working solo. No lab, no cofounder, no credential worth
     listing &mdash; so the argument is the artefact. The runtime, the substrate, the
-    engine, 201 tests, and four retractions of our own claims, all in ten days of a
+    engine, 249 tests, and five retractions of our own claims, all in ten days of a
     public repository. <strong>The reason nobody has measured the cost of these
     systems is that everyone positioned to is a funded lab with API credits.</strong>
     If your compute is free at the margin, price is not a variable you notice. Mine
@@ -384,41 +386,5 @@ it becomes 'b'</div>
   <a href="https://github.com/let-the-dreamers-rise/nyaya/blob/main/docs/LANDSCAPE.md">Sources for every external number</a>
   <span>Nyaya &mdash; the Indian school of logic; literally &ldquo;method, rule&rdquo;</span>
 </footer>
-
-<script>
-(function () {
-  var wrap = document.getElementById("chartwrap");
-  var tip = document.getElementById("tip");
-  var hits = wrap.querySelectorAll(".hit");
-  function show(e) {
-    tip.textContent = e.currentTarget.getAttribute("data-tip");
-    tip.style.opacity = "1";
-    move(e);
-  }
-  function move(e) {
-    var r = wrap.getBoundingClientRect();
-    var x = e.clientX - r.left, y = e.clientY - r.top;
-    var flip = x > r.width * 0.6;
-    tip.style.left = (flip ? x - 14 : x + 14) + "px";
-    tip.style.top = (y - 10) + "px";
-    tip.style.transform = flip ? "translateX(-100%)" : "none";
-  }
-  function hide() { tip.style.opacity = "0"; }
-  Array.prototype.forEach.call(hits, function (h) {
-    h.addEventListener("mouseenter", show);
-    h.addEventListener("mousemove", move);
-    h.addEventListener("mouseleave", hide);
-    h.setAttribute("tabindex", "0");
-    h.addEventListener("focus", function (e) {
-      tip.textContent = e.currentTarget.getAttribute("data-tip");
-      tip.style.opacity = "1";
-      tip.style.left = e.currentTarget.getAttribute("cx") / 960 * wrap.clientWidth + "px";
-      tip.style.top = "8px"; tip.style.transform = "none";
-    });
-    h.addEventListener("blur", hide);
-  });
-})();
-</script>
-
 </body>
 </html>
