@@ -103,6 +103,7 @@ game with precision above 50%, or a published reason why not.
 | 9 Sep 2026, afternoon | per-rule evidence gates: nothing; whole-effect gate: right 8.6% to 51.4% at 1.1% coverage |
 | 9 Sep 2026, evening | completeness gate on every learner: 20 to 50% right at about 1% coverage; three repeats zeroes synthesis |
 | 10 Sep 2026 | a model in the loop, EvoSkill's shape, on the same games: 107 programs written, 0 survived verification, 156k tokens; the row below |
+| 10 Sep 2026 | the same loop with the evaluator's verdict fed back once: 137 programs, 0 survived, 180k tokens |
 | 10 Sep 2026 | the three gated learners cover different actions: their union is 1.1% delegable at 38.5% right, against 0.6% for the best single gate |
 | 10 Sep 2026 | add exact recurrence (memorise, 90% right when it speaks): 2.4% delegable at 56.7% right. Above the ungated heuristic's 2.0% for the first time, with seven times its precision. 1.4 of the 2.4 points are recall, not generalisation, and are labelled so |
 
@@ -122,6 +123,7 @@ python scripts/delegation.py --corpus bench/corpus-heldout --limit 5 --methods l
 ```text
 method                actions  commits  commit ok  delegable  no-ops   tokens
 llm-skill                 709     0.0%       0.0%       0.0%    7.1%   156438
+llm-skill-feedback        709     0.0%       0.0%       0.0%    7.1%   179864
 last-effect               709    24.1%      11.7%       2.8%    6.3%        0
 dsl-synthesis-rel         709    45.1%       2.8%       1.3%    3.4%        0
 ```
@@ -131,9 +133,11 @@ was a syntactically valid `predict`, and none reproduced the two frames it
 had just been shown, so none was ever allowed to commit. Changed-cell F1:
 0.000, against 0.181 for the one-line heuristic. Every prompt and reply is
 in [`bench/llm-cache/`](bench/llm-cache/), so the row replays without a
-model and anyone can read what it wrote. This is the floor of the loop, not
-its ceiling: one prompt, no evaluator feedback, an 8B model. It is also the
-point of the curve. The loop that solves the public set uses a frontier
+model and anyone can read what it wrote. Feeding the evaluator's verdict
+back once, the failing cells named, on the same call budget
+(`llm-skill-feedback`): 137 programs, still none survived, 180k tokens.
+This is the floor of the loop, not its ceiling: two prompts at most, an 8B
+model. It is also the point of the curve. The loop that solves the public set uses a frontier
 model at about $119 a game; the same loop with a laptop model produces
 nothing a verifier will accept. What lies between is unmeasured, and
 measuring it is tranche one.

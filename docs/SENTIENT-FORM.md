@@ -68,7 +68,8 @@ regenerate from commands in this repo.
 >
 > And the competitor's row is run, not promised: EvoSkill's loop with an
 > open 8B model, on the same games under the same verifier, wrote 107
-> programs and none survived, at 156k tokens. The loop's value is in the
+> programs and none survived, at 156k tokens; with the evaluator's verdict
+> fed back, 137 programs and still none. The loop's value is in the
 > model, and the model is what costs $119 a game. The curve between those
 > two points is what I am asking you to fund.
 

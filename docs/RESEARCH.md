@@ -389,8 +389,12 @@ syntactically valid, **zero survived verification**, so zero commits, F1
 scores 0.181 on the same slice for nothing. The prompts and replies are
 committed under `bench/llm-cache/` so the row replays without a model.
 
+With the evaluator's verdict fed back once, the wrong cells named, on the
+same three-call budget (`llm-skill-feedback`): 137 programs, none survived,
+179,864 tokens. Feedback did not help an 8B model at all on this task.
+
 What this row says and does not say. It is the floor of the loop, not its
-ceiling: one prompt, no feedback from the evaluator, a small model. It does
+ceiling: at most two prompts, a small model. It does
 not say the loop is useless; Tycho's version of it clears the public set
 with a frontier model. It says the loop's value is in the model, and the
 model is what costs $119 a game. Between an 8B model that produces nothing

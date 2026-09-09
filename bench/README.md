@@ -323,7 +323,9 @@ program out, kept only if it reproduces every example under the same replay
 verifier. Any Ollama model works; set `NYAYA_LLM_MODEL`. With granite3.2:8b
 on the first five held-out games it wrote 107 programs and none survived
 verification: 0 commits, F1 0.000, 156k tokens, about a hundred minutes.
-Every prompt and reply is cached under `bench/llm-cache/` and committed, so
+`llm-skill-feedback` feeds the evaluator's failing cells back once on the
+same budget: 137 programs, none survived, 180k tokens. Every prompt and
+reply is cached under `bench/llm-cache/` and committed, so
 `--methods llm-skill` replays without a model, including in CI. A stronger
 prompt, a feedback retry, or a bigger model belongs in the registry as
 another row; the protocol does not change.
