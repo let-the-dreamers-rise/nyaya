@@ -78,6 +78,8 @@ dsl-synthesis-rel        3318    59.0%       0.7%       0.4%    2.4%
 last-effect-stable       3318     1.1%      51.4%       0.6%    6.4%
 dsl-cal-32               3318    24.2%       0.1%       0.0%    4.6%
 union of gated learners  3318     2.7%      38.5%       1.1%    6.2%
+memorise                 3318     1.5%      90.0%       1.4%    6.4%
+union + memorise         3318     4.2%      56.7%       2.4%    6.2%
 ```
 
 An action is *delegable* when the model committed to a prediction and the
@@ -102,6 +104,7 @@ game with precision above 50%, or a published reason why not.
 | 9 Sep 2026, evening | completeness gate on every learner: 20 to 50% right at about 1% coverage; three repeats zeroes synthesis |
 | 10 Sep 2026 | a model in the loop, EvoSkill's shape, on the same games: 107 programs written, 0 survived verification, 156k tokens; the row below |
 | 10 Sep 2026 | the three gated learners cover different actions: their union is 1.1% delegable at 38.5% right, against 0.6% for the best single gate |
+| 10 Sep 2026 | add exact recurrence (memorise, 90% right when it speaks): 2.4% delegable at 56.7% right. Above the ungated heuristic's 2.0% for the first time, with seven times its precision. 1.4 of the 2.4 points are recall, not generalisation, and are labelled so |
 
 **The competitor's row, run by us.** EvoSkill's loop is propose, generate,
 evaluate: a model reads what went wrong, writes a skill as code, and the

@@ -40,7 +40,9 @@ COMPLETE = ("complete-1:last-effect", "complete-2:last-effect",
             "complete-1:nyaya-templates", "complete-2:nyaya-templates",
             "complete-1:dsl-synthesis-rel", "complete-2:dsl-synthesis-rel",
             "complete-3:dsl-synthesis-rel",
-            "union:complete-2:last-effect|complete-1:nyaya-templates|complete-1:dsl-synthesis-rel")
+            "union:complete-2:last-effect|complete-1:nyaya-templates|complete-1:dsl-synthesis-rel",
+            "memorise",
+            "union:memorise|complete-2:last-effect|complete-1:nyaya-templates|complete-1:dsl-synthesis-rel")
 
 
 class StableEffect:

@@ -338,6 +338,8 @@ times this action was taken, reproduces every frame exactly. Held out:
 | dsl-synthesis-rel | 2 | 0.2% | 20.0% | 0.0% |
 | dsl-synthesis-rel | 3 | 0.0% | -- | 0.0% |
 | union of the three gates above | 2, 1, 1 | 2.7% | 38.5% | 1.1% |
+| memorise (exact board and action seen before) | -- | 1.5% | 90.0% | 1.4% |
+| union of the three gates and memorise | -- | 4.2% | 56.7% | 2.4% |
 
 *Development corpus: templates at k=2 reach 53.3% right on 0.5% of actions.*
 *k=1 on last-effect is vacuous (it always reproduces the frame it stored) and
@@ -351,6 +353,21 @@ taking the first that commits nearly doubles delegable actions (0.6% to
 sets and below the 50% the heuristic alone reaches. Diversity of theory is
 worth more than depth of any one theory at this end of the curve, which is
 an argument for the library, not against it.
+
+Adding the lookup table changes the picture again. `memorise` commits only
+when this exact board has been seen with this exact action, so it is recall
+by construction, and the benchmark reads it as the share of the corpus that
+is repetition. For delegation that is the right thing to count: an action
+the agent has already taken from this exact state, in a deterministic
+environment, needs no model. It is 90% right when it speaks (the missing 10%
+is hidden state and autonomous movers, a measured fact about the games),
+and the union with the three gates reaches **2.4% delegable at 56.7%
+right**: above the ungated heuristic's 2.0% for the first time, with seven
+times its precision. The honest decomposition is 1.4 points of recall and
+1.0 of generalisation. Both are reported, because a reviewer would separate
+them and so should we. The delegable number on the log has moved from 0.6%
+to 2.4% in a day without touching a learner, only the commit criterion and
+the composition. The learners are still the bottleneck.
 
 The gate does what per-rule evidence could not: it turns every learner
 from under 3% right into 20 to 50% right. And it shows the real ceiling.

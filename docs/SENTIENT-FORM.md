@@ -60,8 +60,11 @@ regenerate from commands in this repo.
 > games are delegable without error. Gating on per-rule confidence does
 > nothing; gating on whether the theory reproduces the action's recent
 > history exactly lifts every learner to 20 to 50% right at about one
-> percent coverage. The commit criterion is solved and cheap. What limits
-> delegation is the completeness of the theory, and that is the research.
+> percent coverage; the gated learners cover different actions, and their
+> union with exact recurrence reaches 2.4% delegable at 57% right, above
+> the ungated heuristic with seven times its precision. The commit
+> criterion is solved and cheap. What limits delegation is the completeness of the
+> theory, and that is the research.
 >
 > And the competitor's row is run, not promised: EvoSkill's loop with an
 > open 8B model, on the same games under the same verifier, wrote 107
