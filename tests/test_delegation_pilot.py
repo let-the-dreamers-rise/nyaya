@@ -84,6 +84,32 @@ def test_calibrated_synthesis_restores_its_rules_after_predicting():
     assert m.learner.rules == before
 
 
+def test_complete_gate_commits_only_when_history_is_fully_explained():
+    a, b, c = ["a..", "..."], [".a.", "..."], ["..a", "..."]
+    m = delegation.Complete(delegation.build("last-effect"), k=2)
+    assert m.predict(a, "RIGHT") == a                 # no history
+    m.observe(a, "RIGHT", b)
+    m.observe(b, "RIGHT", c)
+    # last-effect replays absolute cells, so it explains (b -> c) but not (a -> b)
+    assert m.predict(c, "RIGHT") == c                 # history not fully explained: silent
+    m.observe(c, "RIGHT", c)
+    m.observe(c, "RIGHT", c)
+    assert m.predict(c, "RIGHT") == c                 # explained twice (no-ops), commits to the same
+
+
+def test_complete_gate_passes_an_oracle():
+    chain = CHAIN
+    m = delegation.Complete(Oracle(chain), k=1)
+    # the oracle consumes answers in order; feed history then ask
+    m.observe(*chain[0])
+    assert m.inner.i == 0
+
+
+def test_build_parses_complete_names():
+    m = delegation.build("complete-3:dsl-synthesis-rel")
+    assert isinstance(m, delegation.Complete) and m.k == 3
+
+
 def test_build_knows_the_calibrated_names():
     assert isinstance(delegation.build("last-effect-stable"), delegation.StableEffect)
     assert delegation.build("dsl-cal-16").min_support == 16

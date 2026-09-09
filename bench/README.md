@@ -311,8 +311,11 @@ one-line heuristic is the best delegator in the registry.
 Gating synthesis on rule support and precision does nothing (0.7% right at
 support 8, 0.0% at 64), because the frame is wrong on cells no rule covers.
 Requiring `last-effect` to have seen the same whole effect twice lifts its
-commit precision from 8.6% to 51.4% at 1.1% coverage. Delegation is a
-completeness problem, and that is where the curve starts.
+commit precision from 8.6% to 51.4% at 1.1% coverage. `--complete` applies
+that gate to any method: commit only when the current theory reproduces the
+action's last k frames exactly. Templates go from 2.5% right to 32%,
+synthesis from 0.7% to 21%, both at about one percent coverage. Delegation is
+a completeness problem, and that is where the curve starts.
 
 ## Why the engine is domain-agnostic on purpose
 

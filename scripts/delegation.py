@@ -35,6 +35,10 @@ from bench.replay import f1_of, score_step  # noqa: E402
 
 DEFAULT_METHODS = ("copy-forward", "last-effect", "nyaya-templates", "dsl-synthesis-rel")
 CALIBRATED = ("last-effect-stable", "dsl-cal-8", "dsl-cal-32", "dsl-cal-64")
+COMPLETE = ("complete-1:last-effect", "complete-2:last-effect",
+            "complete-1:nyaya-templates", "complete-2:nyaya-templates",
+            "complete-1:dsl-synthesis-rel", "complete-2:dsl-synthesis-rel",
+            "complete-3:dsl-synthesis-rel")
 
 
 class StableEffect:
@@ -88,11 +92,45 @@ class CalibratedSynthesis:
         self.learner.observe(before, action, after)
 
 
+class Complete:
+    """Any method, committing only when its current theory explains the
+    last `k` times this action was taken, completely.
+
+    The first calibration round showed that per-rule evidence does not
+    predict whole-frame correctness, and that whole-effect consistency does.
+    This is the general form of that: before committing, replay the action's
+    recent history through the method as it stands now and ask whether every
+    frame comes back exact. Costs k extra predictions per step.
+    """
+
+    def __init__(self, inner, k=2):
+        self.inner = inner
+        self.k = k
+        self.history: dict = {}
+
+    def predict(self, board, action):
+        past = self.history.get(repr(action), [])
+        if len(past) < self.k:
+            return list(board)
+        for before, after in past[-self.k:]:
+            if self.inner.predict(before, action) != after:
+                return list(board)
+        return self.inner.predict(board, action)
+
+    def observe(self, before, action, after):
+        self.inner.observe(before, action, after)
+        self.history.setdefault(repr(action), []).append((before, after))
+
+
 def build(name):
     if name == "last-effect-stable":
         return StableEffect()
     if name.startswith("dsl-cal-"):
         return CalibratedSynthesis(min_support=int(name.rsplit("-", 1)[1]))
+    if name.startswith("complete-"):
+        # complete-2:dsl-synthesis-rel
+        k, inner = name[len("complete-"):].split(":", 1)
+        return Complete(build(inner), k=int(k))
     return methods.build(name)
 
 
@@ -151,9 +189,13 @@ def main(argv=None):
     parser.add_argument("--methods", nargs="*", default=list(DEFAULT_METHODS))
     parser.add_argument("--calibrated", action="store_true",
                         help="add the variants that only commit on earned evidence")
+    parser.add_argument("--complete", action="store_true",
+                        help="add the variants that commit only when the theory explains the action's recent history completely")
     args = parser.parse_args(argv)
     if args.calibrated:
         args.methods = list(args.methods) + list(CALIBRATED)
+    if args.complete:
+        args.methods = list(args.methods) + list(COMPLETE)
     path = Path(args.corpus) if args.corpus else corpus_mod.CORPUS
     results = run(path, args.methods)
     print(table(results, f"corpus: {path.name}"))

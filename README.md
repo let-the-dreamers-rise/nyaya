@@ -78,10 +78,12 @@ dsl-cal-32               3318    24.2%       0.1%       0.0%    4.6%
 An action is *delegable* when the model committed to a prediction and the
 whole frame was right. The learners over-commit: synthesis claims 59% of
 actions and is right on 0.7%. The one-line heuristic is the best delegator
-in the registry, and the only calibration that works is the one that checks
-the *whole effect* was consistent (51% right, at 1% coverage); gating
-synthesis on per-rule evidence does nothing, because the frame is wrong on
-cells no rule covers. Delegation is a completeness problem. The curve starts
+in the registry. Gating on per-rule evidence does nothing, because the frame
+is wrong on cells no rule covers. Gating on *completeness*, committing only
+when the current theory reproduces the action's last frames exactly, lifts
+every learner to 20 to 50% right and covers about one percent of actions.
+The commit criterion is solved and cheap; the theories are what is
+incomplete. Delegation is a completeness problem. The curve starts
 at two percent, and the prediction on record in
 [docs/RESEARCH.md](docs/RESEARCH.md) is over 20% delegable at under $1 a
 game with precision above 50%, or a published reason why not.
@@ -172,7 +174,7 @@ nothing uploaded, no model called.
 - `nyaya/mcp_server.py`, `nyaya/sms_rules.py`, `nyaya/cli.py`.
 - `scripts/delegation.py`, `scripts/text_baselines.py`: the two comparisons a
   reviewer would run.
-- **238 tests. MIT. Python 3.9 or later, standard library only.**
+- **241 tests. MIT. Python 3.9 or later, standard library only.**
 - [`docs/`](docs/README.md), indexed by reader.
 
 ## Roadmap (statuses are honest)

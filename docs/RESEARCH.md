@@ -325,6 +325,29 @@ to make a method commit only on earned evidence, on the held-out corpus:
 | dsl-cal-32 | 24.2% | 0.1% | 0.0% |
 | dsl-cal-64 | 16.8% | 0.0% | 0.0% |
 
+**Then the general form of the gate, the same evening** (`--complete`): any
+method commits only if its *current* theory, replayed over the last `k`
+times this action was taken, reproduces every frame exactly. Held out:
+
+| gated method | k | commits | commit right | delegable |
+|---|---|---|---|---|
+| last-effect | 2 | 1.2% | 50.0% | 0.6% |
+| nyaya-templates | 1 | 1.0% | 32.4% | 0.3% |
+| nyaya-templates | 2 | 0.3% | 33.3% | 0.1% |
+| dsl-synthesis-rel | 1 | 0.6% | 21.1% | 0.1% |
+| dsl-synthesis-rel | 2 | 0.2% | 20.0% | 0.0% |
+| dsl-synthesis-rel | 3 | 0.0% | -- | 0.0% |
+
+*Development corpus: templates at k=2 reach 53.3% right on 0.5% of actions.*
+
+The gate does what per-rule evidence could not: it turns every learner
+from under 3% right into 20 to 50% right. And it shows the real ceiling.
+Almost nothing any current theory explains completely happens twice in a
+row: coverage collapses to about one percent for every method. So the
+commit criterion is now known and cheap, and the thing that limits
+delegation is the *completeness* of the theory, which is C2's problem
+stated from the routing side.
+
 The split is the finding. **Gating on per-rule evidence does not calibrate
 at all**: the rules are mostly right about the cells they touch, and the
 frame is wrong anyway because of cells no rule covers. Whole-frame
