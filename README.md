@@ -7,8 +7,12 @@ person can own at $0.**
 *(nyaya, NYAH-yuh: the Indian school of logic; literally "method, rule". Not
 affiliated with Nyaaya, the Indian legal-information nonprofit.)*
 
-**The whole thing on one page:** [the project site](https://claude.ai/code/artifact/aaf9ecdc-f203-487a-b542-ac370294df33),
-also served from [`docs/index.html`](docs/index.html).
+[![bench](https://github.com/let-the-dreamers-rise/nyaya/actions/workflows/bench.yml/badge.svg)](https://github.com/let-the-dreamers-rise/nyaya/actions/workflows/bench.yml)
+Every push re-runs the tests and regenerates the held-out tables below; the
+numbers are in the run summary, so nobody has to type the commands to check them.
+
+**The whole thing on one page:** [let-the-dreamers-rise.github.io/nyaya](https://let-the-dreamers-rise.github.io/nyaya/),
+with [the belief ledger](https://let-the-dreamers-rise.github.io/nyaya/ledger.html) next to it.
 
 In July 2026 two systems put frontier language models inside a world model's
 learning loop and largely closed ARC-AGI-3: Tycho reaches 100.00 RHAE on the
@@ -87,6 +91,15 @@ incomplete. Delegation is a completeness problem. The curve starts
 at two percent, and the prediction on record in
 [docs/RESEARCH.md](docs/RESEARCH.md) is over 20% delegable at under $1 a
 game with precision above 50%, or a published reason why not.
+
+**The log, so the slope is visible and not just the level:**
+
+| when | what moved |
+|---|---|
+| 9 Sep 2026, morning | first measurement: delegable 0.4% (synthesis), 2.0% (last-effect); commits right 0.7% and 8.6% |
+| 9 Sep 2026, afternoon | per-rule evidence gates: nothing; whole-effect gate: right 8.6% to 51.4% at 1.1% coverage |
+| 9 Sep 2026, evening | completeness gate on every learner: 20 to 50% right at about 1% coverage; three repeats zeroes synthesis |
+| 10 Sep 2026 | a model in the loop, EvoSkill's shape, on the same games: the row below |
 
 ## The state of the field, verified
 
@@ -174,7 +187,7 @@ nothing uploaded, no model called.
 - `nyaya/mcp_server.py`, `nyaya/sms_rules.py`, `nyaya/cli.py`.
 - `scripts/delegation.py`, `scripts/text_baselines.py`: the two comparisons a
   reviewer would run.
-- **241 tests. MIT. Python 3.9 or later, standard library only.**
+- **249 tests. MIT. Python 3.9 or later, standard library only.**
 - [`docs/`](docs/README.md), indexed by reader.
 
 ## Roadmap (statuses are honest)

@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Belief Ledger</title>
+<meta name="description" content="A scam filter you can argue with: 47 learned beliefs, each with its evidence. Switch one off and the verdict changes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root {
+  --ground:#EFF2F1; --surface:#FFFFFF; --sunken:#E5EAE8;
+  --ink:#14201E; --muted:#5B6B67; --faint:#8A9995; --hair:#D2D9D7;
+  --accuse:#A93A2B; --accuse-bg:#F6E8E5; --vouch:#2C6357; --vouch-bg:#E2EDEA;
+  --focus:#0F766E;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --data:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground:#0E1413; --surface:#151D1B; --sunken:#1C2624;
+    --ink:#E3EAE7; --muted:#93A29E; --faint:#6C7C78; --hair:#26312E;
+    --accuse:#E3806C; --accuse-bg:#2F1D19; --vouch:#65B9A2; --vouch-bg:#142B26;
+    --focus:#5EEAD4;
+  }
+}
+* { box-sizing: border-box; }
+body { margin:0; background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 72px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.eyebrow { font-family: var(--display); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin: 0 0 14px; }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 5vw, 46px); line-height: 1.06; letter-spacing: -.022em; margin: 0 0 16px; text-wrap: balance; max-width: 20ch; }
+.standfirst { font-size: 18px; color: var(--muted); margin: 0; max-width: 62ch; }
+.standfirst strong { color: var(--ink); font-weight: 600; }
+.masthead { border-bottom: 1px solid var(--hair); padding-bottom: 28px; margin-bottom: 32px; }
+.bench { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 28px; align-items: start; }
+@media (max-width: 900px) { .bench { grid-template-columns: minmax(0,1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--hair); border-radius: 3px; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--hair); }
+.panel-title { font-family: var(--display); font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin: 0; }
+.panel-note { font-family: var(--data); font-size: 11px; color: var(--faint); }
+.panel-body { padding: 18px; }
+textarea { width: 100%; min-height: 104px; resize: vertical; font-family: var(--data); font-size: 14px; line-height: 1.6; color: var(--ink); background: var(--sunken); border: 1px solid var(--hair); border-radius: 2px; padding: 12px 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chip { font-family: var(--display); font-size: 12px; font-weight: 500; padding: 6px 11px; border-radius: 2px; cursor: pointer; background: transparent; color: var(--muted); border: 1px solid var(--hair); }
+.chip:hover { color: var(--ink); border-color: var(--faint); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.receipt { font-family: var(--data); font-size: 13px; }
+.line { display: grid; grid-template-columns: 1fr auto; gap: 14px; padding: 7px 0; border-bottom: 1px dotted var(--hair); }
+.line-text { color: var(--ink); }
+.line-w { font-variant-numeric: tabular-nums; font-weight: 600; }
+.w-plus { color: var(--accuse); }
+.w-minus { color: var(--vouch); }
+.line-ev { font-size: 11px; color: var(--faint); margin-top: 2px; }
+.empty { color: var(--faint); font-family: var(--data); font-size: 13px; padding: 8px 0; }
+.total { display: grid; grid-template-columns: 1fr auto; gap: 14px; margin-top: 14px; padding-top: 12px; border-top: 2px solid var(--ink); font-family: var(--data); font-size: 13px; font-weight: 600; }
+.total-n { font-variant-numeric: tabular-nums; }
+.verdict { margin-top: 18px; padding: 16px 18px; border-radius: 2px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.verdict-flag { background: var(--accuse-bg); border-left: 3px solid var(--accuse); }
+.verdict-safe { background: var(--vouch-bg); border-left: 3px solid var(--vouch); }
+.verdict-word { font-family: var(--display); font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.verdict-flag .verdict-word { color: var(--accuse); }
+.verdict-safe .verdict-word { color: var(--vouch); }
+.verdict-sub { font-family: var(--data); font-size: 12px; color: var(--muted); }
+.changed { margin-top: 12px; padding: 12px 14px; border: 1px dashed var(--focus); border-radius: 2px; font-size: 14px; color: var(--ink); background: var(--sunken); }
+.changed b { font-weight: 600; }
+.ledger-scroll { max-height: 560px; overflow-y: auto; }
+.rule { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: baseline; width: 100%; text-align: left; cursor: pointer; padding: 9px 18px; border: 0; border-bottom: 1px solid var(--hair); background: transparent; color: var(--ink); font: inherit; }
+.rule:hover { background: var(--sunken); }
+.rule-box { width: 13px; height: 13px; border: 1px solid var(--faint); border-radius: 1px; position: relative; top: 2px; flex: none; }
+.rule[aria-pressed="true"] .rule-box::after { content: ""; position: absolute; inset: 2px; background: var(--ink); }
+.rule-text { font-family: var(--data); font-size: 12.5px; line-height: 1.45; }
+.rule-ev { font-size: 10.5px; color: var(--faint); margin-top: 3px; font-family: var(--data); }
+.rule-w { font-family: var(--data); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.rule.is-fired { background: var(--sunken); }
+.rule.is-fired .rule-text { font-weight: 500; }
+.rule.is-off { opacity: .38; }
+.rule.is-off .rule-text { text-decoration: line-through; }
+.rule-fire { font-family: var(--display); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; margin-left: 8px; }
+.is-fired .rule-fire { color: var(--focus); }
+.ledger-tools { display: flex; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--hair); }
+.section { margin-top: 56px; }
+.section h2 { font-family: var(--display); font-weight: 700; font-size: 24px; letter-spacing: -.015em; margin: 0 0 12px; text-wrap: balance; }
+.section p { margin: 0 0 14px; max-width: 66ch; color: var(--muted); }
+.section p strong { color: var(--ink); font-weight: 600; }
+.section .lede { font-size: 17px; color: var(--ink); }
+.finding { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; background: var(--hair); border: 1px solid var(--hair); margin: 22px 0; }
+.finding > div { background: var(--surface); padding: 16px 18px; }
+.finding dt { font-family: var(--data); font-size: 12px; color: var(--accuse); margin: 0 0 6px; font-weight: 500; }
+.finding dd { margin: 0; font-size: 14px; color: var(--muted); }
+.finding dd b { color: var(--ink); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; font-family: var(--data); font-size: 13px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--hair); background: var(--surface); margin: 20px 0; }
+th, td { padding: 9px 14px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--hair); }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-family: var(--display); font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+tbody tr:last-child td { border-bottom: 0; }
+td { font-variant-numeric: tabular-nums; color: var(--muted); }
+td:first-child { color: var(--ink); }
+tr.is-us td { background: var(--sunken); }
+tr.is-us td:first-child { font-weight: 600; }
+.cmds { font-family: var(--data); font-size: 13px; background: var(--surface); border: 1px solid var(--hair); padding: 16px 18px; overflow-x: auto; }
+.cmds div { white-space: pre; padding: 3px 0; color: var(--ink); }
+.cmds .cm { color: var(--faint); }
+footer { margin-top: 60px; padding-top: 22px; border-top: 1px solid var(--hair); font-family: var(--data); font-size: 12px; color: var(--faint); display: flex; flex-wrap: wrap; gap: 6px 20px; }
+footer a { color: var(--muted); }
+a { color: var(--focus); text-underline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: -9999px; top: 8px; background: var(--surface); color: var(--ink); padding: 10px 14px; border: 1px solid var(--focus); border-radius: 2px; z-index: 10; font-family: var(--display); font-size: 13px; }
+.skip:focus { left: 8px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#bench">Skip to the filter</a>
+<div class="wrap">
+  <p id="announce" class="sr-only" role="status" aria-live="polite"></p>
+  <header class="masthead">
+    <p class="eyebrow">Nyaya &middot; a scam filter you can argue with &middot; <a href="index.html">project site</a></p>
+    <h1>Every belief it holds, and the evidence that earned it.</h1>
+    <p class="standfirst">
+      This filter learned 47 rules from 5,574 real text messages in 2.13 seconds on a
+      CPU &mdash; no GPU, no network, no weights. Below is <strong>all of it</strong>. Read a
+      belief, disagree with it, switch it off, and watch the verdict change. That is
+      the whole product claim, and it takes about ten seconds to check.
+    </p>
+  </header>
+
+  <main class="bench" id="bench">
+    <div>
+      <section class="panel" aria-labelledby="h-msg">
+        <div class="panel-head">
+          <h2 class="panel-title" id="h-msg">The message</h2>
+          <span class="panel-note">scored on every keystroke</span>
+        </div>
+        <div class="panel-body">
+          <label for="msg" class="sr-only">Message to screen for scam signals</label>
+          <textarea id="msg" spellcheck="false" aria-describedby="msg-help"></textarea>
+          <p id="msg-help" class="sr-only">Editing this text rescores it immediately. The verdict and the list of rules that fired are announced as they change.</p>
+          <div class="chips" id="chips" role="group" aria-label="Example messages"></div>
+        </div>
+      </section>
+      <section class="panel" style="margin-top:20px" aria-labelledby="h-fired">
+        <div class="panel-head">
+          <h2 class="panel-title" id="h-fired">What fired</h2>
+          <span class="panel-note" id="tally-note"></span>
+        </div>
+        <div class="panel-body">
+          <div class="receipt" id="receipt"></div>
+          <div class="total"><span>total evidence</span><span class="total-n" id="total">0</span></div>
+          <div id="verdict"></div>
+          <div id="changed"></div>
+        </div>
+      </section>
+    </div>
+    <section class="panel" aria-labelledby="h-ledger">
+      <div class="panel-head">
+        <h2 class="panel-title" id="h-ledger">The belief ledger</h2>
+        <span class="panel-note" id="ledger-note"></span>
+      </div>
+      <p id="ledger-help" class="sr-only">Forty-seven learned beliefs. Each is a toggle button: activate it to switch that belief off, and the verdict is recalculated and announced.</p>
+      <div class="ledger-scroll" id="ledger" role="group" aria-labelledby="h-ledger" aria-describedby="ledger-help"></div>
+      <div class="ledger-tools" role="group" aria-label="Bulk actions">
+        <button class="chip" type="button" id="reset">Restore all 47</button>
+        <button class="chip" type="button" id="drop-words">Drop the 40 word rules</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="section">
+    <h2>What a readable filter shows you that a black box cannot</h2>
+    <p class="lede">Scroll the ledger and three things are visible that no accuracy score would ever have told you. None of them is a design choice. They are what the learner actually found, and they are only findable because every belief is a sentence.</p>
+    <dl class="finding">
+      <div>
+        <dt>contains the word 'lor' &nbsp;&minus;1</dt>
+        <dd>Fired on <b>145</b> messages, right <b>100%</b> of the time. <em>Lor</em> is a Singlish particle. The corpus is Singaporean, and the filter learned the dialect rather than the fraud. <b>Nobody told it that. You just read it.</b></dd>
+      </div>
+      <div>
+        <dt>asks for a fee to claim a prize &nbsp;&minus;1</dt>
+        <dd>I wrote this signal for Indian scams. On this corpus it fired <b>7 times</b> and came out <b>vouching for the sender</b>. My best India-specific intuition has almost no evidence behind it here, and the ledger says so in public.</dd>
+      </div>
+      <div>
+        <dt>40 of 47 rules are ordinary words</dt>
+        <dd>but, that, sorry, home, later. The filter mostly learned what a <b>conversation</b> looks like, not what fraud looks like. Switch them all off with the button above and see how much of the verdict was resting on them.</dd>
+      </div>
+    </dl>
+    <p>Every one of those is a limitation, and every one is legible in about a minute because the beliefs are written in words instead of stored as weights. That is the argument: <strong>a filter you can audit is one you can correct.</strong> The thing protecting a person should be a thing that person is allowed to read.</p>
+  </section>
+
+  <section class="section">
+    <h2>And here is the baseline that beats it</h2>
+    <p>On the identical split, a textbook algorithm from the 1990s scores higher. I am publishing that here rather than leaving it for you to find in five minutes, because it is the actual result and it is more interesting than a win would be.</p>
+    <div class="table-wrap">
+      <table>
+        <caption class="sr-only">Held-out results on the UCI SMS corpus</caption>
+        <thead><tr><th scope="col">method</th><th scope="col">precision</th><th scope="col">recall</th><th scope="col">F1</th><th scope="col">fit</th><th scope="col">what you can read</th></tr></thead>
+        <tbody>
+          <tr class="is-us"><td>nyaya readable rules</td><td>100.0%</td><td>77.8%</td><td>0.875</td><td>1.85 s</td><td>47 sentences</td></tr>
+          <tr><td>naive Bayes</td><td>98.7%</td><td>94.4%</td><td>0.965</td><td>0.06 s</td><td>7,930 weights</td></tr>
+          <tr><td>hand-written keyword list</td><td>63.4%</td><td>71.6%</td><td>0.672</td><td>0.00 s</td><td>14 words</td></tr>
+          <tr><td>majority class</td><td>0.0%</td><td>0.0%</td><td>0.000</td><td>0.00 s</td><td>1 constant</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Readability costs about nine points of F1 and sixteen points of recall.</strong> That price had never been published before. It is a real cost, paid for a real thing: 7,930 naive-Bayes weights cannot be opened, understood, argued with or edited by the person they are protecting. Forty-seven sentences can &mdash; you just did it. Closing that recall gap while keeping the rules readable is an open research question here, not a claim already won.</p>
+  </section>
+
+  <section class="section">
+    <h2>Run all of it yourself</h2>
+    <p>No API key, no GPU, no dependencies beyond the Python standard library. The page you are reading uses the exact rules and scoring the repository produces.</p>
+    <div class="cmds">
+<div>git clone https://github.com/let-the-dreamers-rise/nyaya &amp;&amp; cd nyaya</div>
+<div class="cm"># learn this filter from 5,574 real messages, then open skill.py</div>
+<div>python -m nyaya learn data/sms.tsv -o skill.py</div>
+<div class="cm"># the table above, reproduced</div>
+<div>python scripts/text_baselines.py</div>
+<div class="cm"># the world-model benchmark: 25 episodes, cost reported next to quality</div>
+<div>python -m bench.run --corpus bench/corpus-heldout</div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Nyaya &mdash; MIT</span>
+    <span><a href="https://github.com/let-the-dreamers-rise/nyaya">github.com/let-the-dreamers-rise/nyaya</a></span>
+    <span>5,574 messages &middot; UCI SMS Spam Collection</span>
+    <span>Rules and evidence on this page are the learner's real output.</span>
+  </footer>
+</div>
+
+<script>
+var SIGNALS = [
+  ["contains a web link", 1, 153, 0.902, /https?:\/\/|www\.|\b\w+\.(?:xyz|shop|info|co|net|org|in|com|apk)\b/i],
+  ["contains a phone number to call", 3, 409, 0.995, /\b(?:\+?\d[\d\s-]{8,12}\d)\b/i],
+  ["contains an SMS shortcode to text", 3, 133, 1.0, /\b(?:text|txt|sms|send)\s+\w{1,10}\s+to\s+\d{4,6}\b/i],
+  ["claims the reader won a prize or lottery", 1, 150, 0.86, /\b(?:won|winner|congratulat\w*|lucky draw|lottery|prize|jeeta|jeete)\b/i],
+  ["asks for a fee, charge or deposit to receive something", -1, 7, 1.0, /\b(?:processing fee|registration fee|delivery charge|customs duty|gst fee|verification charge|security deposit|bail amount|advance)\b/i],
+  ["quotes a large money amount", 3, 97, 1.0, /(?:rs\.?|inr|₹|\$|usd|£)\s?\d[\d,]{3,}|\b\d+\s*(?:lakh|crore)\b/i],
+  ["reads like a personal message to someone known", -2, 178, 0.994, /\b(?:bhai|yaar|beta|mummy|papa|didi|bro|dear \w+,|kal|aaj (?:ka|gym)|good morning|happy birthday|see you|meeting|class)\b/i]
+];
+var WORDS = [
+  ["but",422,0.983],["that",512,0.949],["not",418,0.945],["can",425,0.932],
+  ["how",293,0.976],["when",272,0.96],["come",218,0.991],["got",230,0.97],
+  ["what",279,0.939],["then",232,0.957],["its",210,0.971],["like",229,0.943],
+  ["was",196,0.964],["home",165,0.988],["lor",145,1.0],["going",167,0.976],
+  ["know",247,0.915],["love",178,0.955],["there",214,0.925],["sorry",151,0.98],
+  ["later",132,1.0],["one",163,0.951],["time",210,0.91],["still",155,0.955],
+  ["she",117,1.0],["need",162,0.944],["about",151,0.954],["don",148,0.946],
+  ["think",129,0.969],["claim",108,1.0],["much",109,0.991],["where",114,0.982],
+  ["too",107,0.991],["some",122,0.959],["wat",102,0.99],["well",119,0.958],
+  ["way",98,0.99],["hope",112,0.964],["him",101,0.98],["here",122,0.943]
+];
+var RULES = [];
+SIGNALS.forEach(function (s) { RULES.push({ text: s[0], weight: s[1], fired: s[2], right: s[3], re: s[4], word: null, on: true }); });
+WORDS.forEach(function (w) { RULES.push({ text: "contains the word '" + w[0] + "'", weight: w[0] === "claim" ? 1 : -1, fired: w[1], right: w[2], re: null, word: w[0], on: true }); });
+var THRESHOLD = 1;
+var SAMPLES = [
+  { label: "A prize scam", text: "Congratulations! You won a prize, text WIN to 87121 to claim" },
+  { label: "An ordinary message", text: "Sorry I'll call later, I'm still at home. See you at the meeting lor" },
+  { label: "An Indian scam it misses", text: "Your KYC will be suspended today. Pay processing fee of Rs 499 immediately to avoid arrest." }
+];
+function tokens(text) { return text.toLowerCase().match(/[a-z0-9']+/g) || []; }
+function score(text, useAll) {
+  var words = tokens(text), total = 0, fired = [];
+  RULES.forEach(function (r) {
+    if (!useAll && !r.on) return;
+    var hit = r.word ? words.indexOf(r.word) !== -1 : r.re.test(text);
+    if (hit) { total += r.weight; fired.push(r); }
+  });
+  return { total: total, fired: fired };
+}
+var msg = document.getElementById("msg");
+var ledger = document.getElementById("ledger");
+SAMPLES.forEach(function (s, i) {
+  var b = document.createElement("button");
+  b.className = "chip"; b.type = "button"; b.textContent = s.label;
+  b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+  b.addEventListener("click", function () { msg.value = s.text; render(); });
+  document.getElementById("chips").appendChild(b);
+});
+RULES.forEach(function (r, i) {
+  var b = document.createElement("button");
+  b.className = "rule"; b.type = "button"; b.dataset.i = i;
+  b.setAttribute("aria-pressed", "true");
+  b.innerHTML = '<span class="rule-box" aria-hidden="true"></span><span><span class="rule-text"></span><span class="rule-fire"></span><span class="rule-ev"></span></span><span class="rule-w"></span>';
+  b.querySelector(".rule-text").textContent = r.text;
+  b.querySelector(".rule-ev").textContent = "fired on " + r.fired + " messages, right " + Math.round(r.right * 100) + "% of the time";
+  var w = b.querySelector(".rule-w");
+  w.textContent = (r.weight > 0 ? "+" : "") + r.weight;
+  w.className = "rule-w " + (r.weight > 0 ? "w-plus" : "w-minus");
+  b.setAttribute("aria-label", r.text + ", weight " + (r.weight > 0 ? "plus " : "minus ") + Math.abs(r.weight) + ", " + (r.weight > 0 ? "accuses" : "vouches") + ", fired on " + r.fired + " messages and was right " + Math.round(r.right * 100) + " percent of the time");
+  b.addEventListener("click", function () { r.on = !r.on; render(); });
+  ledger.appendChild(b);
+});
+document.getElementById("reset").addEventListener("click", function () { RULES.forEach(function (r) { r.on = true; }); render(); });
+document.getElementById("drop-words").addEventListener("click", function () { RULES.forEach(function (r) { if (r.word) r.on = false; }); render(); });
+msg.addEventListener("input", render);
+function render() {
+  var text = msg.value;
+  var live = score(text, false);
+  var full = score(text, true);
+  var firedSet = live.fired;
+  var matching = SAMPLES.filter(function (s) { return s.text === text; })[0];
+  Array.prototype.forEach.call(document.querySelectorAll(".chips .chip"), function (c) {
+    c.setAttribute("aria-pressed", String(!!matching && c.textContent === matching.label));
+  });
+  Array.prototype.forEach.call(ledger.children, function (b) {
+    var r = RULES[+b.dataset.i];
+    var isFired = firedSet.indexOf(r) !== -1;
+    b.classList.toggle("is-off", !r.on);
+    b.classList.toggle("is-fired", isFired);
+    b.setAttribute("aria-pressed", String(r.on));
+    b.querySelector(".rule-fire").textContent = isFired ? "fired" : "";
+  });
+  var off = RULES.filter(function (r) { return !r.on; }).length;
+  document.getElementById("ledger-note").textContent = off ? (RULES.length - off) + " of 47 active" : "47 rules, all active";
+  var receipt = document.getElementById("receipt");
+  receipt.innerHTML = "";
+  if (!firedSet.length) { receipt.innerHTML = '<p class="empty">Nothing fired. No belief in the ledger matches this message.</p>'; }
+  firedSet.forEach(function (r) {
+    var row = document.createElement("div");
+    row.className = "line";
+    row.innerHTML = '<span><span class="line-text"></span><span class="line-ev"></span></span><span class="line-w"></span>';
+    row.querySelector(".line-text").textContent = r.text;
+    row.querySelector(".line-ev").textContent = r.fired + " messages of evidence, " + Math.round(r.right * 100) + "% right";
+    var w = row.querySelector(".line-w");
+    w.textContent = (r.weight > 0 ? "+" : "") + r.weight;
+    w.className = "line-w " + (r.weight > 0 ? "w-plus" : "w-minus");
+    receipt.appendChild(row);
+  });
+  document.getElementById("total").textContent = (live.total > 0 ? "+" : "") + live.total;
+  document.getElementById("tally-note").textContent = firedSet.length + (firedSet.length === 1 ? " rule" : " rules") + ", threshold " + THRESHOLD;
+  var flagged = live.total >= THRESHOLD;
+  var v = document.getElementById("verdict");
+  v.className = "verdict " + (flagged ? "verdict-flag" : "verdict-safe");
+  v.innerHTML = '<span class="verdict-word"></span><span class="verdict-sub"></span>';
+  v.querySelector(".verdict-word").textContent = flagged ? "FLAG" : "LOOKS ORDINARY";
+  v.querySelector(".verdict-sub").textContent = "evidence " + live.total + ", threshold " + THRESHOLD + (flagged ? " — it would warn the reader" : " — it would stay quiet");
+  var changed = document.getElementById("changed");
+  var fullFlag = full.total >= THRESHOLD;
+  if (off && fullFlag !== flagged) {
+    changed.className = "changed";
+    changed.innerHTML = "<b>You just changed its mind.</b> With all 47 rules it says " + (fullFlag ? "FLAG" : "LOOKS ORDINARY") + " on this message. With the " + off + " you switched off, it says " + (flagged ? "FLAG" : "LOOKS ORDINARY") + ". No retraining, no upload, no permission needed — the beliefs are a file you own.";
+  } else if (off) {
+    changed.className = "changed";
+    changed.innerHTML = "<b>" + off + " beliefs switched off.</b> The verdict has not moved on this particular message, but the filter is now a different filter. Try another message.";
+  } else { changed.className = ""; changed.innerHTML = ""; }
+  var spoken = flagged ? "Flagged" : "Looks ordinary";
+  spoken += ". Evidence " + live.total + ", threshold " + THRESHOLD + ". ";
+  spoken += firedSet.length ? firedSet.length + (firedSet.length === 1 ? " belief fired: " : " beliefs fired: ") + firedSet.map(function (r) { return r.text; }).join("; ") : "No belief fired.";
+  if (off) { spoken += ". " + off + " of 47 beliefs are switched off"; spoken += fullFlag !== flagged ? ", which changed the verdict." : ", which did not change the verdict on this message."; }
+  document.getElementById("announce").textContent = spoken;
+}
+msg.value = SAMPLES[0].text;
+render();
+</script>
+</body>
+</html>

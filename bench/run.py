@@ -15,6 +15,7 @@ import json
 from pathlib import Path
 
 from . import corpus, methods, replay
+from . import methods_llm  # noqa: F401  registers llm-skill
 
 
 def _fmt_threshold(value) -> str:

@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from bench import corpus as corpus_mod  # noqa: E402
 from bench import methods  # noqa: E402
+from bench import methods_llm  # noqa: E402,F401  registers llm-skill
 from bench.replay import f1_of, score_step  # noqa: E402
 
 DEFAULT_METHODS = ("copy-forward", "last-effect", "nyaya-templates", "dsl-synthesis-rel")
@@ -38,7 +39,8 @@ CALIBRATED = ("last-effect-stable", "dsl-cal-8", "dsl-cal-32", "dsl-cal-64")
 COMPLETE = ("complete-1:last-effect", "complete-2:last-effect",
             "complete-1:nyaya-templates", "complete-2:nyaya-templates",
             "complete-1:dsl-synthesis-rel", "complete-2:dsl-synthesis-rel",
-            "complete-3:dsl-synthesis-rel")
+            "complete-3:dsl-synthesis-rel",
+            "union:complete-2:last-effect|complete-1:nyaya-templates|complete-1:dsl-synthesis-rel")
 
 
 class StableEffect:
@@ -122,7 +124,33 @@ class Complete:
         self.history.setdefault(repr(action), []).append((before, after))
 
 
+class Union:
+    """Several gated methods; the first that commits, speaks.
+
+    Each completeness-gated learner covers about one percent of actions.
+    If they cover different actions, the union covers more at the same
+    precision; if they cover the same ones, it does not. Measured, not
+    assumed.
+    """
+
+    def __init__(self, inners):
+        self.inners = list(inners)
+
+    def predict(self, board, action):
+        for inner in self.inners:
+            out = inner.predict(board, action)
+            if out != board:
+                return out
+        return list(board)
+
+    def observe(self, before, action, after):
+        for inner in self.inners:
+            inner.observe(before, action, after)
+
+
 def build(name):
+    if name.startswith("union:"):
+        return Union(build(part) for part in name[len("union:"):].split("|"))
     if name == "last-effect-stable":
         return StableEffect()
     if name.startswith("dsl-cal-"):
@@ -149,14 +177,16 @@ def measure(method, chain):
         perfect_f1 += (tp + fp + fn) > 0 and f1_of(tp, fp, fn) == 1.0
         method.observe(before, action, after)
     return {"n": n, "commits": commits, "exact": exact, "delegable": delegable,
-            "noops": noops, "perfect_f1": perfect_f1}
+            "noops": noops, "perfect_f1": perfect_f1, "tokens": int(getattr(method, "tokens", 0))}
 
 
-def run(corpus_path, names):
+def run(corpus_path, names, limit=0):
     episodes = corpus_mod.load(corpus_path)
+    if limit:
+        episodes = dict(sorted(episodes.items())[:limit])
     out = {}
     for name in names:
-        total = {"n": 0, "commits": 0, "exact": 0, "delegable": 0, "noops": 0, "perfect_f1": 0}
+        total = {"n": 0, "commits": 0, "exact": 0, "delegable": 0, "noops": 0, "perfect_f1": 0, "tokens": 0}
         for chain in episodes.values():
             counts = measure(build(name), chain)
             for key in total:
@@ -167,14 +197,14 @@ def run(corpus_path, names):
 
 def table(results, title):
     lines = [title, "",
-             f"{'method':<20}{'actions':>9}{'commits':>9}{'commit ok':>11}{'delegable':>11}{'no-ops':>8}{'cells ok':>10}",
-             "-" * 78]
+             f"{'method':<20}{'actions':>9}{'commits':>9}{'commit ok':>11}{'delegable':>11}{'no-ops':>8}{'cells ok':>10}{'tokens':>9}",
+             "-" * 87]
     for name, t in results.items():
         n = t["n"] or 1
         commit_ok = t["delegable"] / t["commits"] if t["commits"] else 0.0
         lines.append(
             f"{name:<20}{t['n']:>9}{t['commits'] / n:>9.1%}{commit_ok:>11.1%}"
-            f"{t['delegable'] / n:>11.1%}{t['noops'] / n:>8.1%}{t['perfect_f1'] / n:>10.1%}"
+            f"{t['delegable'] / n:>11.1%}{t['noops'] / n:>8.1%}{t['perfect_f1'] / n:>10.1%}{t.get('tokens', 0):>9}"
         )
     lines.append("")
     lines.append("commits: claimed to know the outcome.  commit ok: of those, whole frame right.")
@@ -191,14 +221,16 @@ def main(argv=None):
                         help="add the variants that only commit on earned evidence")
     parser.add_argument("--complete", action="store_true",
                         help="add the variants that commit only when the theory explains the action's recent history completely")
+    parser.add_argument("--limit", type=int, default=0, help="first N episodes only")
     args = parser.parse_args(argv)
     if args.calibrated:
         args.methods = list(args.methods) + list(CALIBRATED)
     if args.complete:
         args.methods = list(args.methods) + list(COMPLETE)
     path = Path(args.corpus) if args.corpus else corpus_mod.CORPUS
-    results = run(path, args.methods)
-    print(table(results, f"corpus: {path.name}"))
+    results = run(path, args.methods, limit=args.limit)
+    title = f"corpus: {path.name}" + (f" (first {args.limit} episodes)" if args.limit else "")
+    print(table(results, title))
     return 0
 
 

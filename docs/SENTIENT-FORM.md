@@ -119,8 +119,9 @@ regenerate from commands in this repo.
 
 > https://github.com/let-the-dreamers-rise/nyaya
 > `python -m bench.run --corpus bench/corpus-heldout` and `python scripts/delegation.py --complete` reproduce every number above.
-> Project site: https://claude.ai/code/artifact/aaf9ecdc-f203-487a-b542-ac370294df33
-> Belief ledger, 47 rules, switch any off: https://claude.ai/code/artifact/06089609-fcda-45bc-86f6-e3adf3399c40
+> Project site: https://let-the-dreamers-rise.github.io/nyaya/
+> Belief ledger, 47 rules, switch any off: https://let-the-dreamers-rise.github.io/nyaya/ledger.html
+> Every push regenerates the held-out tables: https://github.com/let-the-dreamers-rise/nyaya/actions
 > Phone: `nyaya-money serve demo`, or the one-line Termux installer in the README.
 > The archive / verify / inherit spec the engine is built toward: https://github.com/let-the-dreamers-rise/auto-evolve
 
@@ -135,6 +136,11 @@ going to describe a company that does not exist yet."
 Part Two #11, Make Open Models Small, Fast, and Cheap; Part Two #8, Your AI,
 Your Values. Part Three #1 (EvoSkill) is the comparison point, not the
 base: their loop and mine on the same unseen games.
+
+**Where the money goes** (three lines, from docs/ASK.md): $12,000 compute to
+run the competitor's method at the expensive end of the curve, $10,500 one
+researcher for three months in India, $7,500 corpus extension, three
+phone-class devices and contingency. Total $30,000.
 
 **How much, for what, by when**: $30,000, three months, one deliverable:
 the cost-capability curve with Tycho at the expensive end measured rather

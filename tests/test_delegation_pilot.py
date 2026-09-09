@@ -50,7 +50,8 @@ CHAIN = [
 
 def test_oracle_delegates_every_change_and_names_the_noop():
     counts = delegation.measure(Oracle(CHAIN), CHAIN)
-    assert counts == {"n": 3, "commits": 2, "exact": 3, "delegable": 2, "noops": 1, "perfect_f1": 2}
+    assert counts == {"n": 3, "commits": 2, "exact": 3, "delegable": 2, "noops": 1, "perfect_f1": 2,
+                      "tokens": 0}
 
 
 def test_wrong_commits_everywhere_and_delegates_nothing():
@@ -103,6 +104,15 @@ def test_complete_gate_passes_an_oracle():
     # the oracle consumes answers in order; feed history then ask
     m.observe(*chain[0])
     assert m.inner.i == 0
+
+
+def test_union_speaks_with_the_first_method_that_commits():
+    board = ["ab"]
+    union = delegation.Union([Silent(), Wrong(), Silent()])
+    assert union.predict(board, "A") == ["XX"]
+    assert delegation.Union([Silent(), Silent()]).predict(board, "A") == board
+    built = delegation.build("union:last-effect|complete-2:last-effect")
+    assert isinstance(built, delegation.Union) and len(built.inners) == 2
 
 
 def test_build_parses_complete_names():

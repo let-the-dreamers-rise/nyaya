@@ -1,0 +1,43 @@
+name: bench
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install pytest
+      - run: python -m pytest -q
+
+  held-out:
+    # The numbers in the README, regenerated on every push so nobody has to
+    # type the commands to check them. The llm-skill row replays from the
+    # committed prompt cache, so no model is needed here.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: benchmark, held-out corpus
+        run: python -m bench.run --corpus bench/corpus-heldout --json heldout.json | tee heldout.txt
+      - name: delegation, held-out corpus
+        run: python scripts/delegation.py --corpus bench/corpus-heldout --calibrated --complete | tee delegation.txt
+      - name: summary
+        run: |
+          { echo '```'; cat heldout.txt; echo; cat delegation.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: held-out-results
+          path: |
+            heldout.json
+            heldout.txt
+            delegation.txt
