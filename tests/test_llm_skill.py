@@ -71,6 +71,28 @@ def test_cache_replays_without_the_model(tmp_path):
     assert second.predict(["3333", "0000"], "ACTION1") == ["5555", "0000"]
 
 
+def test_feedback_round_carries_the_evaluators_verdict(tmp_path):
+    client = Fake([WRONG, RULE])
+    skill = LlmSkill(client=client, cache_dir=tmp_path, rounds=2)
+    for before, after in transitions():
+        skill.observe(before, "ACTION1", after)
+    assert len(client.prompts) == 2
+    assert "Your previous program" in client.prompts[1]
+    assert "you said 9, it was 5" in client.prompts[1]
+    assert skill.predict(["3333", "0000"], "ACTION1") == ["5555", "0000"]
+    assert skill.summary()["accepted"] == 1
+
+
+def test_feedback_rounds_share_the_call_budget(tmp_path):
+    client = Fake([WRONG] * 10)
+    skill = LlmSkill(client=client, cache_dir=tmp_path, max_calls=3, rounds=2)
+    for _ in range(4):
+        for before, after in transitions():
+            skill.observe(before, "ACTION1", after)
+    assert len(client.prompts) == 3
+    assert "llm-skill-feedback" in methods.REGISTRY
+
+
 def test_extract_and_normalise():
     assert extract_code("```python\nx = 1\n```") == "x = 1"
     assert normalise([["a", "b"], ["c", "d"]], (2, 2)) == ["ab", "cd"]

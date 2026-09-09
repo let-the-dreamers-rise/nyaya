@@ -120,6 +120,43 @@ def prompt_for(action, examples):
     return "\n".join(lines)
 
 
+def failure_report(code, examples, limit=20):
+    """What the evaluator saw: for the first example the program got wrong,
+    the cells it got wrong. This is the feedback EvoSkill's loop carries back
+    into the next proposal."""
+    try:
+        fn = compile_predict(code)
+    except Exception as error:  # noqa: BLE001
+        return f"Your previous program did not compile: {error!r}"
+    for i, (before, action, after) in enumerate(examples, 1):
+        try:
+            out = normalise(fn(list(before), action), (len(after), len(after[0]) if after else 0))
+        except Exception as error:  # noqa: BLE001
+            return f"Your previous program raised {error!r} on example {i}."
+        if out is None:
+            return f"Your previous program returned the wrong shape on example {i}."
+        if out == after:
+            continue
+        wrong = []
+        for r in range(len(after)):
+            for c in range(len(after[r])):
+                if out[r][c] != after[r][c]:
+                    wrong.append(f"({r},{c}): you said {out[r][c]}, it was {after[r][c]}")
+                    if len(wrong) >= limit:
+                        break
+            if len(wrong) >= limit:
+                break
+        return (f"Your previous program was wrong on example {i} at these cells "
+                f"(row, col): " + "; ".join(wrong) + (" ..." if len(wrong) >= limit else ""))
+    return ""
+
+
+def feedback_prompt(prompt, code, report):
+    return (prompt + "\n\nYour previous program:\n" + code + "\n\n" + report +
+            "\nWrite a corrected `def predict(board, action)` that reproduces every example exactly. "
+            "Return only the code.")
+
+
 def extract_code(text):
     """Strip markdown fences if the model added them anyway."""
     text = text.strip()
@@ -164,10 +201,11 @@ def compile_predict(code):
 class LlmSkill:
     """Skills written by a model, kept only when they explain the evidence."""
 
-    def __init__(self, client=None, cache_dir=CACHE, max_calls=MAX_CALLS_PER_ACTION):
+    def __init__(self, client=None, cache_dir=CACHE, max_calls=MAX_CALLS_PER_ACTION, rounds=1):
         self.client = client or OllamaClient()
         self.cache_dir = Path(cache_dir) / getattr(self.client, "model", "fake").replace(":", "-")
         self.max_calls = max_calls
+        self.rounds = rounds
         self.examples: dict = {}
         self.programs: dict = {}
         self.calls: dict = {}
@@ -206,20 +244,37 @@ class LlmSkill:
         explained = self._run(key, before, action) == after
         if explained or len(history) < 2 or self.calls.get(key, 0) >= self.max_calls:
             return
-        self.calls[key] = self.calls.get(key, 0) + 1
         recent = history[-MAX_EXAMPLES:]
-        text, tokens = self._complete(prompt_for(action, recent))
-        self.tokens += tokens
-        code = extract_code(text)
-        if not code or not verify(code, [(b, action, a) for b, a in recent]):
-            self.programs.pop(key, None)
-            return
-        try:
-            self.programs[key] = compile_predict(code)
-            self.accepted += 1
-        except Exception:  # noqa: BLE001
-            self.programs.pop(key, None)
+        examples = [(b, action, a) for b, a in recent]
+        prompt = prompt_for(action, recent)
+        code = ""
+        for _round in range(self.rounds):
+            if self.calls.get(key, 0) >= self.max_calls:
+                break
+            self.calls[key] = self.calls.get(key, 0) + 1
+            text, tokens = self._complete(prompt)
+            self.tokens += tokens
+            code = extract_code(text)
+            if code and verify(code, examples):
+                try:
+                    self.programs[key] = compile_predict(code)
+                    self.accepted += 1
+                    return
+                except Exception:  # noqa: BLE001
+                    break
+            # The evaluate step failed; carry what it saw into the next proposal.
+            prompt = feedback_prompt(prompt_for(action, recent), code or "(no code)",
+                                     failure_report(code, examples) if code else "Your previous reply contained no code.")
+        self.programs.pop(key, None)
 
     def summary(self):
         return {"programs": len(self.programs), "accepted": self.accepted,
                 "calls": sum(self.calls.values()), "tokens": self.tokens}
+
+
+@methods.register("llm-skill-feedback")
+def llm_skill_feedback():
+    """The same loop with the evaluator's verdict fed back once, which is the
+    part of EvoSkill's loop the one-shot row leaves out. Three calls per
+    action still, so the budget is equal and only the feedback differs."""
+    return LlmSkill(rounds=2)
