@@ -337,8 +337,20 @@ times this action was taken, reproduces every frame exactly. Held out:
 | dsl-synthesis-rel | 1 | 0.6% | 21.1% | 0.1% |
 | dsl-synthesis-rel | 2 | 0.2% | 20.0% | 0.0% |
 | dsl-synthesis-rel | 3 | 0.0% | -- | 0.0% |
+| union of the three gates above | 2, 1, 1 | 2.7% | 38.5% | 1.1% |
 
 *Development corpus: templates at k=2 reach 53.3% right on 0.5% of actions.*
+*k=1 on last-effect is vacuous (it always reproduces the frame it stored) and
+matches the ungated row exactly, which is a useful check that the gate does
+what it says.*
+
+The union row is the first point on the log that moved coverage rather than
+precision. The three gated learners commit on mostly different actions, so
+taking the first that commits nearly doubles delegable actions (0.6% to
+1.1%) and keeps precision at 38.5%, above the 20% floor the synthesiser
+sets and below the 50% the heuristic alone reaches. Diversity of theory is
+worth more than depth of any one theory at this end of the curve, which is
+an argument for the library, not against it.
 
 The gate does what per-rule evidence could not: it turns every learner
 from under 3% right into 20 to 50% right. And it shows the real ceiling.

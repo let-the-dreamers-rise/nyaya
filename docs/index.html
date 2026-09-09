@@ -190,6 +190,7 @@ footer a{color:var(--muted)}
         <tr><td>last-effect, complete gate</td><td>1.2%</td><td class="best">50.0%</td><td>0.6%</td></tr>
         <tr><td>nyaya-templates, complete gate</td><td>1.0%</td><td>32.4%</td><td>0.3%</td></tr>
         <tr><td>dsl-synthesis-rel, complete gate</td><td>0.6%</td><td>21.1%</td><td>0.1%</td></tr>
+        <tr><td>union of the three gates</td><td>2.7%</td><td>38.5%</td><td class="best">1.1%</td></tr>
       </tbody>
     </table>
   </div>
@@ -207,6 +208,7 @@ footer a{color:var(--muted)}
     <div><span class="when">9 Sep 2026, afternoon</span><p class="what"><b>Per-rule evidence gates:</b> no change. <b>Whole-effect gate:</b> precision 8.6% &rarr; 51.4%, coverage 1.1%.</p></div>
     <div><span class="when">9 Sep 2026, evening</span><p class="what"><b>General completeness gate</b> on every learner: 20 to 50% right, about 1% coverage. Requiring three repeats zeroes the synthesiser.</p></div>
     <div><span class="when">10 Sep 2026</span><p class="what"><b>A model in the loop, the way EvoSkill does it,</b> on the same games with an open 8B model: 107 programs written, none survived the verifier, 0 commits, F1 0.000, 156k tokens. The $0 heuristic scores 0.181 on the same slice. The loop's value is in the model, and the model is what costs $119 a game.</p></div>
+    <div><span class="when">10 Sep 2026</span><p class="what"><b>The gated learners cover different actions.</b> Their union is 1.1% delegable at 38.5% right, against 0.6% for the best single gate. The first point that moved coverage, not precision.</p></div>
   </div>
 </section>
 

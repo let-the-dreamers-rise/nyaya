@@ -77,6 +77,7 @@ nyaya-templates          3318    38.1%       2.5%       0.9%    5.2%
 dsl-synthesis-rel        3318    59.0%       0.7%       0.4%    2.4%
 last-effect-stable       3318     1.1%      51.4%       0.6%    6.4%
 dsl-cal-32               3318    24.2%       0.1%       0.0%    4.6%
+union of gated learners  3318     2.7%      38.5%       1.1%    6.2%
 ```
 
 An action is *delegable* when the model committed to a prediction and the
@@ -100,6 +101,7 @@ game with precision above 50%, or a published reason why not.
 | 9 Sep 2026, afternoon | per-rule evidence gates: nothing; whole-effect gate: right 8.6% to 51.4% at 1.1% coverage |
 | 9 Sep 2026, evening | completeness gate on every learner: 20 to 50% right at about 1% coverage; three repeats zeroes synthesis |
 | 10 Sep 2026 | a model in the loop, EvoSkill's shape, on the same games: 107 programs written, 0 survived verification, 156k tokens; the row below |
+| 10 Sep 2026 | the three gated learners cover different actions: their union is 1.1% delegable at 38.5% right, against 0.6% for the best single gate |
 
 **The competitor's row, run by us.** EvoSkill's loop is propose, generate,
 evaluate: a model reads what went wrong, writes a skill as code, and the
