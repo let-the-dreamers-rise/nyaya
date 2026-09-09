@@ -82,9 +82,10 @@ regenerate from commands in this repo.
 
 **In one line, what are you building?**
 
-> The measurement of how much of an agent a person can own at $0, and the
-> runtime that pushes that number up: readable world models, learned
-> on-device, delegated to only when they have earned it.
+> Skills that outlive the agent that learned them: world models compiled
+> into readable programs, verified by replay so anyone holding the evidence
+> can rescore them, inherited by the next agent, and a public measurement of
+> how much of an agent that lets a person own at $0.
 
 **Who is building this, and why is your team the right one to do it?**
 
@@ -121,6 +122,7 @@ regenerate from commands in this repo.
 > Project site: https://claude.ai/code/artifact/aaf9ecdc-f203-487a-b542-ac370294df33
 > Belief ledger, 47 rules, switch any off: https://claude.ai/code/artifact/06089609-fcda-45bc-86f6-e3adf3399c40
 > Phone: `nyaya-money serve demo`, or the one-line Termux installer in the README.
+> The archive / verify / inherit spec the engine is built toward: https://github.com/let-the-dreamers-rise/auto-evolve
 
 ## If it asks
 
@@ -156,3 +158,9 @@ delegation does not work on this benchmark, and the report says so.
    submitting, re-run and re-paste.
 3. The Kaggle token pasted in chat earlier this month: rotate it at
    kaggle.com/settings if you have not.
+4. GitHub does not credit you for a single commit on nyaya or auto-evolve:
+   ashwinthebest8@gmail.com is not a verified email on the
+   let-the-dreamers-rise account, so the author shows unlinked and the
+   co-author trailer makes wozcode the only listed contributor. Add and
+   verify the email at github.com/settings/emails before anyone on the panel
+   opens the repo.
