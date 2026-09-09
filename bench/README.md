@@ -317,6 +317,17 @@ action's last k frames exactly. Templates go from 2.5% right to 32%,
 synthesis from 0.7% to 21%, both at about one percent coverage. Delegation is
 a completeness problem, and that is where the curve starts.
 
+`llm-skill` (`bench/methods_llm.py`) puts a language model in the loop the
+way EvoSkill does, on this interface: recent transitions in, a `predict`
+program out, kept only if it reproduces every example under the same replay
+verifier. Any Ollama model works; set `NYAYA_LLM_MODEL`. With granite3.2:8b
+on the first five held-out games it wrote 107 programs and none survived
+verification: 0 commits, F1 0.000, 156k tokens, about a hundred minutes.
+Every prompt and reply is cached under `bench/llm-cache/` and committed, so
+`--methods llm-skill` replays without a model, including in CI. A stronger
+prompt, a feedback retry, or a bigger model belongs in the registry as
+another row; the protocol does not change.
+
 ## Why the engine is domain-agnostic on purpose
 
 The searcher never learns what a primitive means. It takes `(observation,

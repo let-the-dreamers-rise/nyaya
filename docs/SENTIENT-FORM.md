@@ -62,6 +62,12 @@ regenerate from commands in this repo.
 > history exactly lifts every learner to 20 to 50% right at about one
 > percent coverage. The commit criterion is solved and cheap. What limits
 > delegation is the completeness of the theory, and that is the research.
+>
+> And the competitor's row is run, not promised: EvoSkill's loop with an
+> open 8B model, on the same games under the same verifier, wrote 107
+> programs and none survived, at 156k tokens. The loop's value is in the
+> model, and the model is what costs $119 a game. The curve between those
+> two points is what I am asking you to fund.
 
 **Who does this help?**
 
@@ -135,7 +141,8 @@ going to describe a company that does not exist yet."
 (primary: delegation is cost routing, with the routing decision measured);
 Part Two #11, Make Open Models Small, Fast, and Cheap; Part Two #8, Your AI,
 Your Values. Part Three #1 (EvoSkill) is the comparison point, not the
-base: their loop and mine on the same unseen games.
+base: their loop and mine on the same unseen games, and that row exists
+(`bench/methods_llm.py`, prompts and replies committed).
 
 **Where the money goes** (three lines, from docs/ASK.md): $12,000 compute to
 run the competitor's method at the expensive end of the curve, $10,500 one

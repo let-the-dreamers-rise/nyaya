@@ -348,6 +348,26 @@ commit criterion is now known and cheap, and the thing that limits
 delegation is the *completeness* of the theory, which is C2's problem
 stated from the routing side.
 
+**A model in the loop, measured on the same games** (10 Sep, `llm-skill`,
+`bench/methods_llm.py`). EvoSkill's propose, generate, evaluate loop, reduced
+to the benchmark's interface: the model sees the action's last transitions
+as changed cells, writes `predict(board, action)`, and the program is kept
+only if it reproduces every example under the replay verifier. Model:
+granite3.2:8b through Ollama, the open 8B model on the author's laptop.
+First five held-out games, 709 transitions: 107 programs written, all
+syntactically valid, **zero survived verification**, so zero commits, F1
+0.000, 156,438 tokens, about a hundred minutes. The one-line heuristic
+scores 0.181 on the same slice for nothing. The prompts and replies are
+committed under `bench/llm-cache/` so the row replays without a model.
+
+What this row says and does not say. It is the floor of the loop, not its
+ceiling: one prompt, no feedback from the evaluator, a small model. It does
+not say the loop is useless; Tycho's version of it clears the public set
+with a frontier model. It says the loop's value is in the model, and the
+model is what costs $119 a game. Between an 8B model that produces nothing
+and a frontier model that produces everything, nobody has measured the
+curve, which is the programme.
+
 The split is the finding. **Gating on per-rule evidence does not calibrate
 at all**: the rules are mostly right about the cells they touch, and the
 frame is wrong anyway because of cells no rule covers. Whole-frame

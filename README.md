@@ -99,7 +99,39 @@ game with precision above 50%, or a published reason why not.
 | 9 Sep 2026, morning | first measurement: delegable 0.4% (synthesis), 2.0% (last-effect); commits right 0.7% and 8.6% |
 | 9 Sep 2026, afternoon | per-rule evidence gates: nothing; whole-effect gate: right 8.6% to 51.4% at 1.1% coverage |
 | 9 Sep 2026, evening | completeness gate on every learner: 20 to 50% right at about 1% coverage; three repeats zeroes synthesis |
-| 10 Sep 2026 | a model in the loop, EvoSkill's shape, on the same games: the row below |
+| 10 Sep 2026 | a model in the loop, EvoSkill's shape, on the same games: 107 programs written, 0 survived verification, 156k tokens; the row below |
+
+**The competitor's row, run by us.** EvoSkill's loop is propose, generate,
+evaluate: a model reads what went wrong, writes a skill as code, and the
+skill is kept if it survives evaluation. `bench/methods_llm.py` is that loop
+on this benchmark's interface, with the same replay verifier every $0 method
+faces: the program is kept only if it reproduces every example it was shown.
+The model is the one open model on the author's laptop, granite3.2:8b via
+Ollama, so the row is priced in tokens and minutes. First five held-out
+games, 709 transitions:
+
+```bash
+python scripts/delegation.py --corpus bench/corpus-heldout --limit 5 --methods llm-skill last-effect dsl-synthesis-rel
+```
+
+```text
+method                actions  commits  commit ok  delegable  no-ops   tokens
+llm-skill                 709     0.0%       0.0%       0.0%    7.1%   156438
+last-effect               709    24.1%      11.7%       2.8%    6.3%        0
+dsl-synthesis-rel         709    45.1%       2.8%       1.3%    3.4%        0
+```
+
+The model wrote 107 programs in about a hundred minutes. Every one of them
+was a syntactically valid `predict`, and none reproduced the two frames it
+had just been shown, so none was ever allowed to commit. Changed-cell F1:
+0.000, against 0.181 for the one-line heuristic. Every prompt and reply is
+in [`bench/llm-cache/`](bench/llm-cache/), so the row replays without a
+model and anyone can read what it wrote. This is the floor of the loop, not
+its ceiling: one prompt, no evaluator feedback, an 8B model. It is also the
+point of the curve. The loop that solves the public set uses a frontier
+model at about $119 a game; the same loop with a laptop model produces
+nothing a verifier will accept. What lies between is unmeasured, and
+measuring it is tranche one.
 
 ## The state of the field, verified
 
