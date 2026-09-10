@@ -91,10 +91,11 @@ repo; if you change code before submitting, re-run and re-paste.
 
 **In one line, what are you building?**
 
-> Skills that outlive the agent that learned them: world models compiled
-> into readable programs, verified by replay so anyone holding the evidence
-> can rescore them, inherited by the next agent, and a public measurement of
-> how much of an agent that lets a person own at $0.
+> Readable, verifiable world models learned on-device at $0, and the public benchmark that prices how much of an agent a person can own.
+
+*(The field is a single line. Longer form, if it ever takes one: skills that
+outlive the agent that learned them: world models compiled into readable
+programs, verified by replay, inherited by the next agent.)*
 
 **Who is building this, and why is your team the right one to do it?**
 
@@ -126,14 +127,17 @@ repo; if you change code before submitting, re-run and re-paste.
 > last one is exactly the loss your "yours to keep" belief exists to
 > prevent.
 
-**Please provide demo or trial links** *(one URL field; the site links to everything else)*
+**Please provide demo or trial links** *(one URL field; the repo links to everything else)*
 
-> https://let-the-dreamers-rise.github.io/nyaya/
+> https://github.com/let-the-dreamers-rise/nyaya
 
+The repo, not the Pages site, goes in the single field: github.com is
+reachable from every network, and on 11 Sep github.io timed out from the
+author's connection while GitHub reported the site built and DNS resolved.
 If the field takes text, add:
 
-> Repo: https://github.com/let-the-dreamers-rise/nyaya (`python -m bench.run --corpus bench/corpus-heldout`, `python scripts/delegation.py --corpus bench/corpus-heldout --complete`)
-> Belief ledger: https://let-the-dreamers-rise.github.io/nyaya/ledger.html
+> Site: https://let-the-dreamers-rise.github.io/nyaya/ and the belief ledger at /ledger.html
+> Reproduce: `python -m bench.run --corpus bench/corpus-heldout`, `python scripts/delegation.py --corpus bench/corpus-heldout --complete`
 > CI regenerating the tables on every push: https://github.com/let-the-dreamers-rise/nyaya/actions
 > The archive / verify / inherit spec the engine is built toward: https://github.com/let-the-dreamers-rise/auto-evolve
 
