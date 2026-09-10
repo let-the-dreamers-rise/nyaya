@@ -39,14 +39,14 @@ running agents at scale -- and I would welcome that conversation once the
 runtime has users, but I am not going to describe a company that does not yet
 exist."*
 
-## 2. The number: ask for $30,000, not $103,000
+## 2. The number: ask for $25,000, not $103,000
 
 **The ask is a first tranche, and it is deliberately small.**
 
 An earlier draft of this document asked for $103,000 up front. That was the
 wrong instrument for the situation. A solo researcher with no completed funded
 project asking a foundation for six figures on day one is asking them to make
-a bet; asking for $30,000 against one three-month deliverable is asking them to
+a bet; asking for $25,000 against one three-month deliverable is asking them to
 buy a cheap option. The second is a much easier yes, and a delivered small
 grant is the fastest route to a large one.
 
@@ -54,7 +54,11 @@ It is also now the *accurate* ask, because the thing the old fallback was
 priced for -- C0, the corpus and protocol -- **has already been delivered,
 unpaid.** Charging for it would be charging for finished work.
 
-### Tranche one: $30,000, three months, one deliverable
+### Tranche one: $25,000, three months, one deliverable
+
+*(Sentient's form offers fixed amounts: 10k, 25k, 50k, over 50k. The
+build-up below is trimmed to the 25k rung; the trimmed lines are the phone
+devices and the contingency, which are the two that can wait.)*
 
 **The deliverable is M1: the cost-capability curve.** Every method with public
 code, run under one protocol on one corpus, with cost measured rather than
@@ -62,14 +66,14 @@ quoted. Published open, contestable by a stranger, whatever it shows.
 
 | Line | Amount (USD) | Justification |
 |---|---|---|
-| Compute for the head-to-head | 12,000 | **The largest line, and it is spent running our competitor's method, not ours.** Tycho's published cost is ~$119/game; 25 games across a few configurations, plus re-runs, is what an honest expensive anchor costs. A cost curve with an unmeasured expensive end is an opinion |
+| Compute for the head-to-head | 10,000 | **The largest line, and it is spent running our competitor's method, not ours.** Tycho's published cost is ~$119/game; 25 games across a few configurations, plus re-runs, is what an honest expensive anchor costs. A cost curve with an unmeasured expensive end is an opinion |
 | Researcher, 3 months | 10,500 | One person, India, at a rate that makes this the work rather than the side project |
-| Corpus extension and curation | 3,000 | Beyond the 25 public games: more environments, human-verified labels on a held-out slice so agreement is checked against ground truth, not only against a teacher model |
-| Phone-class test devices | 2,000 | A sub-Rs.10,000 Android and two mid-tier devices, so "runs on hardware people own" stays measured rather than asserted |
-| Contingency (9%) | 2,500 | Compute overruns are the likeliest surprise, and they land on the one line we cannot economise on |
-| **Tranche one total** | **$30,000** | |
+| Corpus extension and curation | 2,000 | Beyond the 25 public games: more environments, human-verified labels on a held-out slice so agreement is checked against ground truth, not only against a teacher model |
+| Phone-class test devices | 1,000 | A sub-Rs.10,000 Android and two mid-tier devices, so "runs on hardware people own" stays measured rather than asserted |
+| Contingency (6%) | 1,500 | Compute overruns are the likeliest surprise, and they land on the one line we cannot economise on |
+| **Tranche one total** | **$25,000** | |
 
-**What they get for $30,000 even if everything after it fails:** the first
+**What they get for $25,000 even if everything after it fails:** the first
 published measurement of what programmatic world models cost to run, on a
 corpus and protocol that are already public, under a licence that means the
 field keeps it. That artefact does not depend on our method being any good.
@@ -88,7 +92,7 @@ persuade, we part on good terms and they keep the artefact.
 | **Full programme** | **$98,000** | Twelve months, one full-time researcher |
 
 **Say the shape out loud in the application**, because proposing your own
-ceiling is a signal no promise can carry: *"I am asking for $30,000 against one
+ceiling is a signal no promise can carry: *"I am asking for $25,000 against one
 three-month deliverable. The full programme is $98,000 and I would rather earn
 the rest than be handed it."*
 
@@ -159,7 +163,7 @@ asking them to:
 
 | Tranche | Released on | Amount |
 |---|---|---|
-| 1 | Signing. Covers M1: the cost curve, every method with public code under one protocol | **$30,000** |
+| 1 | Signing. Covers M1: the cost curve, every method with public code under one protocol | **$25,000** |
 | 2 | M1 published and reproducible by a third party | $26,000 |
 | 3 | M2/M3 reported -- *including if the prediction failed*, which is a delivery, not a default | $26,000 |
 | 4 | Paper submitted, all artefacts released | $16,000 |
