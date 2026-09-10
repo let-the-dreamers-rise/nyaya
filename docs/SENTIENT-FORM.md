@@ -175,7 +175,5 @@ delegation does not work on this benchmark, and the report says so.
    submitting, re-run and re-paste.
 3. The Kaggle token pasted in chat earlier this month: rotate it at
    kaggle.com/settings if you have not.
-4. New commits are authored as ashwingoyal2006@gmail.com, the address GitHub
-   links to let-the-dreamers-rise. The earlier commits still carry the other
-   address until it is linked or the history is rewritten. Check the
-   contributors tab once before submitting.
+4. Done, 10 Sep: every commit on nyaya and auto-evolve now links to
+   let-the-dreamers-rise, and the contributors tab lists only you.
