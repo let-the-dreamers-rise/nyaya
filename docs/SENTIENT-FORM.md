@@ -175,9 +175,7 @@ delegation does not work on this benchmark, and the report says so.
    submitting, re-run and re-paste.
 3. The Kaggle token pasted in chat earlier this month: rotate it at
    kaggle.com/settings if you have not.
-4. GitHub does not credit you for a single commit on nyaya or auto-evolve:
-   ashwinthebest8@gmail.com is not a verified email on the
-   let-the-dreamers-rise account, so the author shows unlinked and the
-   co-author trailer makes wozcode the only listed contributor. Add and
-   verify the email at github.com/settings/emails before anyone on the panel
-   opens the repo.
+4. New commits are authored as ashwingoyal2006@gmail.com, the address GitHub
+   links to let-the-dreamers-rise. The earlier commits still carry the other
+   address until it is linked or the history is rewritten. Check the
+   contributors tab once before submitting.
